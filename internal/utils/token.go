@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateToken(user *schemas.UserResponseToken, pointSale *[]schemas.PointSale) (string, error) {
+func GenerateToken(user *schemas.UserResponseToken, pointSale *schemas.PointSaleResponse) (string, error) {
 	if user == nil {
 		return "", fmt.Errorf("el usuario no puede estar vacio")
 	}

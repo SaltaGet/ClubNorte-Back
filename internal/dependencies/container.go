@@ -1,7 +1,7 @@
 package dependencies
 
 import (
-	"github.com/DanielChachagua/Club-Norte-Back/cmd/server/controllers"
+	"github.com/DanielChachagua/Club-Norte-Back/cmd/api/controllers"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/repositories"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/services"
 	"gorm.io/gorm"

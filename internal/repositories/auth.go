@@ -43,3 +43,16 @@ func (r *MainRepository) AuthPointSale(userID uint, pointSaleID uint) (*models.P
 
 	return &pointSale, nil
 }
+
+func (r *MainRepository) LoginPointSale(userID uint, pointSaleID uint) (*models.PointSale, error) {
+	var pointSale models.PointSale
+
+	err := r.DB.Joins("JOIN user_point_sales ups ON ups.point_sale_id = point_sales.id").
+    Where("ups.user_id = ?", userID).
+    Find(&pointSale).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &pointSale, nil
+}

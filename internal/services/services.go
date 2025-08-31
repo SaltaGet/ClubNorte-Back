@@ -4,6 +4,8 @@ import "github.com/DanielChachagua/Club-Norte-Back/internal/ports"
 
 type AuthService struct {
 	AuthRepository ports.AuthRepository
+	UserRepository ports.UserRepository
+	PointSaleRepository ports.PointSaleRepository
 }
 
 type CategoryService struct {

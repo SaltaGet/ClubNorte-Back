@@ -8,7 +8,8 @@ import (
 func SetupRoutes(app *fiber.App, deps *dependencies.MainContainer) {
 	AuthRoutes(app, deps.AuthController)
 
-
+	CategoryRoutes(app, deps.CategoryController)
 
 	PointSaleRoutes(app, deps.PointSaleController)
+	ProductRoutes(app, deps.ProductController)
 }

@@ -12,13 +12,13 @@ import (
 func AuthMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		token := c.Cookies("access_token") // Obtenemos la cookie
-    if token == "" {
-        return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-            Status:  false,
-            Body:    nil,
-            Message: "No autorizado",
-        })
-    }
+		if token == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
+				Status:  false,
+				Body:    nil,
+				Message: "No autorizado",
+			})
+		}
 
 		claims, err := utils.VerifyToken(token)
 		if err != nil {
@@ -69,7 +69,19 @@ func AuthMiddleware() fiber.Handler {
 			})
 		}
 
+		pointSaleID := getIntClaim(mapClaims, "point_sale_id")
+		pointSale := getStringClaim(mapClaims, "point_sale")
+
 		c.Locals("user", user)
+
+		if pointSaleID == -1 || pointSale == "" {
+			c.Locals("point_sale", nil)
+		} else {
+			c.Locals("point_sale", &schemas.PointSaleContext{
+				ID:   2,
+				Name: "mama coco",
+			})
+		}
 
 		if user.IsAdmin {
 			return c.Next()
@@ -84,10 +96,6 @@ func AuthMiddleware() fiber.Handler {
 			})
 		}
 
-		pointSale := getMapClaim(mapClaims, "point_sale")
-		
-		c.Locals("point_sale", pointSale)
-		c.Locals("point_sale", nil)
 		return c.Next()
 	}
 }
@@ -98,9 +106,9 @@ func getBoolClaim(claims jwt.MapClaims, key string) bool {
 }
 
 func getIntClaim(claims jwt.MapClaims, key string) int {
-	val, ok := claims[key].(int)
+	val, ok := claims[key].(float64)
 	if ok {
-		return val
+		return int(val)
 	}
 	return -1
 }

@@ -6,9 +6,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type PointSaleContext struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}
+
 type PointSaleResponse struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`
+	Description *string `json:"description"`
 }
 
 type PointSaleCreate struct {

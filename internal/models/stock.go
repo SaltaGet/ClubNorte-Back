@@ -17,5 +17,6 @@ type StockPointSale struct {
 	PointSaleID uint      `gorm:"not null" json:"point_sale_id"`
 	PointSale   PointSale `gorm:"foreignKey:PointSaleID;references:ID" json:"point_sale"`
 	Quantity    float64   `gorm:"not null;default:0" json:"quantity"`
+	Ignored     bool      `gorm:"not null;default:false" json:"ignored"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

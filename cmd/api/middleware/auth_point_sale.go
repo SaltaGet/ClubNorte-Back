@@ -11,7 +11,7 @@ func AuthPointSaleMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		deps := c.Locals("deps").(*dependencies.MainContainer)
 		user := c.Locals("user").(*schemas.UserContext)
-		pointSale := c.Locals("point_sale")
+		pointSale := c.Locals("point_sale").(*schemas.PointSaleContext)
 
 		if pointSale == nil {
 			return c.Status(401).JSON(schemas.Response{
@@ -21,16 +21,11 @@ func AuthPointSaleMiddleware() fiber.Handler {
 			})
 		}
 
-		ps, ok := pointSale.(*schemas.PointSaleResponse)
-		if !ok {
-			return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Formato inválido para el punto de venta",
-			})
+		if user.Role == "admin" {
+			return c.Next()
 		}
 
-		validatedPointSale, err := deps.AuthController.AuthService.AuthPointSale(user.ID, ps.ID)
+		validatedPointSale, err := deps.AuthController.AuthService.AuthPointSale(user.ID, pointSale.ID)
 		if err != nil {
 			logging.ERROR("Error: %s", err.Error())
 			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{

@@ -28,7 +28,7 @@ type MainContainer struct {
 func NewMainContainer(db *gorm.DB) *MainContainer {
 	repo := &repositories.MainRepository{DB: db}
 
-	authSvc := &services.AuthService{AuthRepository: repo}
+	authSvc := &services.AuthService{AuthRepository: repo, UserRepository: repo, PointSaleRepository: repo}
 	categorySvc := &services.CategoryService{CategoryRepository: repo}
 	depositSvc := &services.DepositService{DepositRepository: repo}
 	expenseSvc := &services.ExpenseService{ExpenseRepository: repo}

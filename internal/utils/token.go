@@ -16,19 +16,15 @@ func GenerateToken(user *schemas.UserResponseToken, pointSale *schemas.PointSale
 
 	claims := jwt.MapClaims{
 		"id":         user.ID,
-		"first_name": user.FirstName,
-		"last_name":  user.LastName,
-		"address":    user.Address,
-		"cellphone":  user.Cellphone,
 		"email":      user.Email,
-		"username":   user.Username,
 		"is_admin":   user.IsAdmin,
 		"role_id":    user.Role.ID,
 		"role":       user.Role.Name,
 	}
 
 	if pointSale != nil {
-		claims["point_sale"] = pointSale
+		claims["point_sale_id"] = pointSale.ID
+		claims["point_sale"] = pointSale.Name
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

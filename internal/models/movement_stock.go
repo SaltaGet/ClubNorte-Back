@@ -14,5 +14,4 @@ type MovementStock struct {
 	ToID      uint      `gorm:"not null" json:"to_id"`
 	ToType    string    `gorm:"not null" json:"to_type" validate:"oneof=deposit point_sale"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

@@ -10,7 +10,7 @@ type ProductRepository interface {
 	ProductGetByCode(code string) (*models.Product, error)
 	ProductGetByName(name string) ([]*models.Product, error)
 	ProductGetByCategoryID(categoryID uint) ([]*models.Product, error)
-	ProductGetAll(page, limit int) ([]*models.Product, int64, error)
+	ProductGetAll(pointSaleID uint, page, limit int) ([]*models.Product, int64, error)
 	ProductCreate(productCreate *schemas.ProductCreate) (uint, error)
 	ProductUpdate(productUpdate *schemas.ProductUpdate) error
 	ProductDelete(id uint) error
@@ -21,7 +21,7 @@ type ProductService interface {
 	ProductGetByCode(code string) (*schemas.ProductResponse, error)
 	ProductGetByName(name string) ([]*schemas.ProductResponseDTO, error)
 	ProductGetByCategoryID(categoryID uint) ([]*schemas.ProductSimpleResponse, error)
-	ProductGetAll(page, limit int) ([]*schemas.ProductResponseDTO, int64, error)
+	ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductResponseDTO, int64, error)
 	ProductCreate(productCreate *schemas.ProductCreate) (uint, error)
 	ProductUpdate(productUpdate *schemas.ProductUpdate) error
 	ProductDelete(id uint) error

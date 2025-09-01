@@ -91,7 +91,7 @@ definitions:
     type: object
   schemas.ProductResponseDTO:
     properties:
-      category;omitempty:
+      category:
         $ref: '#/definitions/schemas.CategoryResponse'
       code:
         type: string

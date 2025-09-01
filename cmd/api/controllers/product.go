@@ -213,6 +213,8 @@ func (p *ProductController) ProductGetByCategoryID(ctx *fiber.Ctx) error {
 //	@Failure		500		{object}	schemas.Response
 //	@Router			/v1/product/get_all [get]
 func (p *ProductController) ProductGetAll(ctx *fiber.Ctx) error {
+	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
+
 	page, err := strconv.Atoi(ctx.Query("page", "1"))
 	if err != nil || page <= 0 {
 		page = 1
@@ -223,7 +225,7 @@ func (p *ProductController) ProductGetAll(ctx *fiber.Ctx) error {
 		limit = 10
 	}
 
-	products, total, err := p.ProductService.ProductGetAll(page, limit)
+	products, total, err := p.ProductService.ProductGetAll(pointSale.ID, page, limit)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(schemas.Response{
 			Status:  false,

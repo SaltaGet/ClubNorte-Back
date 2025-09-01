@@ -20,7 +20,7 @@ type ProductResponseDTO struct {
 	ID          uint   `json:"id"`
 	Code        string `json:"code"`
 	Name        string `json:"name"`
-	Category    CategoryResponse `json:"category;omitempty"`
+	Category    *CategoryResponse `json:"category,omitempty"`
 	Price       float64 `json:"price"`
 	Stock       int    `json:"stock"`
 }

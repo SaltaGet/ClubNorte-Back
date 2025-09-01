@@ -1835,7 +1835,7 @@ const docTemplate = `{
         "schemas.ProductResponseDTO": {
             "type": "object",
             "properties": {
-                "category;omitempty": {
+                "category": {
                     "$ref": "#/definitions/schemas.CategoryResponse"
                 },
                 "code": {

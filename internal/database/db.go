@@ -37,11 +37,11 @@ func connectSQLite() (*gorm.DB, error) {
 	setupDBConnection(db, 10, 5)
 
 	if err := db.AutoMigrate(
-		&models.User{}, &models.Category{}, &models.Deposit{},
+		&models.User{}, &models.Category{},
 		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
-		&models.SportsCourt{}, &models.StockDeposite{}, &models.StockPointSale{},
+		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
 	); err != nil {
 		return nil, err
 	}
@@ -72,11 +72,11 @@ func connectMySQL() (*gorm.DB, error) {
 	setupDBConnection(db, 15, 5)
 
 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
-		&models.User{}, &models.Category{}, &models.Deposit{},
+		&models.User{}, &models.Category{}, 
 		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
-		&models.SportsCourt{}, &models.StockDeposite{}, &models.StockPointSale{},
+		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
 	); err != nil {
 		log.Fatalf("Error en migración: %v", err)
 	}

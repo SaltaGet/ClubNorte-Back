@@ -11,9 +11,9 @@ func AuthPointSaleMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		deps := c.Locals("deps").(*dependencies.MainContainer)
 		user := c.Locals("user").(*schemas.UserContext)
-		pointSale := c.Locals("point_sale").(*schemas.PointSaleContext)
+		pointSale, ok := c.Locals("point_sale").(*schemas.PointSaleContext)
 
-		if pointSale == nil {
+		if !ok || pointSale == nil {
 			return c.Status(401).JSON(schemas.Response{
 				Status:  false,
 				Body:    nil,

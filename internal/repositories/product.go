@@ -12,7 +12,7 @@ import (
 func (r *MainRepository) ProductGetByID(id uint) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").First(&product, id).Error; err != nil {
+	if err := r.DB.Preload("Category").Preload("StockPointSale").First(&product, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("producto no encontrado")
 		}
@@ -25,7 +25,7 @@ func (r *MainRepository) ProductGetByID(id uint) (*models.Product, error) {
 func (r *MainRepository) ProductGetByCode(code string) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").Where("code = ?", code).First(&product).Error; err != nil {
+	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("code = ?", code).First(&product).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("producto no encontrado")
 		}
@@ -38,7 +38,7 @@ func (r *MainRepository) ProductGetByCode(code string) (*models.Product, error) 
 func (r *MainRepository) ProductGetByCategoryID(categoryID uint) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
+	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
 		return nil, err
 	}
 
@@ -48,30 +48,76 @@ func (r *MainRepository) ProductGetByCategoryID(categoryID uint) ([]*models.Prod
 func (r *MainRepository) ProductGetByName(name string) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Preload("Category").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
+	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
 		return nil, err
 	}
 
 	return products, nil
 }
 
-func (r *MainRepository) ProductGetAll(page, limit int) ([]*models.Product, int64, error) {
+// func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*models.Product, int64, error) {
+// 	var products []*models.Product
+// 	var total int64
+// 	offset := (page - 1) * limit
+
+// 	subQuery := r.DB.
+// 		Table("stock_point_sales").
+// 		Select("product_id").
+// 		Where("point_sale_id = ?", pointSaleID)
+// 	// if err := r.DB.Preload("StockPointSale").Where("stock_point_sale = ?", pointSaleID).Model(&models.Product{}).Count(&total).Error; err != nil {
+// 	// 	return nil, 0, err
+// 	// }
+
+// 	if err := r.DB.
+// 		Model(&models.Product{}).
+// 		Where("id IN (?)", subQuery).
+// 		Count(&total).Error; err != nil {
+// 		return nil, 0, err
+// 	}
+
+// 	// if err := r.DB.
+// 	// 	Preload("Category").
+// 	// 	Preload("StockPointSale").
+// 	// 	Limit(limit).
+// 	// 	Offset(offset).
+// 	// 	Find(&products).Error; err != nil {
+// 	// 	return nil, 0, err
+// 	// }
+// 	if err := r.DB.
+// 		Preload("Category").
+// 		Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
+// 		Where("id IN (?)", subQuery).
+// 		Limit(limit).
+// 		Offset(offset).
+// 		Find(&products).Error; err != nil {
+// 		return nil, 0, err
+// 	}
+
+// 	return products, total, nil
+// }
+
+func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*models.Product, int64, error) {
 	var products []*models.Product
 	var total int64
+	offset := (page - 1) * limit
 
-	// Contar el total de registros (para saber cuántas páginas hay)
-	if err := r.DB.Model(&models.Product{}).Count(&total).Error; err != nil {
+	// Contar los productos disponibles en el punto de venta
+	if err := r.DB.
+		Table("products").
+		// Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		// Where("sps.point_sale_id = ?", pointSaleID).
+		Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
-	// Calcular offset
-	offset := (page - 1) * limit
-
-	// Obtener productos con paginación
+	// Obtener productos con la categoría y el stock específico del punto de venta
 	if err := r.DB.
 		Preload("Category").
-		Limit(limit).
+		// Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
+		// Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		// Where("sps.point_sale_id = ?", pointSaleID).
 		Offset(offset).
+		Limit(limit).
 		Find(&products).Error; err != nil {
 		return nil, 0, err
 	}
@@ -115,12 +161,20 @@ func (r *MainRepository) ProductUpdate(product *schemas.ProductUpdate) error {
 }
 
 func (r *MainRepository) ProductDelete(id uint) error {
-	if err := r.DB.Where("id = ?", id).Delete(&models.Product{}).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("producto no encontrado")
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("product_id = ?", id).Delete(&models.StockPointSale{}).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return fmt.Errorf("producto no encontrado")
+			}
+			return err
 		}
-		return err
-	}
 
-	return nil
+		if err := tx.Where("id = ?", id).Delete(&models.Product{}).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return fmt.Errorf("producto no encontrado")
+			}
+			return err
+		}
+		return nil
+	})
 }

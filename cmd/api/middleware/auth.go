@@ -78,7 +78,7 @@ func AuthMiddleware() fiber.Handler {
 			c.Locals("point_sale", nil)
 		} else {
 			c.Locals("point_sale", &schemas.PointSaleContext{
-				ID:   2,
+				ID:   uint(pointSaleID),
 				Name: "mama coco",
 			})
 		}

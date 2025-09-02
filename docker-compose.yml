@@ -1,0 +1,60 @@
+services:
+  db:
+    image: mariadb:11   # reemplaza mysql:8 por mariadb
+    container_name: mariadb-db
+    restart: always
+    ports:
+      - "3307:3306"
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:  # ← Agrega healthcheck
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: clubnorteback:latest
+    container_name: club-norte
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - /etc/variables/club-norte/.env:/app/.env:ro
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+
+# services:
+#   db:
+#     image: mysql:8
+#     container_name: mysql-db
+#     restart: always
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - /etc/variables/club-norte/.env:/app/.env:ro
+#       - db-data:/var/lib/mysql
+
+#   api:
+#     image: clubnorteback:latest
+#     container_name: club-norte
+#     restart: always
+#     ports:
+#       - "3000:3000"
+#     # env_file:
+#     #   - /etc/variables/club-norte/.env 
+#     volumes:
+#       - /etc/variables/club-norte/.env:/app/.env:ro
+#     depends_on:
+#       - db
+
+# volumes:
+#   db-data:

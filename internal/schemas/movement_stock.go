@@ -43,7 +43,7 @@ type MovementStock struct {
 	ToType string `json:"to_type" validate:"oneof=deposit point_sale"`
 	ToID   uint   `json:"to_id" validate:"required"`
 
-	IgnoreStock bool `json:"ignore_stock" validate:"required"`
+	IgnoreStock bool `json:"ignore_stock"`
 }
 
 func (m *MovementStock) Validate() error {
@@ -59,5 +59,5 @@ func (m *MovementStock) Validate() error {
 	params := validatorErr.Param()
 
 	errorMessage := field + " " + tag + " " + params
-	return fmt.Errorf("error al validar el login: %s", errorMessage)
+	return fmt.Errorf("error al validar el movimiento de stock: %s", errorMessage)
 }

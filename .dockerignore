@@ -1,0 +1,6 @@
+**/.env
+**/*.db
+**/.git
+**/.gitignore
+**/README.md
+**/deploy.md

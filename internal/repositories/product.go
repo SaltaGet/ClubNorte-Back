@@ -104,8 +104,8 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 	// Contar los productos disponibles en el punto de venta
 	if err := r.DB.
 		Table("products").
-		// Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
-		// Where("sps.point_sale_id = ?", pointSaleID).
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
@@ -113,9 +113,9 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 	// Obtener productos con la categoría y el stock específico del punto de venta
 	if err := r.DB.
 		Preload("Category").
-		// Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
-		// Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
-		// Where("sps.point_sale_id = ?", pointSaleID).
+		Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Offset(offset).
 		Limit(limit).
 		Find(&products).Error; err != nil {

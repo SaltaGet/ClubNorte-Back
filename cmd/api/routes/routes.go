@@ -9,7 +9,7 @@ func SetupRoutes(app *fiber.App, deps *dependencies.MainContainer) {
 	AuthRoutes(app, deps.AuthController)
 
 	CategoryRoutes(app, deps.CategoryController)
-
+	DepositRoutes(app, deps.DepositController)
 	MovementStockRoutes(app, deps.MovementStockController)
 
 	PointSaleRoutes(app, deps.PointSaleController)

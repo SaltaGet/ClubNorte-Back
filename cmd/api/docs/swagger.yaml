@@ -23,6 +23,37 @@ definitions:
     - id
     - name
     type: object
+  schemas.DepositResponse:
+    properties:
+      category:
+        $ref: '#/definitions/schemas.CategoryResponse'
+      code:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: number
+    type: object
+  schemas.DepositUpdateStock:
+    properties:
+      method:
+        enum:
+        - add
+        - subtract
+        - set
+        example: add|subtract|set
+        type: string
+      product_id:
+        type: integer
+      stock:
+        type: number
+    type: object
   schemas.Login:
     properties:
       email:
@@ -58,7 +89,6 @@ definitions:
     required:
     - amount
     - from_id
-    - ignore_stock
     - product_id
     - to_id
     type: object
@@ -139,7 +169,7 @@ definitions:
       price:
         type: number
       stock:
-        type: integer
+        type: number
     type: object
   schemas.ProductResponseDTO:
     properties:
@@ -154,7 +184,7 @@ definitions:
       price:
         type: number
       stock:
-        type: integer
+        type: number
     type: object
   schemas.ProductUpdate:
     properties:
@@ -685,6 +715,247 @@ paths:
       summary: CategoryUpdate
       tags:
       - Category
+  /v1/deposit/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: DepositProductGetByID obtener un producto por ID del deposito
+      parameters:
+      - description: Id del producto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.DepositResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: DepositProductGetByID
+      tags:
+      - Deposit
+  /v1/deposit/get_all:
+    get:
+      consumes:
+      - application/json
+      description: DepositProductGetAll obtener productos por paginacion
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.DepositResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: DepositProductGetAll
+      tags:
+      - Deposit
+  /v1/deposit/get_by_code:
+    get:
+      consumes:
+      - application/json
+      description: DepositProductGetByCode obtener un producto por codigo del deposito
+      parameters:
+      - description: codigo del producto
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.DepositResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: DepositProductGetByCode
+      tags:
+      - Deposit
+  /v1/deposit/get_by_name:
+    get:
+      consumes:
+      - application/json
+      description: DepositProductGetByName obtener productos por por similitud de
+        nombre
+      parameters:
+      - description: nombre por aproximacion del producto
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.DepositResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: DepositProductGetByName
+      tags:
+      - Deposit
+  /v1/deposit/update_stock:
+    put:
+      consumes:
+      - application/json
+      description: DepositProductUpdateStock alctualizar stock de un producto del
+        deposito
+      parameters:
+      - description: nombre por aproximacion del producto
+        in: body
+        name: stock_update
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.DepositUpdateStock'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.DepositResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: DepositProductUpdateStock
+      tags:
+      - Deposit
   /v1/movement_stock/get/{id}:
     get:
       consumes:

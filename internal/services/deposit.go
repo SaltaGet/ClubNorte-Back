@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
-	"github.com/jinzhu/copier"
 )
 
 func (s *DepositService) DepositGetByID(id uint) (*schemas.DepositResponse, error) {
@@ -11,8 +10,19 @@ func (s *DepositService) DepositGetByID(id uint) (*schemas.DepositResponse, erro
 		return nil, err
 	}
 
-	var productResponse *schemas.DepositResponse
-	_ = copier.Copy(&productResponse, &product)
+	desc := product.Description
+	productResponse := &schemas.DepositResponse{
+		ID:          product.ID,
+		Code:        product.Code,
+		Description: desc,
+		Name:        product.Name,
+		Category: schemas.CategoryResponse{
+			ID:   product.Category.ID,
+			Name: product.Category.Name,
+		},
+		Price: product.Price,
+		Stock: product.StockDeposit.Stock,
+	}
 
 	return productResponse, nil
 }
@@ -23,22 +33,48 @@ func (s *DepositService) DepositGetByCode(code string) (*schemas.DepositResponse
 		return nil, err
 	}
 
-	var productResponse *schemas.DepositResponse
-	_ = copier.Copy(&productResponse, &product)
+	desc := product.Description
+	productResponse := &schemas.DepositResponse{
+		ID:          product.ID,
+		Code:        product.Code,
+		Description: desc,
+		Name:        product.Name,
+		Category: schemas.CategoryResponse{
+			ID:   product.Category.ID,
+			Name: product.Category.Name,
+		},
+		Price: product.Price,
+		Stock: product.StockDeposit.Stock,
+	}
 
 	return productResponse, nil
 }
 
-func (s *DepositService) DepositGetByName(name string) (*schemas.DepositResponse, error) {
+func (s *DepositService) DepositGetByName(name string) ([]*schemas.DepositResponse, error) {
 	products, err := s.DepositRepository.DepositGetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	var productsResponse []*schemas.DepositResponse
-	_ = copier.Copy(&productsResponse, &products)
+	productsResponse := make([]*schemas.DepositResponse, len(products))
 
-	return productsResponse[0], nil
+	for i, prod := range products {
+		desc := prod.Description
+		productsResponse[i] = &schemas.DepositResponse{
+			ID:          prod.ID,
+			Code:        prod.Code,
+			Description: desc,
+			Name:        prod.Name,
+			Category: schemas.CategoryResponse{
+				ID:   prod.Category.ID,
+				Name: prod.Category.Name,
+			},
+			Price: prod.Price,
+			Stock: prod.StockDeposit.Stock,
+		}
+	}
+
+	return productsResponse, nil
 }
 
 func (s *DepositService) DepositGetAll(page, limit int) ([]*schemas.DepositResponse, int64, error) {
@@ -47,12 +83,27 @@ func (s *DepositService) DepositGetAll(page, limit int) ([]*schemas.DepositRespo
 		return nil, 0, err
 	}
 
-	var productsResponse []*schemas.DepositResponse
-	_ = copier.Copy(&productsResponse, &products)
+	productsResponse := make([]*schemas.DepositResponse, len(products))
+
+	for i, prod := range products {
+		desc := prod.Description
+		productsResponse[i] = &schemas.DepositResponse{
+			ID:          prod.ID,
+			Code:        prod.Code,
+			Description: desc,
+			Name:        prod.Name,
+			Category: schemas.CategoryResponse{
+				ID:   prod.Category.ID,
+				Name: prod.Category.Name,
+			},
+			Price: prod.Price,
+			Stock: prod.StockDeposit.Stock,
+		}
+	}
 
 	return productsResponse, total, nil
 }
 
-func (s *DepositService) DepositUpdateStock(productID uint, stock float64, method string) (error) {
-	return s.DepositRepository.DepositUpdateStock(productID, stock, method)
+func (s *DepositService) DepositUpdateStock(updateStock schemas.DepositUpdateStock) error {
+	return s.DepositRepository.DepositUpdateStock(updateStock)
 }

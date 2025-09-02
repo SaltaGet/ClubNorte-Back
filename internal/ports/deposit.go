@@ -10,13 +10,13 @@ type DepositRepository interface {
 	DepositGetByCode(code string) (*models.Product, error)
 	DepositGetByName(name string) ([]*models.Product, error)
 	DepositGetAll(page, limit int) ([]*models.Product, int64,error)
-	DepositUpdateStock(productID uint, stock float64, method string) (error)
+	DepositUpdateStock(updateStock schemas.DepositUpdateStock) (error)
 }
 
 type DepositService interface {
 	DepositGetByID(id uint) (*schemas.DepositResponse, error)
 	DepositGetByCode(code string) (*schemas.DepositResponse, error)
-	DepositGetByName(name string) (*schemas.DepositResponse, error)
+	DepositGetByName(name string) ([]*schemas.DepositResponse, error)
 	DepositGetAll(page, limit int) ([]*schemas.DepositResponse, int64, error)
-	DepositUpdateStock(productID uint, stock float64, method string) (error)
+	DepositUpdateStock(updateStock schemas.DepositUpdateStock) (error)
 }

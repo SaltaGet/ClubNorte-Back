@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
-	"github.com/jinzhu/copier"
 )
 
 func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductResponse, error) {
@@ -11,10 +10,20 @@ func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductResponse, erro
 		return nil, err
 	}
 
-	var productResponse schemas.ProductResponse
-	_ = copier.Copy(&productResponse, &product)
+	productResponse := &schemas.ProductResponse{
+		ID:          product.ID,
+		Code:        product.Code,
+		Name:        product.Name,
+		Description: *product.Description,
+		Category: schemas.CategoryResponse{
+			ID:   product.Category.ID,
+			Name: product.Category.Name,
+		},
+		Price: product.Price,
+		Stock: product.StockPointSale.Stock,
+	}
 
-	return &productResponse, nil
+	return productResponse, nil
 }
 
 func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductResponse, error) {
@@ -23,10 +32,20 @@ func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductResponse
 		return nil, err
 	}
 
-	var productResponse schemas.ProductResponse
-	_ = copier.Copy(&productResponse, &product)
+	productResponse := &schemas.ProductResponse{
+		ID:          product.ID,
+		Code:        product.Code,
+		Name:        product.Name,
+		Description: *product.Description,
+		Category: schemas.CategoryResponse{
+			ID:   product.Category.ID,
+			Name: product.Category.Name,
+		},
+		Price: product.Price,
+		Stock: product.StockPointSale.Stock,
+	}
 
-	return &productResponse, nil
+	return productResponse, nil
 }
 
 func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductResponseDTO, error) {
@@ -35,8 +54,21 @@ func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductRespon
 		return nil, err
 	}
 
-	var productsResponse []*schemas.ProductResponseDTO
-	_ = copier.Copy(&productsResponse, &products)
+	productsResponse := make([]*schemas.ProductResponseDTO, len(products))
+
+	for i, prod := range products {
+		productsResponse[i] = &schemas.ProductResponseDTO{
+			ID:   prod.ID,
+			Code: prod.Code,
+			Name: prod.Name,
+			Category: &schemas.CategoryResponse{
+				ID:   prod.Category.ID,
+				Name: prod.Category.Name,
+			},
+			Price: prod.Price,
+			Stock: prod.StockPointSale.Stock,
+		}
+	}
 
 	return productsResponse, nil
 }
@@ -47,8 +79,17 @@ func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.Pro
 		return nil, err
 	}
 
-	var productsResponse []*schemas.ProductSimpleResponse
-	_ = copier.Copy(&productsResponse, &products)
+	productsResponse := make([]*schemas.ProductSimpleResponse, len(products))
+
+	for i, prod := range products {
+		productsResponse[i] = &schemas.ProductSimpleResponse{
+			ID:   prod.ID,
+			Code: prod.Code,
+			Name: prod.Name,
+			Price: prod.Price,
+			Stock: prod.StockPointSale.Stock,
+		}
+	}
 
 	return productsResponse, nil
 }
@@ -59,8 +100,21 @@ func (s *ProductService) ProductGetAll(pointSaleID uint, page, limit int) ([]*sc
 		return nil, 0, err
 	}
 
-	var productsResponse []*schemas.ProductResponseDTO
-	_ = copier.Copy(&productsResponse, &products)
+	productsResponse := make([]*schemas.ProductResponseDTO, len(products))
+
+	for i, prod := range products {
+		productsResponse[i] = &schemas.ProductResponseDTO{
+			ID:   prod.ID,
+			Code: prod.Code,
+			Name: prod.Name,
+			Category: &schemas.CategoryResponse{
+				ID:   prod.Category.ID,
+				Name: prod.Category.Name,
+			},
+			Price: prod.Price,
+			Stock: prod.StockPointSale.Stock,
+		}
+	}
 
 	return productsResponse, total, nil
 }

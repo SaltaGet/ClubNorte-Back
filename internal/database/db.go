@@ -54,36 +54,123 @@ func connectSQLite() (*gorm.DB, error) {
 	return ensureAdmin(db)
 }
 
+// func connectMySQL() (*gorm.DB, error) {
+// 	dsn := os.Getenv("URI_DB_PROD")
+// 	if dsn == "" {
+// 		return nil, fmt.Errorf("la variable de entorno URI_DB_PROD no esta definida")
+// 	}
+
+// 	if err := ensureDatabaseExists(dsn); err != nil {
+// 		log.Fatalf("No se pudo crear la base: %v", err)
+// 	}
+
+// 	// db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
+// 	var db *gorm.DB
+// 	var err error
+
+// 	// Intentar varias veces hasta que MySQL esté listo
+// 	for i := 0; i < 10; i++ {
+// 		if err := ensureDatabaseExists(dsn); err != nil {
+// 			log.Printf("Esperando a que MySQL esté listo... intento %d: %v", i+1, err)
+// 			time.Sleep(3 * time.Second)
+// 			continue
+// 		}
+
+// 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+// 		if err == nil {
+// 			break
+// 		}
+
+// 		log.Printf("Error conectando a MySQL, retry %d: %v", i+1, err)
+// 		time.Sleep(3 * time.Second)
+// 	}
+
+// 	if err != nil {
+// 		return nil, fmt.Errorf("no se pudo conectar a MySQL después de varios intentos: %v", err)
+// 	}
+
+// 	setupDBConnection(db, 15, 5)
+
+// 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
+// 		&models.User{}, &models.Category{},
+// 		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
+// 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
+// 		&models.PointSale{}, &models.Register{}, &models.Role{},
+// 		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
+// 	); err != nil {
+// 		log.Fatalf("Error en migración: %v", err)
+// 	}
+
+// 	err = initialData(db)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+//		return ensureAdmin(db)
+//	}
 func connectMySQL() (*gorm.DB, error) {
 	dsn := os.Getenv("URI_DB_PROD")
 	if dsn == "" {
 		return nil, fmt.Errorf("la variable de entorno URI_DB_PROD no esta definida")
 	}
 
-	if err := ensureDatabaseExists(dsn); err != nil {
-		log.Fatalf("No se pudo crear la base: %v", err)
+	var db *gorm.DB
+	var err error
+
+	// Intentar varias veces hasta que MariaDB esté listo (más intentos)
+	maxRetries := 20
+	for i := 0; i < maxRetries; i++ {
+		// Primero intentar conectar directamente
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		if err == nil {
+			// Verificar si la conexión es realmente válida
+			sqlDB, pingErr := db.DB()
+			if pingErr == nil {
+				pingErr = sqlDB.Ping()
+				if pingErr == nil {
+					log.Println("✅ Conexión a la base de datos exitosa")
+
+					// Ahora asegurar que la base de datos existe
+					if ensureErr := ensureDatabaseExists(dsn); ensureErr != nil {
+						log.Printf("Warning: Error creando base de datos: %v", ensureErr)
+						// No fatal, continuar con la conexión existente
+					}
+
+					break // Salir del loop si todo está bien
+				}
+			}
+		}
+
+		log.Printf("Esperando a que MariaDB esté listo... intento %d/%d: %v",
+			i+1, maxRetries, err)
+		time.Sleep(5 * time.Second)
 	}
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("no se pudo conectar a MySQL después de %d intentos: %v", maxRetries, err)
 	}
 
 	setupDBConnection(db, 15, 5)
 
+	// Migraciones
 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
-		&models.User{}, &models.Category{}, 
+		&models.User{}, &models.Category{},
 		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
 		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
 	); err != nil {
-		log.Fatalf("Error en migración: %v", err)
+		log.Printf("Error en migración: %v", err)
+		// No fatal, continuar
 	}
 
 	err = initialData(db)
 	if err != nil {
-		return nil, err
+		log.Printf("Error en datos iniciales: %v", err)
+		// No fatal, continuar
 	}
 
 	return ensureAdmin(db)
@@ -109,12 +196,12 @@ func ensureAdmin(db *gorm.DB) (*gorm.DB, error) {
 	if err := db.Create(&models.User{
 		FirstName: os.Getenv("ADMIN_FIRST_NAME"),
 		LastName:  os.Getenv("ADMIN_LAST_NAME"),
-		Address: &address,
+		Address:   &address,
 		Cellphone: &cellphone,
 		Email:     os.Getenv("ADMIN_EMAIL"),
 		Username:  os.Getenv("ADMIN_USERNAME"),
 		Password:  os.Getenv("ADMIN_PASSWORD"),
-		RoleID:     role.ID,
+		RoleID:    role.ID,
 		IsAdmin:   true,
 	}).Error; err != nil {
 		return nil, err
@@ -153,6 +240,18 @@ func ensureDatabaseExists(dsn string) error {
 		return fmt.Errorf("error al conectar sin base: %w", err)
 	}
 	defer db.Close()
+
+	for i := 0; i < 5; i++ {
+		err = db.Ping()
+		if err == nil {
+			break
+		}
+		time.Sleep(2 * time.Second)
+	}
+
+	if err != nil {
+		return fmt.Errorf("no se pudo conectar al servidor MySQL: %w", err)
+	}
 
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", dbName))
 	return err

@@ -13,7 +13,7 @@ type ProductResponse struct {
 	Description string `json:"description"`
 	Category    CategoryResponse `json:"category"`
 	Price       float64 `json:"price"`
-	Stock       int    `json:"stock"`
+	Stock       float64    `json:"stock"`
 }
 
 type ProductResponseDTO struct {
@@ -22,7 +22,7 @@ type ProductResponseDTO struct {
 	Name        string `json:"name"`
 	Category    *CategoryResponse `json:"category,omitempty"`
 	Price       float64 `json:"price"`
-	Stock       int    `json:"stock"`
+	Stock       float64    `json:"stock"`
 }
 
 type ProductSimpleResponse struct {

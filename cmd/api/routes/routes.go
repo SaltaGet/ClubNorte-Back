@@ -10,6 +10,8 @@ func SetupRoutes(app *fiber.App, deps *dependencies.MainContainer) {
 
 	CategoryRoutes(app, deps.CategoryController)
 
+	MovementStockRoutes(app, deps.MovementStockController)
+
 	PointSaleRoutes(app, deps.PointSaleController)
 	ProductRoutes(app, deps.ProductController)
 }

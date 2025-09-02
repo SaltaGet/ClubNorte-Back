@@ -33,6 +33,58 @@ definitions:
     - email
     - password
     type: object
+  schemas.MovementStock:
+    properties:
+      amount:
+        type: number
+      from_id:
+        type: integer
+      from_type:
+        enum:
+        - deposit
+        - point_sale
+        type: string
+      ignore_stock:
+        type: boolean
+      product_id:
+        type: integer
+      to_id:
+        type: integer
+      to_type:
+        enum:
+        - deposit
+        - point_sale
+        type: string
+    required:
+    - amount
+    - from_id
+    - ignore_stock
+    - product_id
+    - to_id
+    type: object
+  schemas.MovementStockResponse:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      from_id:
+        type: integer
+      from_type:
+        type: string
+      id:
+        type: integer
+      ignore_stock:
+        type: boolean
+      product:
+        $ref: '#/definitions/schemas.ProductResponse'
+      to_id:
+        type: integer
+      to_type:
+        type: string
+      user:
+        $ref: '#/definitions/schemas.UserResponse'
+    type: object
   schemas.PointSaleCreate:
     properties:
       description:
@@ -132,6 +184,38 @@ definitions:
         type: string
       status:
         type: boolean
+    type: object
+  schemas.RoleResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        enum:
+        - admin
+        - vendedor
+        - repositor
+        type: string
+    type: object
+  schemas.UserResponse:
+    properties:
+      address:
+        type: string
+      cellphone:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      is_admin:
+        type: boolean
+      last_name:
+        type: string
+      role:
+        $ref: '#/definitions/schemas.RoleResponse'
+      username:
+        type: string
     type: object
 info:
   contact: {}
@@ -601,6 +685,153 @@ paths:
       summary: CategoryUpdate
       tags:
       - Category
+  /v1/movement_stock/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: MovementStockGet Obtener un movimiento de stock por ID
+      parameters:
+      - description: ID del movimiento de stock
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.MovementStockResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: MovementStockGet
+      tags:
+      - MovementStock
+  /v1/movement_stock/get_all:
+    get:
+      consumes:
+      - application/json
+      description: MovementStockGetAll Obtener movimeintos de sotck por paginacion
+      parameters:
+      - default: 1
+        description: Número de página
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Número de elementos por página
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.MovementStockResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: MovementStockGetAll
+      tags:
+      - MovementStock
+  /v1/movement_stock/move:
+    post:
+      consumes:
+      - application/json
+      description: MovementStock movimiento de stock entre doposito y puntos de ventas
+      parameters:
+      - description: movimiento de stock
+        in: body
+        name: movement_stock
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.MovementStock'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: MovementStock
+      tags:
+      - MovementStock
   /v1/point_sale/create:
     post:
       consumes:

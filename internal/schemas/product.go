@@ -30,7 +30,14 @@ type ProductSimpleResponse struct {
 	Code        string `json:"code"`
 	Name        string `json:"name"`
 	Price       float64 `json:"price"`
-	Stock       int    `json:"stock"`
+	Stock       float64    `json:"stock"`
+}
+
+type ProductSimpleResponseDTO struct {
+	ID          uint   `json:"id"`
+	Code        string `json:"code"`
+	Name        string `json:"name"`
+	Price       float64 `json:"price"`
 }
 
 type ProductCreate struct {

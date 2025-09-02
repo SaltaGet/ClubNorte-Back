@@ -748,6 +748,243 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/movement_stock/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "MovementStockGet Obtener un movimiento de stock por ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MovementStock"
+                ],
+                "summary": "MovementStockGet",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del movimiento de stock",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "$ref": "#/definitions/schemas.MovementStockResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/movement_stock/get_all": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "MovementStockGetAll Obtener movimeintos de sotck por paginacion",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MovementStock"
+                ],
+                "summary": "MovementStockGetAll",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Número de página",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Número de elementos por página",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/schemas.MovementStockResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/movement_stock/move": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "MovementStock movimiento de stock entre doposito y puntos de ventas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "MovementStock"
+                ],
+                "summary": "MovementStock",
+                "parameters": [
+                    {
+                        "description": "movimiento de stock",
+                        "name": "movement_stock",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.MovementStock"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/point_sale/create": {
             "post": {
                 "security": [
@@ -1748,6 +1985,82 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.MovementStock": {
+            "type": "object",
+            "required": [
+                "amount",
+                "from_id",
+                "ignore_stock",
+                "product_id",
+                "to_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "from_id": {
+                    "type": "integer"
+                },
+                "from_type": {
+                    "type": "string",
+                    "enum": [
+                        "deposit",
+                        "point_sale"
+                    ]
+                },
+                "ignore_stock": {
+                    "type": "boolean"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "to_type": {
+                    "type": "string",
+                    "enum": [
+                        "deposit",
+                        "point_sale"
+                    ]
+                }
+            }
+        },
+        "schemas.MovementStockResponse": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "from_id": {
+                    "type": "integer"
+                },
+                "from_type": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ignore_stock": {
+                    "type": "boolean"
+                },
+                "product": {
+                    "$ref": "#/definitions/schemas.ProductResponse"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "to_type": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/schemas.UserResponse"
+                }
+            }
+        },
         "schemas.PointSaleCreate": {
             "type": "object",
             "required": [
@@ -1894,6 +2207,54 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "boolean"
+                }
+            }
+        },
+        "schemas.RoleResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "enum": [
+                        "admin",
+                        "vendedor",
+                        "repositor"
+                    ]
+                }
+            }
+        },
+        "schemas.UserResponse": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cellphone": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/schemas.RoleResponse"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }

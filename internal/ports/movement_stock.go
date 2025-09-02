@@ -1,13 +1,18 @@
 package ports
 
+import (
+	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
+	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
+)
+
 type MovementStockRepository interface {
-	MovementStockDepositToPointSale(userID, pointSaleID, productID uint, amount float64) error
-	MovementStockPointSaleToPointSale(userID, fromPointSaleID, toPointSaleID, productID uint, amount float64) error
-	MovementStockPointSaleToDeposit(userID, pointSaleID, productID uint, amount float64) error
+	MovementStockGetByID(id uint) (*models.MovementStock, error)
+	MovementStockGetAll(page, limit int) ([]*models.MovementStock, int64, error)
+	MoveStock(userID uint, input *schemas.MovementStock) error
 }
 
 type MovementStockService interface {
-	MovementStockDepositToPointSale(userID, pointSaleID, productID uint, amount float64) error
-	MovementStockPointSaleToPointSale(userID, fromPointSaleID, toPointSaleID, productID uint, amount float64) error
-	MovementStockPointSaleToDeposit(userID, pointSaleID, productID uint, amount float64) error
+	MovementStockGetByID(id uint) (*schemas.MovementStockResponse, error)
+	MovementStockGetAll(page, limit int) ([]*schemas.MovementStockResponseDTO, int64, error)
+	MoveStock(userID uint, input *schemas.MovementStock) error
 }

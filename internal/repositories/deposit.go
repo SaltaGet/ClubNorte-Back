@@ -48,7 +48,7 @@ func (r *MainRepository) DepositUpdateStock(productID uint, stock float64, metho
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		var deposit models.StockDeposit
 
-		if err := tx.Where("product_id = ?", productID).First(&deposit).Error; err != nil {
+		if err := tx.Where("product_id = ?", productID).FirstOrCreate(&deposit, &models.StockDeposit{ProductID: productID}).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return fmt.Errorf("no existe un depósito para el producto %d", productID)
 			}

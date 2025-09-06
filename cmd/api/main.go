@@ -33,15 +33,15 @@ import (
 //	@description				Enter your JWT token here. Example: "eyJhbGciOiJIUz..."
 
 func main() {
-	// err := godotenv.Load(".env")
-	// if err != nil {
-	// 	log.Fatalf("Error al cargar el archivo .env: %v", err)
-	// }
-	if _, err := os.Stat(".env"); err == nil {
-		if err := godotenv.Load(".env"); err != nil {
-			log.Fatalf("Error cargando .env local: %v", err)
-		}
+	err := godotenv.Load("/etc/variables/club-norte/.env")
+	if err != nil {
+		log.Fatalf("Error al cargar el archivo .env: %v", err)
 	}
+	// if _, err := os.Stat(".env"); err == nil {
+	// 	if err := godotenv.Load(".env"); err != nil {
+	// 		log.Fatalf("Error cargando .env local: %v", err)
+	// 	}
+	// }
 
 	db, err := database.ConnectDB()
 	if err != nil {

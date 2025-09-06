@@ -35,6 +35,8 @@ RUN apk add --no-cache ca-certificates
 # Crear carpeta de la app
 WORKDIR /app
 
+FROM gcr.io/distroless/static-debian12
+
 # Copiar binario desde la etapa de compilación
 COPY --from=builder /app/club-norte .
 

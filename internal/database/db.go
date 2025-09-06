@@ -122,6 +122,11 @@ func connectMySQL() (*gorm.DB, error) {
 
 	// Intentar varias veces hasta que MariaDB esté listo (más intentos)
 	maxRetries := 20
+	if ensureErr := ensureDatabaseExists(dsn); ensureErr != nil {
+		log.Printf("Warning: Error creando base de datos: %v", ensureErr)
+		// No fatal, continuar con la conexión existente
+	}
+
 	for i := 0; i < maxRetries; i++ {
 		// Primero intentar conectar directamente
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -134,10 +139,6 @@ func connectMySQL() (*gorm.DB, error) {
 					log.Println("✅ Conexión a la base de datos exitosa")
 
 					// Ahora asegurar que la base de datos existe
-					if ensureErr := ensureDatabaseExists(dsn); ensureErr != nil {
-						log.Printf("Warning: Error creando base de datos: %v", ensureErr)
-						// No fatal, continuar con la conexión existente
-					}
 
 					break // Salir del loop si todo está bien
 				}

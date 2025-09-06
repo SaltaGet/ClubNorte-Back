@@ -14,4 +14,6 @@ func SetupRoutes(app *fiber.App, deps *dependencies.MainContainer) {
 
 	PointSaleRoutes(app, deps.PointSaleController)
 	ProductRoutes(app, deps.ProductController)
+	RoleRoutes(app, deps.RoleController)
+	UserRoutes(app, deps.UserController)
 }

@@ -23,8 +23,8 @@ import (
 func (r *RoleController) RoleGetAll(c *fiber.Ctx) error {
 	roles, err := r.RoleService.RoleGetAll()
 	if err != nil {
-		return err
-	}
+			return schemas.HandleError(c, err)
+		}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
 		Status:  true,

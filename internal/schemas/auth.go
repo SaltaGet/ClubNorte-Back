@@ -24,5 +24,5 @@ func(l *Login) Validate() error {
 	params := validatorErr.Param()
 
 	errorMessage := field + " " + tag + " " + params
-	return fmt.Errorf("error al validar el login: %s", errorMessage)
+	return ErrorResponse(422, fmt.Sprintf("error al validar campo(s): %s", errorMessage), err)
 }

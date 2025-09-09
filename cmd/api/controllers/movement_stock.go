@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -26,34 +27,22 @@ import (
 func (m *MovementStockController) MovementStockGet(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el id del movimiento de stock",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Se necesita el id del movimiento de stock", fmt.Errorf("se necesita el id del movimiento de stock")))
 	}
 
 	idUint, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al parsear el id del movimiento de stock",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(422, "el id debe ser un número", err))
 	}
 
 	movementStock, err := m.MovementStockService.MovementStockGetByID(uint(idUint))
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Movimiento de stock no encontrado",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
-		Status: true,
-		Body:   movementStock,
+		Status:  true,
+		Body:    movementStock,
 		Message: "Movimiento de stock obtenido correctamente",
 	})
 }
@@ -88,17 +77,13 @@ func (m *MovementStockController) MovementStockGetAll(c *fiber.Ctx) error {
 
 	movementsStock, total, err := m.MovementStockService.MovementStockGetAll(page, limit)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Movimiento de stock no encontrado",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	totalPages := int((total + int64(limit) - 1) / int64(limit))
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
-		Status: true,
+		Status:  true,
 		Body:    map[string]interface{}{"movements": movementsStock, "total": total, "page": page, "limit": limit, "total_pages": totalPages},
 		Message: "Movimiento de stock obtenido correctamente",
 	})
@@ -125,24 +110,16 @@ func (m *MovementStockController) MoveStock(c *fiber.Ctx) error {
 
 	var movementStock schemas.MovementStock
 	if err := c.BodyParser(&movementStock); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al parsear el cuerpo de la solicitud",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}
 
 	if err := movementStock.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	err := m.MovementStockService.MoveStock(user.ID, &movementStock)
 	if err != nil {
-		return err
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{

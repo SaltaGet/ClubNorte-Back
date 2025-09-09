@@ -1,7 +1,8 @@
 package middleware
 
 import (
-	"github.com/DanielChachagua/Club-Norte-Back/cmd/api/logging"
+	"fmt"
+
 	"github.com/DanielChachagua/Club-Norte-Back/internal/dependencies"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
@@ -14,11 +15,7 @@ func AuthPointSaleMiddleware() fiber.Handler {
 		pointSale, ok := c.Locals("point_sale").(*schemas.PointSaleContext)
 
 		if !ok || pointSale == nil {
-			return c.Status(401).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Se necesita autenticacion al punto de venta",
-			})
+			return schemas.HandleError(c, schemas.ErrorResponse(401, "Se necesita auntenticación del punto de venta", fmt.Errorf("se necesita auntenticación del punto de venta")))
 		}
 
 		if user.Role == "admin" {
@@ -27,12 +24,7 @@ func AuthPointSaleMiddleware() fiber.Handler {
 
 		validatedPointSale, err := deps.AuthController.AuthService.AuthPointSale(user.ID, pointSale.ID)
 		if err != nil {
-			logging.ERROR("Error: %s", err.Error())
-			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Error al obtener el punto de venta",
-			})
+			return schemas.HandleError(c, err)
 		}
 
 		c.Locals("point_sale", validatedPointSale)

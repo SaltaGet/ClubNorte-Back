@@ -1,14 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
-	"github.com/DanielChachagua/Club-Norte-Back/cmd/api/logging"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
 )
 
-//  PointSaleGet godoc
+//	 PointSaleGet godoc
 //	@Summary		PointSaleGet
 //	@Description	PointSaleGet
 //	@Tags			PointSale
@@ -36,21 +36,12 @@ func (p *PointSaleController) PointSaleGet(c *fiber.Ctx) error {
 
 	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El ID proporcionado no es válido",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(422, "el id debe ser un número", err))
 	}
 
 	pointSale, err := p.PointSaleService.PointSaleGet(uint(id))
 	if err != nil {
-		logging.ERROR("Error: %s", err.Error())
-		return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al obtener el punto de venta",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -60,7 +51,7 @@ func (p *PointSaleController) PointSaleGet(c *fiber.Ctx) error {
 	})
 }
 
-//  PointSaleGetAll godoc
+//	 PointSaleGetAll godoc
 //	@Summary		PointSaleGetAll
 //	@Description	PointSaleGetAll
 //	@Tags			PointSale
@@ -77,12 +68,7 @@ func (p *PointSaleController) PointSaleGet(c *fiber.Ctx) error {
 func (p *PointSaleController) PointSaleGetAll(c *fiber.Ctx) error {
 	pointsSales, err := p.PointSaleService.PointSaleGetAll()
 	if err != nil {
-		logging.ERROR("Error: %s", err.Error())
-		return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al obtener los puntos de venta",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -92,7 +78,7 @@ func (p *PointSaleController) PointSaleGetAll(c *fiber.Ctx) error {
 	})
 }
 
-//  PointSaleCreate godoc
+//	 PointSaleCreate godoc
 //	@Summary		PointSaleCreate
 //	@Description	PointSaleCreate
 //	@Tags			PointSale
@@ -110,29 +96,16 @@ func (p *PointSaleController) PointSaleGetAll(c *fiber.Ctx) error {
 func (p *PointSaleController) PointSaleCreate(c *fiber.Ctx) error {
 	var pointSaleCreate schemas.PointSaleCreate
 	if err := c.BodyParser(&pointSaleCreate); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al parsear el cuerpo de la solicitud",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "error al parsear el cuerpo de la solicitud", err))
 	}
 
 	if err := pointSaleCreate.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	pointSale, err := p.PointSaleService.PointSaleCreate(&pointSaleCreate)
 	if err != nil {
-		logging.ERROR("Error: %s", err.Error())
-		return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al crear el punto de venta",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -142,7 +115,7 @@ func (p *PointSaleController) PointSaleCreate(c *fiber.Ctx) error {
 	})
 }
 
-//  PointSaleUpdate godoc
+//	 PointSaleUpdate godoc
 //	@Summary		PointSaleUpdate
 //	@Description	PointSaleUpdate
 //	@Tags			PointSale
@@ -160,29 +133,16 @@ func (p *PointSaleController) PointSaleCreate(c *fiber.Ctx) error {
 func (p *PointSaleController) PointSaleUpdate(c *fiber.Ctx) error {
 	var pointSaleUpdate schemas.PointSaleUpdate
 	if err := c.BodyParser(&pointSaleUpdate); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al parsear el cuerpo de la solicitud",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}
 
 	if err := pointSaleUpdate.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	err := p.PointSaleService.PointSaleUpdate(&pointSaleUpdate)
 	if err != nil {
-		logging.ERROR("Error: %s", err.Error())
-		return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al actualizar el punto de venta",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -192,7 +152,7 @@ func (p *PointSaleController) PointSaleUpdate(c *fiber.Ctx) error {
 	})
 }
 
-//  PointSaleDelete godoc
+//	 PointSaleDelete godoc
 //	@Summary		PointSaleDelete
 //	@Description	PointSaleDelete
 //	@Tags			PointSale
@@ -210,32 +170,19 @@ func (p *PointSaleController) PointSaleUpdate(c *fiber.Ctx) error {
 func (p *PointSaleController) PointSaleDelete(c *fiber.Ctx) error {
 	var idParam = c.Params("id")
 	if idParam == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el id del punto de venta",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Se necesita el id del punto de venta", fmt.Errorf("se necesita el id del punto de venta")))
 	}
 
 	id, err := strconv.ParseUint(idParam, 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El ID proporcionado no es válido",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(422, "el id debe ser un número", err))
 	}
 
 	err = p.PointSaleService.PointSaleDelete(uint(id))
 	if err != nil {
-		logging.ERROR("Error: %s", err.Error())
-		return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Error al eliminar el punto de venta",
-		})
+		return schemas.HandleError(c, err)
 	}
-
+	
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
 		Status:  true,
 		Body:    nil,

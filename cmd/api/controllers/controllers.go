@@ -51,7 +51,7 @@ type SportCourtController struct {
 }
 
 type StockController struct {
-	StockService ports.StockDepositeService
+	StockService ports.StockPointSaleService
 }
 
 // type StockPointSaleController struct {

@@ -6,6 +6,7 @@ import (
 )
 
 type RoleRepository interface {
+	RoleGetByID(id uint) (*models.Role, error)
 	RoleGetAll() ([]*models.Role, error)
 }
 

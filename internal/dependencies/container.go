@@ -40,9 +40,9 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 	registerSvc := &services.RegisterService{RegisterRepository: repo}
 	roleSvc := &services.RoleService{RoleRepository: repo}
 	sportCourtSvc := &services.SportCourtService{SportCourtRepository: repo}
-	stockSvc := &services.StockService{StockDepositeRepository: repo, StockPointSaleRepository: repo}
+	stockSvc := &services.StockService{StockPointSaleRepository: repo}
 	// stockPointSaleSvc := &services.CategoryService{StockPointSaleRepository: repo}
-	userSvc := &services.UserService{UserRepository: repo}
+	userSvc := &services.UserService{UserRepository: repo, RoleRepository: repo}
 
 	return &MainContainer{
 		AuthController: &controllers.AuthController{AuthService: authSvc},

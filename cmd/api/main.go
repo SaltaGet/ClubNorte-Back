@@ -80,15 +80,13 @@ func main() {
 		credentials = false
 	}
 
-	// Convertir MAXAGE de string → int
 	maxAge, err := strconv.Atoi(os.Getenv("MAXAGE"))
 	if err != nil {
-		maxAge = 300 // valor por defecto
+		maxAge = 300 
 	}
 
-	// Configurar CORS dinámicamente
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     strings.ReplaceAll(os.Getenv("ORIGIN"), " ", ""), // Limpia espacios extras
+		AllowOrigins:     strings.ReplaceAll(os.Getenv("ORIGIN"), " ", ""), 
 		AllowMethods:     os.Getenv("METHODS"),
 		AllowHeaders:     os.Getenv("HEADERS"),
 		AllowCredentials: credentials,

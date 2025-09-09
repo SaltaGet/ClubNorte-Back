@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -14,9 +13,9 @@ func (r *MainRepository) ProductGetByID(id uint) (*models.Product, error) {
 
 	if err := r.DB.Preload("Category").Preload("StockPointSale").First(&product, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("producto no encontrado")
+			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
 	}
 
 	return product, nil
@@ -27,9 +26,9 @@ func (r *MainRepository) ProductGetByCode(code string) (*models.Product, error) 
 
 	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("code = ?", code).First(&product).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("producto no encontrado")
+			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
 	}
 
 	return product, nil
@@ -39,7 +38,7 @@ func (r *MainRepository) ProductGetByCategoryID(categoryID uint) ([]*models.Prod
 	var products []*models.Product
 
 	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
 	return products, nil
@@ -49,7 +48,7 @@ func (r *MainRepository) ProductGetByName(name string) ([]*models.Product, error
 	var products []*models.Product
 
 	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
 	return products, nil
@@ -107,7 +106,7 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
 		Where("sps.point_sale_id = ?", pointSaleID).
 		Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
 	// Obtener productos con la categoría y el stock específico del punto de venta
@@ -119,7 +118,7 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 		Offset(offset).
 		Limit(limit).
 		Find(&products).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
 	return products, total, nil
@@ -135,7 +134,7 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 	product.CategoryID = productCreate.CategoryID
 
 	if err := r.DB.Create(&product).Error; err != nil {
-		return 0, err
+		return 0, schemas.ErrorResponse(500, "error al crear el producto", err)
 	}
 
 	return product.ID, nil
@@ -148,32 +147,36 @@ func (r *MainRepository) ProductUpdate(product *schemas.ProductUpdate) error {
 		Select("count(*) > 0").
 		Where("id = ?", product.ID).
 		Find(&exists).Error; err != nil {
-		return err
+		return schemas.ErrorResponse(500, "error al obtener el producto", err)
 	}
 
 	if !exists {
-		return gorm.ErrRecordNotFound
+		return schemas.ErrorResponse(404, "producto no encontrado", nil)
 	}
 
-	return r.DB.Model(&models.Product{}).
+	if err := r.DB.Model(&models.Product{}).
 		Where("id = ?", product.ID).
-		Updates(product).Error
+		Updates(product).Error; err != nil {
+		return schemas.ErrorResponse(500, "error al actualizar el producto", err)
+	}
+
+	return nil
 }
 
 func (r *MainRepository) ProductDelete(id uint) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("product_id = ?", id).Delete(&models.StockPointSale{}).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return fmt.Errorf("producto no encontrado")
+				return schemas.ErrorResponse(404, "producto no encontrado", err)
 			}
-			return err
+			return schemas.ErrorResponse(500, "error al eliminar el producto", err)
 		}
 
 		if err := tx.Where("id = ?", id).Delete(&models.Product{}).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return fmt.Errorf("producto no encontrado")
+				return schemas.ErrorResponse(404, "producto no encontrado", err)
 			}
-			return err
+			return schemas.ErrorResponse(500, "error al eliminar el producto", err)
 		}
 		return nil
 	})

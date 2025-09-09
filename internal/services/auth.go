@@ -21,7 +21,7 @@ func (s *AuthService) Login(params *schemas.Login) (string, error) {
 
 	token, err := utils.GenerateToken(&userResponse, nil)
 	if err != nil {
-		return "", err
+		return "", schemas.ErrorResponse(500, "error al generar el token", err)
 	}
 
 	return token, nil
@@ -80,7 +80,7 @@ func (s *AuthService) LoginPointSale(userID uint, pointSaleID uint) (string, err
 
 	token, err := utils.GenerateToken(&UserResponseToken, &pointSaleResponse)
 	if err != nil {
-		return "", err
+		return "", schemas.ErrorResponse(500, "error al generar el token", err)
 	}
 
 	return token, nil
@@ -97,7 +97,7 @@ func (s *AuthService) LogoutPointSale(userID uint) (string, error) {
 
 	token, err := utils.GenerateToken(&UserResponseToken, nil)
 	if err != nil {
-		return "", err
+		return "", schemas.ErrorResponse(500, "error al generar el token", err)
 	}
 
 	return token, nil

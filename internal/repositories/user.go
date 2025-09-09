@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -14,9 +13,9 @@ func (r *MainRepository) UserGetByID(id uint) (*models.User, error) {
 
 	if err := r.DB.Preload("Role").Preload("PointSales").Where("id = ? AND is_admin = ?", id, false).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("punto de venta no encontrado")
+			return nil, schemas.ErrorResponse(404, "usuario no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el usuario", err)
 	}
 
 	return user, nil
@@ -27,9 +26,9 @@ func (r *MainRepository) UserGetByEmail(email string) (*models.User, error) {
 
 	if err := r.DB.Preload("Role").Preload("PointSales").Where("email = ? AND is_admin = ?", email, false).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("punto de venta no encontrado")
+			return nil, schemas.ErrorResponse(404, "usuario no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el usuario", err)
 	}
 
 	return user, nil
@@ -39,7 +38,7 @@ func (r *MainRepository) UserGetAll() ([]*models.User, error) {
 	var users []*models.User
 
 	if err := r.DB.Preload("Role").Where("is_admin = ?", false).Find(&users).Error; err != nil {
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener los usuarios", err)
 	}
 
 	return users, nil
@@ -49,7 +48,7 @@ func (r *MainRepository) UserCreate(userCreate *schemas.UserCreate) (uint, error
 	var pointSales []models.PointSale
 
 	if err := r.DB.Where("id IN (?)", userCreate.PointSaleIDs).Find(&pointSales).Error; err != nil {
-		return 0, err
+		return 0, schemas.ErrorResponse(500, "error al obtener los puntos de venta", err)
 	}
 
 	user := &models.User{
@@ -65,7 +64,7 @@ func (r *MainRepository) UserCreate(userCreate *schemas.UserCreate) (uint, error
 	}
 
 	if err := r.DB.Create(&user).Error; err != nil {
-		return 0, err
+		return 0, schemas.ErrorResponse(500, "error al crear el usuario", err)
 	}
 
 	return user.ID, nil
@@ -90,14 +89,14 @@ func (r *MainRepository) UserUpdate(userUpdate *schemas.UserUpdate) error {
                 Email:     userUpdate.Email,
                 RoleID:    userUpdate.RoleID,
             }).Error; err != nil {
-            return err
+            return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
         }
 
         // Actualizar relación con PointSales
         if err := tx.Model(&models.User{ID: userUpdate.ID}).
             Association("PointSales").
             Replace(pointSales); err != nil {
-            return err
+            return schemas.ErrorResponse(500, "error al actualizar la relación con los puntos de venta", err)
         }
 
         return nil
@@ -108,9 +107,9 @@ func (r *MainRepository) UserUpdate(userUpdate *schemas.UserUpdate) error {
 func (r *MainRepository) UserDelete(id uint) error {
 	if err := r.DB.Where("id = ?", id).Delete(&models.User{}).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("usuario no encontrado")
+			return schemas.ErrorResponse(404, "usuario no encontrado", err)
 		}
-		return err
+		return schemas.ErrorResponse(500, "error al eliminar el usuario", err)
 	}
 	return nil
 }
@@ -118,9 +117,13 @@ func (r *MainRepository) UserDelete(id uint) error {
 func (r *MainRepository) UserUpdatePassword(userID uint, userUpdatePassword *schemas.UserUpdatePassword) error {
 	var user models.User
 	if err := r.DB.First(&user, userID).Error; err != nil {
-		return err
+		return schemas.ErrorResponse(404, "usuario no encontrado", err)
 	}
 
 	user.Password = userUpdatePassword.NewPassword
-	return r.DB.Save(&user).Error
+	if err := r.DB.Save(&user).Error; err != nil {
+		return schemas.ErrorResponse(500, "error al actualizar la contraseña", err)
+	}
+
+	return nil
 }

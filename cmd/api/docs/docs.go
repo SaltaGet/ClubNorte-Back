@@ -755,7 +755,7 @@ const docTemplate = `{
                         "CookieAuth": []
                     }
                 ],
-                "description": "DepositProductGetByID obtener un producto por ID del deposito",
+                "description": "DepositProductGetByID obtener un producto por ID del producto",
                 "consumes": [
                     "application/json"
                 ],

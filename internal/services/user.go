@@ -45,10 +45,28 @@ func (u *UserService) UserGetAll() ([]*schemas.UserResponseDTO, error) {
 }
 
 func (u *UserService) UserCreate(userCreate *schemas.UserCreate) (uint, error) {
+	role, err := u.RoleRepository.RoleGetByID(userCreate.RoleID)
+	if err != nil {
+		return 0, err
+	} 
+
+	if role.Name == "admin" {
+		return 0, schemas.ErrorResponse(400, "el usuario no puede ser creado con este rol", nil)
+	}
+
 	return u.UserRepository.UserCreate(userCreate)
 }
 
 func (u *UserService) UserUpdate(userUpdate *schemas.UserUpdate) error {
+	role, err := u.RoleRepository.RoleGetByID(userUpdate.RoleID)
+	if err != nil {
+		return err
+	} 
+
+	if role.Name == "admin" {
+		return schemas.ErrorResponse(400, "el usuario no puede ser editado con este rol", fmt.Errorf("el usuario no puede ser editado con este rol %s", role.Name))
+	}
+
 	return u.UserRepository.UserUpdate(userUpdate)
 }
 
@@ -63,7 +81,7 @@ func (u *UserService) UserUpdatePassword(userID uint, updatePass *schemas.UserUp
 	}
 
 	if !utils.CheckPasswordHash(updatePass.OldPassword, user.Password) {
-		return fmt.Errorf("la contraseña actual no es correcta")
+		return schemas.ErrorResponse(400, "Contraseña incorrecta", fmt.Errorf("la contraseña actual no es correcta"))
 	}
 
 	return u.UserRepository.UserUpdatePassword(userID, updatePass)

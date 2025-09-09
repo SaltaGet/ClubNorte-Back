@@ -9,11 +9,11 @@ import (
 func UserRoutes(app *fiber.App, controllers *controllers.UserController) {
 	user := app.Group("/v1/user", middleware.AuthMiddleware())
 
-	user.Get("/get_all", controllers.UserGetAll)
-	user.Get("/get_by_email", controllers.UserGetByEmail)
-	user.Post("/create", controllers.UserCreate)
+	user.Get("/get_all", middleware.IsAdmin(), controllers.UserGetAll)
+	user.Get("/get_by_email", middleware.IsAdmin(), controllers.UserGetByEmail)
+	user.Post("/create", middleware.IsAdmin(), controllers.UserCreate)
 	user.Put("/update", controllers.UserUpdate)
 	user.Put("/update_password", controllers.UserUpdatePassword)
-	user.Delete("/delete/:id", controllers.UserDelete)
-	user.Get("/get/:id", controllers.UserGetByID)
+	user.Delete("/delete/:id", middleware.IsAdmin(), controllers.UserDelete)
+	user.Get("/get/:id", middleware.IsAdmin(), controllers.UserGetByID)
 }

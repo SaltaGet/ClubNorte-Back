@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -14,9 +13,9 @@ func (r *MainRepository) PointSaleGet(id uint) (*models.PointSale, error) {
 
 	if err := r.DB.Where("id = ?", id).First(&pointSales).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("punto de venta no encontrado")
+			return nil, schemas.ErrorResponse(404, "punto de venta no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el punto de venta", err)
 	}
 
 	return &pointSales, nil
@@ -26,7 +25,7 @@ func (r *MainRepository) PointSaleGetAll() ([]*models.PointSale, error) {
 	var pointSales []*models.PointSale
 
 	if err := r.DB.Find(&pointSales).Error; err != nil {
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener los puntos de venta", err)
 	}
 
 	return pointSales, nil
@@ -39,7 +38,7 @@ func (r *MainRepository) PointSaleCreate(pointSaleCreate *schemas.PointSaleCreat
 	pointSale.Description = pointSaleCreate.Description
 
 	if err := r.DB.Create(&pointSale).Error; err != nil {
-		return 0, err
+		return 0, schemas.ErrorResponse(500, "error al crear el punto de venta", err)
 	}
 
 	return pointSale.ID, nil
@@ -52,9 +51,9 @@ func (r *MainRepository) PointSaleUpdate(pointSaleUpdate *schemas.PointSaleUpdat
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("punto de venta no encontrado")
+			return schemas.ErrorResponse(404, "punto de venta no encontrado", err)
 		}
-		return err
+		return schemas.ErrorResponse(500, "error al actualizar el punto de venta", err)
 	}
 
 	return nil
@@ -65,9 +64,9 @@ func (r *MainRepository) PointSaleDelete(id uint) error {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("punto de venta no encontrado")
+			return schemas.ErrorResponse(404, "punto de venta no encontrado", err)
 		}
-		return err
+		return schemas.ErrorResponse(500, "error al eliminar el punto de venta", err)
 	}
 
 	return nil

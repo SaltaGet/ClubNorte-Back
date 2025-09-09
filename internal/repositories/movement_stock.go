@@ -14,9 +14,9 @@ func (r *MainRepository) MovementStockGetByID(id uint) (*models.MovementStock, e
 	var movement *models.MovementStock
 	if err := r.DB.Preload("User").Preload("Product").First(&movement, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("movimiento no encontrado")
+			return nil, schemas.ErrorResponse(404, "movimiento no encontrado", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener el movimiento", err)
 	}
 	return movement, nil
 }
@@ -27,11 +27,11 @@ func (r *MainRepository) MovementStockGetAll(page, limit int) ([]*models.Movemen
 	var movements []*models.MovementStock
 	var total int64
 	if err := r.DB.Preload("User").Preload("Product").Offset(offset).Limit(limit).Find(&movements).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, schemas.ErrorResponse(500, "error al obtener movimientos", err)
 	}
 
 	if err := r.DB.Model(&models.MovementStock{}).Count(&total).Error; err != nil {
-		return nil, 0, err
+		return nil, 0, schemas.ErrorResponse(500, "error al contar movimientos", err)
 	}
 
 	return movements, total, nil
@@ -48,14 +48,14 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				Where("product_id = ?", input.ProductID).
 				FirstOrCreate(&deposit, &models.StockDeposit{ProductID: input.ProductID}).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return fmt.Errorf("producto no encontrado en depósito origen")
+					return schemas.ErrorResponse(404, "deposito no encontrado", err)
 				}
-				return err
+				return schemas.ErrorResponse(500, "error al obtener el depósito", err)
 			}
 			fromID = deposit.ID
 
 			if !input.IgnoreStock && deposit.Stock < input.Amount {
-				return fmt.Errorf("no hay suficiente stock en depósito para transferir %.2f unidades", input.Amount)
+				return schemas.ErrorResponse(400, "no hay suficiente stock en depósito para transferir", fmt.Errorf("no hay suficiente stock en depósito para transferir: %.2f", input.Amount))
 			}
 
 			deposit.Stock -= input.Amount
@@ -72,12 +72,12 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 					ProductID:   input.ProductID,
 					PointSaleID: input.FromID,
 				}).Error; err != nil {
-				return err
+				return schemas.ErrorResponse(500, "error al obtener producto del punto de venta", err)
 			}
 			fromID = ps.ID
 
 			if !input.IgnoreStock && ps.Stock < input.Amount {
-				return fmt.Errorf("no hay suficiente stock en punto de venta para transferir %.2f unidades", input.Amount)
+				return schemas.ErrorResponse(400, "no hay suficiente stock en punto de venta para transferir", fmt.Errorf("no hay suficiente stock en punto de venta para transferir %.2f unidades", input.Amount))
 			}
 
 			ps.Stock -= input.Amount
@@ -86,7 +86,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				_ = tx.Save(&ps).Error
 			}()
 		default:
-			return fmt.Errorf("tipo de origen inválido: %s", input.FromType)
+			return schemas.ErrorResponse(400, "tipo de origen inválido", fmt.Errorf("tipo de origen inválido: %s", input.FromType))
 		}
 
 		switch input.ToType {
@@ -96,9 +96,9 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				Where("product_id = ?", input.ProductID).
 				First(&deposit).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return fmt.Errorf("producto no encontrado en depósito destino")
+					return schemas.ErrorResponse(404, "producto no encontrado en depósito destino", err)
 				}
-				return err
+				return schemas.ErrorResponse(500, "error al obtener el depósito de destino", err)
 			}
 			deposit.Stock += input.Amount
 			toID = deposit.ID
@@ -115,7 +115,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 					ProductID:   input.ProductID,
 					PointSaleID: input.ToID,
 				}).Error; err != nil {
-				return err
+				return schemas.ErrorResponse(500, "error al obtener el punto de venta de destino", err)
 			}
 			ps.Stock += input.Amount
 			toID = ps.ID
@@ -124,7 +124,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				_ = tx.Save(&ps).Error
 			}()
 		default:
-			return fmt.Errorf("tipo de destino inválido: %s", input.ToType)
+			return schemas.ErrorResponse(400, "tipo de destino inválido", fmt.Errorf("tipo de destino inválido: %s", input.ToType))
 		}
 
 		movementStock := models.MovementStock{
@@ -139,7 +139,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 		}
 
 		if err := tx.Create(&movementStock).Error; err != nil {
-			return err
+			return schemas.ErrorResponse(500, "error al realizar el movimiento", err)
 		}
 
 		return nil

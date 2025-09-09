@@ -53,10 +53,10 @@ type SportCourtService struct {
 }
 
 type StockService struct {
-	StockDepositeRepository ports.StockDepositeRepository
 	StockPointSaleRepository ports.StockPointSaleRepository
 }
 
 type UserService struct {
+	RoleRepository ports.RoleRepository
 	UserRepository ports.UserRepository
 }

@@ -14,9 +14,9 @@ func (r *MainRepository) CategoryGetByID(id uint) (*models.Category, error) {
 
 	if err := r.DB.First(&category, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("categoria no encontrada")
+			return nil, schemas.ErrorResponse(404, "categoria no encontrada", err)
 		}
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener la categoria", err)
 	}
 
 	return category, nil
@@ -26,7 +26,7 @@ func (r *MainRepository) CategoryGetAll() ([]*models.Category, error) {
 	var categories []*models.Category
 
 	if err := r.DB.Find(&categories).Error; err != nil {
-		return nil, err
+		return nil, schemas.ErrorResponse(500, "error al obtener las categorias", err)
 	}
 
 	return categories, nil
@@ -38,7 +38,7 @@ func (r *MainRepository) CategoryCreate(categoryCreate *schemas.CategoryCreate) 
 	category.Name = categoryCreate.Name
 
 	if err := r.DB.Create(&category).Error; err != nil {
-		return 0, err
+		return 0, schemas.ErrorResponse(500, "error al crear la categoria", err)
 	}
 
 	return category.ID, nil
@@ -51,26 +51,30 @@ func (r *MainRepository) CategoryUpdate(categoryUpdate *schemas.CategoryUpdate) 
 		Select("count(*) > 0").
 		Where("id = ?", categoryUpdate.ID).
 		Find(&exists).Error; err != nil {
-		return err
+		return schemas.ErrorResponse(500, "error al obtener la categoria", err)
 	}
 
 	if !exists {
-		return gorm.ErrRecordNotFound
+		return schemas.ErrorResponse(404, "categoria no encontrada", fmt.Errorf("categoria no encontrada"))
 	}
 
-	return r.DB.Model(&models.Category{}).
+	if err := r.DB.Model(&models.Category{}).
 		Where("id = ?", categoryUpdate.ID).
 		Updates(map[string]interface{}{
 			"name": categoryUpdate.Name,
-		}).Error
+		}).Error; err != nil {
+		return schemas.ErrorResponse(500, "error al actualizar la categoria", err)
+	}
+
+	return nil
 }
 
 func (r *MainRepository) CategoryDelete(id uint) error {
 	if err := r.DB.Where("id = ?", id).Delete(&models.Category{}).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return fmt.Errorf("categoria no encontrada")
+			return schemas.ErrorResponse(404, "categoria no encontrada", err)
 		}
-		return err
+		return schemas.ErrorResponse(500, "error al eliminar la categoria", err)
 	}
 
 	return nil

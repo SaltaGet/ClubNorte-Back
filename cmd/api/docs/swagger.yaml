@@ -799,7 +799,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: DepositProductGetByID obtener un producto por ID del deposito
+      description: DepositProductGetByID obtener un producto por ID del producto
       parameters:
       - description: Id del producto
         in: path

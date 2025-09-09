@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -10,7 +11,7 @@ import (
 // DepositProductGetByID godoc
 //
 //	@Summary		DepositProductGetByID
-//	@Description	DepositProductGetByID obtener un producto por ID del deposito
+//	@Description	DepositProductGetByID obtener un producto por ID del producto
 //	@Tags			Deposit
 //	@Accept			json
 //	@Produce		json
@@ -26,29 +27,17 @@ import (
 func (d *DepositController) DepositGetByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el id del deposito",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Se necesita el id del producto", fmt.Errorf("se necesita el id del producto")))
 	}
 
 	idUint, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El id del deposito no es valido",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(422, "el id debe ser un número", err))
 	}
 
 	product, err := d.DepositService.DepositGetByID(uint(idUint))
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El deposito no existe",
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -77,20 +66,12 @@ func (d *DepositController) DepositGetByID(c *fiber.Ctx) error {
 func (d *DepositController) DepositGetByCode(c *fiber.Ctx) error {
 	code := c.Query("code")
 	if code == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el codigo del producto",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "Se necesita el codigo del producto", fmt.Errorf("se necesita el codigo del producto")))
 	}
 
 	product, err := d.DepositService.DepositGetByCode(code)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -119,20 +100,12 @@ func (d *DepositController) DepositGetByCode(c *fiber.Ctx) error {
 func (d *DepositController) DepositGetByName(c *fiber.Ctx) error {
 	name := c.Query("name")
 	if len(name) < 3 {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El nombre debe de tener al menos 3 caracteres",
-		})
+		return schemas.HandleError(c, schemas.ErrorResponse(400, "El nombre debe de tener al menos 3 caracteres", fmt.Errorf("el nombre debe de tener al menos 3 caracteres")))
 	}
 
 	products, err := d.DepositService.DepositGetByName(name)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -170,11 +143,7 @@ func (d *DepositController) DepositGetAll(c *fiber.Ctx) error {
 
 	products, total, err := d.DepositService.DepositGetAll(page, limit)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	totalPages := int((total + int64(limit) - 1) / int64(limit))
@@ -205,28 +174,16 @@ func (d *DepositController) DepositGetAll(c *fiber.Ctx) error {
 func (d *DepositController) DepositUpdateStock(c *fiber.Ctx) error {
 	var stockUpdate schemas.DepositUpdateStock
 	if err := c.BodyParser(&stockUpdate); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	if err := stockUpdate.Validate(); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	err := d.DepositService.DepositUpdateStock(stockUpdate)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: err.Error(),
-		})
+		return schemas.HandleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{

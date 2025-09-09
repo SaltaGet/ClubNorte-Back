@@ -1,7 +1,8 @@
 package middleware
 
 import (
-	"github.com/DanielChachagua/Club-Norte-Back/cmd/api/logging"
+	"fmt"
+
 	"github.com/DanielChachagua/Club-Norte-Back/internal/dependencies"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/utils"
@@ -22,51 +23,31 @@ func AuthMiddleware() fiber.Handler {
 
 		claims, err := utils.VerifyToken(token)
 		if err != nil {
-			if errResp, ok := err.(*schemas.ErrorStruc); ok {
-				logging.ERROR("Error: %s", errResp.Err.Error())
-				return c.Status(errResp.StatusCode).JSON(schemas.Response{
-					Status:  false,
-					Body:    nil,
-					Message: errResp.Message,
-				})
-			}
-			logging.ERROR("Error: %s", err.Error())
-			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Token inválido",
-			})
+			return schemas.HandleError(c, schemas.ErrorResponse(401, "Token inválido", err))
 		}
 
 		mapClaims, ok := claims.(jwt.MapClaims)
 		if !ok {
-			logging.ERROR("Error: Claims inválidos")
-			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Claims inválidos",
-			})
+			return schemas.HandleError(c, schemas.ErrorResponse(401, "Claims inválidos", err))
 		}
 
 		email := getStringClaim(mapClaims, "email")
 		if email == "" {
-			logging.ERROR("Error: Email no proporcionado")
-			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Email no proporcionado",
-			})
+			return schemas.HandleError(c, schemas.ErrorResponse(401, "Email inválido", fmt.Errorf("email inválido")))
 		}
 
-		deps := c.Locals("deps").(*dependencies.MainContainer)
+		deps, ok := c.Locals("deps").(*dependencies.MainContainer)
+		if !ok {
+			return schemas.HandleError(c, fmt.Errorf("error al obtener dependencias"))
+		}
+
 		user, err := deps.AuthController.AuthService.AuthUser(email)
 		if err != nil {
-			logging.ERROR("Error: %s", err.Error())
-			return c.Status(fiber.StatusUnauthorized).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Error al obtener el usuario",
-			})
+			return schemas.HandleError(c, err)
+		}
+
+		if !user.IsActive {
+			return schemas.HandleError(c, schemas.ErrorResponse(403, "Usuario no activo", fmt.Errorf("usuario no activo")))
 		}
 
 		pointSaleID := getIntClaim(mapClaims, "point_sale_id")
@@ -79,21 +60,12 @@ func AuthMiddleware() fiber.Handler {
 		} else {
 			c.Locals("point_sale", &schemas.PointSaleContext{
 				ID:   uint(pointSaleID),
-				Name: "mama coco",
+				Name: pointSale,
 			})
 		}
 
 		if user.IsAdmin {
 			return c.Next()
-		}
-
-		if !user.IsActive {
-			logging.ERROR("Error: El usuario no está activo")
-			return c.Status(403).JSON(schemas.Response{
-				Status:  false,
-				Body:    nil,
-				Message: "Usuario no activo",
-			})
 		}
 
 		return c.Next()

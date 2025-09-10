@@ -20,7 +20,7 @@ func (s *StockService) StockProductGetByID(pointSaleID, id uint) (*schemas.Produ
 			Name: product.Category.Name,
 		},
 		Price: product.Price,
-		Stock: product.StockPointSale.Stock,
+		Stock: product.StockPointSales[0].Stock,
 	}
 
 	return productResponse, nil
@@ -42,7 +42,7 @@ func (s *StockService) StockProductGetByCode(pointSaleID uint, code string) (*sc
 			Name: product.Category.Name,
 		},
 		Price: product.Price,
-		Stock: product.StockPointSale.Stock,
+		Stock: product.StockPointSales[0].Stock,
 	}
 
 	return productResponse, nil
@@ -66,7 +66,7 @@ func (s *StockService) StockProductGetByName(pointSaleID uint, name string) ([]*
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockPointSale.Stock,
+			Stock: prod.StockPointSales[0].Stock,
 		}
 	}
 
@@ -87,7 +87,7 @@ func (s *StockService) StockProductGetByCategoryID(pointSaleID, categoryID uint)
 			Code: prod.Code,
 			Name: prod.Name,
 			Price: prod.Price,
-			Stock: prod.StockPointSale.Stock,
+			Stock: prod.StockPointSales[0].Stock,
 		}
 	}
 
@@ -112,7 +112,7 @@ func (s *StockService) StockProductGetAll(pointSaleID uint, page, limit int) ([]
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockPointSale.Stock,
+			Stock: prod.StockPointSales[0].Stock,
 		}
 	}
 

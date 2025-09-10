@@ -11,24 +11,46 @@ import (
 func (r *MainRepository) StockProductGetByID(pointSaleID, id uint) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").First(&product, id).Error; err != nil {
+	// if err := r.DB.Preload("Category").Preload("StockPointSale").First(&product, id).Error; err != nil {
+	// 	if errors.Is(err, gorm.ErrRecordNotFound) {
+	// 		return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
+	// 	}
+	// 	return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
+	// }
+	if err := r.DB.
+		Table("products").
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Joins("INNER JOIN categories c ON c.id = products.category_id").
+		Where("products.id = ?", id).
+		Where("sps.point_sale_id = ?", pointSaleID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
-		return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
+		return nil, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
 	return product, nil
 }
 
-func (r *MainRepository) StockProductGetByCode(cpointSaleID uint, code string) (*models.Product, error) {
+func (r *MainRepository) StockProductGetByCode(pointSaleID uint, code string) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("code = ?", code).First(&product).Error; err != nil {
+	// if err := r.DB.Preload("Category").Preload("StockPointSale").Where("code = ?", code).First(&product).Error; err != nil {
+	// 	if errors.Is(err, gorm.ErrRecordNotFound) {
+	// 		return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
+	// 	}
+	// 	return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
+	// }
+	if err := r.DB.
+		Table("products").
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Joins("INNER JOIN categories c ON c.id = products.category_id").
+		Where("products.code = ?", code).
+		Where("sps.point_sale_id = ?", pointSaleID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
-		return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
+		return nil, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
 	return product, nil
@@ -37,8 +59,16 @@ func (r *MainRepository) StockProductGetByCode(cpointSaleID uint, code string) (
 func (r *MainRepository) StockProductGetByCategoryID(pointSaleID, categoryID uint) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
-		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
+	// if err := r.DB.Preload("Category").Preload("StockPointSale").Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
+	// 	return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
+	// }
+	if err := r.DB.
+		Table("products").
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Joins("INNER JOIN categories c ON c.id = products.category_id").
+		Where("c.id = ?", categoryID).
+		Where("sps.point_sale_id = ?", pointSaleID).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
 	return products, nil
@@ -47,8 +77,16 @@ func (r *MainRepository) StockProductGetByCategoryID(pointSaleID, categoryID uin
 func (r *MainRepository) StockProductGetByName(pointSaleID uint, name string) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
-		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
+	// if err := r.DB.Preload("Category").Preload("StockPointSale").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
+	// 	return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
+	// }
+	if err := r.DB.
+		Table("products").
+		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Joins("INNER JOIN categories c ON c.id = products.category_id").
+		Where("products.name LIKE ?", name).
+		Where("sps.point_sale_id = ?", pointSaleID).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
 	return products, nil

@@ -8,11 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// ProductGet godoc
+// StockProductGet godoc
 //
-// @Summary		ProductGet
-// @Description	ProductGet obtener un producto por ID
-// @Tags			Product
+// @Summary		StockProductGetByID
+// @Description	Obtener un producto del punto de venta por ID
+// @Tags			PointSaleProduct
 // @Accept			json
 // @Produce		json
 // @Security		CookieAuth
@@ -29,11 +29,7 @@ func (s *StockController) StockProductGetByID(ctx *fiber.Ctx) error {
 	
 	productID := ctx.Params("id")
 	if productID == "" {
-		return ctx.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el id del producto",
-		})
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Se necesita el id del producto", fmt.Errorf("se necesita el id del producto")))
 	}
 
 	productIDUint, err := strconv.ParseUint(productID, 10, 64)
@@ -53,11 +49,11 @@ func (s *StockController) StockProductGetByID(ctx *fiber.Ctx) error {
 	})
 }
 
-// ProductGetByCode godoc
+// StockProductGetByCode godoc
 //
-// @Summary		ProductGetByCode
-// @Description	ProductGetByCode obtener un producto por Codigo
-// @Tags			Product
+// @Summary		StockProductGetByCode
+// @Description	Obtener un producto del punto de venta por Codigo
+// @Tags			PointSaleProduct
 // @Accept			json
 // @Produce		json
 // @Security		CookieAuth
@@ -74,11 +70,7 @@ func (s *StockController) StockProductGetByCode(ctx *fiber.Ctx) error {
 
 	code := ctx.Query("code")
 	if code == "" {
-		return ctx.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "Se necesita el codigo del producto",
-		})
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Se necesita el codigo del producto", fmt.Errorf("se necesita el codigo del producto")))
 	}
 
 	product, err := s.StockService.StockProductGetByCode(pointSale.ID, code)
@@ -93,11 +85,11 @@ func (s *StockController) StockProductGetByCode(ctx *fiber.Ctx) error {
 	})
 }
 
-// ProductGetByName godoc
+// StockProductGetByName godoc
 //
-// @Summary		ProductGetByName
-// @Description	ProductGetByName obtener un producto por nombre
-// @Tags			Product
+// @Summary		StockProductGetByName
+// @Description	Obtener un producto del punto de venta por nombre
+// @Tags			PointSaleProduct
 // @Accept			json
 // @Produce		json
 // @Security		CookieAuth
@@ -114,11 +106,7 @@ func (s *StockController) StockProductGetByName(ctx *fiber.Ctx) error {
 
 	name := ctx.Query("name")
 	if len(name) < 3 {
-		return ctx.Status(fiber.StatusBadRequest).JSON(schemas.Response{
-			Status:  false,
-			Body:    nil,
-			Message: "El nombre debe de tener al menos 3 caracteres",
-		})
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Se necesita el nombre del producto, minimo 3 caracteres", fmt.Errorf("se necesita el nombre del producto")))
 	}
 
 	products, err := s.StockService.StockProductGetByName(pointSale.ID, name)
@@ -133,11 +121,11 @@ func (s *StockController) StockProductGetByName(ctx *fiber.Ctx) error {
 	})
 }
 
-// ProductGetByCategory godoc
+// StockProductGetByCategory godoc
 //
-// @Summary		ProductGetByCategory
-// @Description	ProductGetByCategory obtener un producto por Id de categoria
-// @Tags			Product
+// @Summary		StockProductGetByCategory
+// @Description	Obtener un producto del punto de venta por Id de categoria
+// @Tags			PointSaleProduct
 // @Accept			json
 // @Produce		json
 // @Security		CookieAuth
@@ -174,11 +162,11 @@ func (s *StockController) StockProductGetByCategoryID(ctx *fiber.Ctx) error {
 	})
 }
 
-// ProductGetAll godoc
+// StockProductGetAll godoc
 //
-//	@Summary		ProductGetAll
-//	@Description	ProductGetAll obtener todos los productos
-//	@Tags			Product
+//	@Summary		StockProductGetAll
+//	@Description	Obtener todos los productos del punto de venta
+//	@Tags			PointSaleProduct
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
@@ -213,7 +201,7 @@ func (s *StockController) StockProductGetAll(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
 		Status:  true,
-		Body:    map[string]interface{}{"products": products, "total": total, "page": page, "limit": limit, "total_pages": totalPages},
+		Body:    map[string]any{"products": products, "total": total, "page": page, "limit": limit, "total_pages": totalPages},
 		Message: "Productos obtenidos correctamente",
 	})
 }

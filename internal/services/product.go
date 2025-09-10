@@ -4,115 +4,171 @@ import (
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 )
 
-func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductResponse, error) {
+func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductFullResponse, error) {
 	product, err := s.ProductRepository.ProductGetByID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	productResponse := &schemas.ProductResponse{
-		ID:          product.ID,
-		Code:        product.Code,
-		Name:        product.Name,
-		Description: *product.Description,
-		Category: schemas.CategoryResponse{
-			ID:   product.Category.ID,
-			Name: product.Category.Name,
-		},
-		Price: product.Price,
-		Stock: product.StockPointSales[0].Stock,
+	var productResponse schemas.ProductFullResponse
+
+	productResponse.ID = product.ID
+	productResponse.Code = product.Code
+	productResponse.Name = product.Name
+	productResponse.Description = *product.Description
+	productResponse.Category = schemas.CategoryResponse{
+		ID:   product.Category.ID,
+		Name: product.Category.Name,
+	}
+	productResponse.Price = product.Price
+	productResponse.StockDeposit = &schemas.StockDepositResponse{
+		ID:    product.StockDeposit.ID,
+		Stock: product.StockDeposit.Stock,
 	}
 
-	return productResponse, nil
+	for _, stock := range product.StockPointSales {
+		productResponse.StockPointSales = append(productResponse.StockPointSales, &schemas.PointSaleStock{
+			ID:    stock.PointSale.ID,
+			Name:  stock.PointSale.Name,
+			Stock: stock.Stock,
+		})
+	}
+
+	return &productResponse, nil
 }
 
-func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductResponse, error) {
+func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductFullResponse, error) {
 	product, err := s.ProductRepository.ProductGetByCode(code)
 	if err != nil {
 		return nil, err
 	}
 
-	productResponse := &schemas.ProductResponse{
-		ID:          product.ID,
-		Code:        product.Code,
-		Name:        product.Name,
-		Description: *product.Description,
-		Category: schemas.CategoryResponse{
-			ID:   product.Category.ID,
-			Name: product.Category.Name,
-		},
-		Price: product.Price,
-		Stock: product.StockPointSales[0].Stock,
+	var productResponse schemas.ProductFullResponse
+
+	productResponse.ID = product.ID
+	productResponse.Code = product.Code
+	productResponse.Name = product.Name
+	productResponse.Description = *product.Description
+	productResponse.Category = schemas.CategoryResponse{
+		ID:   product.Category.ID,
+		Name: product.Category.Name,
+	}
+	productResponse.Price = product.Price
+	productResponse.StockDeposit = &schemas.StockDepositResponse{
+		ID:    product.StockDeposit.ID,
+		Stock: product.StockDeposit.Stock,
 	}
 
-	return productResponse, nil
+	for _, stock := range product.StockPointSales {
+		productResponse.StockPointSales = append(productResponse.StockPointSales, &schemas.PointSaleStock{
+			ID:    stock.PointSale.ID,
+			Name:  stock.PointSale.Name,
+			Stock: stock.Stock,
+		})
+	}
+
+	return &productResponse, nil
 }
 
-func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductResponseDTO, error) {
+func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductFullResponse, error) {
 	products, err := s.ProductRepository.ProductGetByName(name)
 	if err != nil {
 		return nil, err
 	}
 
-	productsResponse := make([]*schemas.ProductResponseDTO, len(products))
+	productsResponse := make([]*schemas.ProductFullResponse, len(products))
 
 	for i, prod := range products {
-		productsResponse[i] = &schemas.ProductResponseDTO{
+		productsResponse[i] = &schemas.ProductFullResponse{
 			ID:   prod.ID,
 			Code: prod.Code,
 			Name: prod.Name,
-			Category: &schemas.CategoryResponse{
+			Category: schemas.CategoryResponse{
 				ID:   prod.Category.ID,
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockPointSales[0].Stock,
+			StockDeposit: &schemas.StockDepositResponse{
+				ID:    prod.StockDeposit.ID,
+				Stock: prod.StockDeposit.Stock,
+			},
+		}
+		for _, stock := range prod.StockPointSales {
+			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
+				ID:    stock.PointSale.ID,
+				Name:  stock.PointSale.Name,
+				Stock: stock.Stock,
+			})
 		}
 	}
 
 	return productsResponse, nil
 }
 
-func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.ProductSimpleResponse, error) {
+func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.ProductFullResponse, error) {
 	products, err := s.ProductRepository.ProductGetByCategoryID(categoryID)
 	if err != nil {
 		return nil, err
 	}
 
-	productsResponse := make([]*schemas.ProductSimpleResponse, len(products))
+	productsResponse := make([]*schemas.ProductFullResponse, len(products))
 
 	for i, prod := range products {
-		productsResponse[i] = &schemas.ProductSimpleResponse{
+		productsResponse[i] = &schemas.ProductFullResponse{
 			ID:   prod.ID,
 			Code: prod.Code,
 			Name: prod.Name,
+			Category: schemas.CategoryResponse{
+				ID:   prod.Category.ID,
+				Name: prod.Category.Name,
+			},
 			Price: prod.Price,
-			Stock: prod.StockPointSales[0].Stock,
+			StockDeposit: &schemas.StockDepositResponse{
+				ID:    prod.StockDeposit.ID,
+				Stock: prod.StockDeposit.Stock,
+			},
+		}
+		for _, stock := range prod.StockPointSales {
+			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
+				ID:    stock.PointSale.ID,
+				Name:  stock.PointSale.Name,
+				Stock: stock.Stock,
+			})
 		}
 	}
 
 	return productsResponse, nil
 }
 
-func (s *ProductService) ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductResponseDTO, int64, error) {
+func (s *ProductService) ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductFullResponse, int64, error) {
 	products, total, err := s.ProductRepository.ProductGetAll(pointSaleID, page, limit)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	productsResponse := make([]*schemas.ProductResponseDTO, len(products))
+	productsResponse := make([]*schemas.ProductFullResponse, len(products))
 
 	for i, prod := range products {
-		productsResponse[i] = &schemas.ProductResponseDTO{
+		productsResponse[i] = &schemas.ProductFullResponse{
 			ID:   prod.ID,
 			Code: prod.Code,
 			Name: prod.Name,
-			Category: &schemas.CategoryResponse{
+			Category: schemas.CategoryResponse{
 				ID:   prod.Category.ID,
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockPointSales[0].Stock,
+			StockDeposit: &schemas.StockDepositResponse{
+				ID:    prod.StockDeposit.ID,
+				Stock: prod.StockDeposit.Stock,
+			},
+		}
+		for _, stock := range prod.StockPointSales {
+			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
+				ID:    stock.PointSale.ID,
+				Name:  stock.PointSale.Name,
+				Stock: stock.Stock,
+			})
 		}
 	}
 

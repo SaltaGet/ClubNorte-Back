@@ -11,7 +11,11 @@ import (
 func (r *MainRepository) ProductGetByID(id uint) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").First(&product, id).Error; err != nil {
+	if err := r.DB.Preload("Category").
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
+		First(&product, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
@@ -24,7 +28,12 @@ func (r *MainRepository) ProductGetByID(id uint) (*models.Product, error) {
 func (r *MainRepository) ProductGetByCode(code string) (*models.Product, error) {
 	var product *models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("code = ?", code).First(&product).Error; err != nil {
+	if err := r.DB.
+		Preload("Category").
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
+		Where("code = ?", code).First(&product).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "producto no encontrado", err)
 		}
@@ -37,7 +46,12 @@ func (r *MainRepository) ProductGetByCode(code string) (*models.Product, error) 
 func (r *MainRepository) ProductGetByCategoryID(categoryID uint) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
+	if err := r.DB.
+		Preload("Category").
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
+		Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
 		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
@@ -47,7 +61,12 @@ func (r *MainRepository) ProductGetByCategoryID(categoryID uint) ([]*models.Prod
 func (r *MainRepository) ProductGetByName(name string) ([]*models.Product, error) {
 	var products []*models.Product
 
-	if err := r.DB.Preload("Category").Preload("StockPointSale").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
+	if err := r.DB.
+		Preload("Category").
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
+		Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
 		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
@@ -102,9 +121,7 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 
 	// Contar los productos disponibles en el punto de venta
 	if err := r.DB.
-		Table("products").
-		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
-		Where("sps.point_sale_id = ?", pointSaleID).
+		Model(&models.Product{}).
 		Count(&total).Error; err != nil {
 		return nil, 0, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
@@ -112,9 +129,9 @@ func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*mo
 	// Obtener productos con la categoría y el stock específico del punto de venta
 	if err := r.DB.
 		Preload("Category").
-		Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
-		Joins("INNER JOIN stock_point_sales sps ON sps.product_id = products.id").
-		Where("sps.point_sale_id = ?", pointSaleID).
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
 		Offset(offset).
 		Limit(limit).
 		Find(&products).Error; err != nil {

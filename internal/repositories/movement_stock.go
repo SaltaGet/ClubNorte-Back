@@ -12,7 +12,7 @@ import (
 
 func (r *MainRepository) MovementStockGetByID(id uint) (*models.MovementStock, error) {
 	var movement *models.MovementStock
-	if err := r.DB.Preload("User").Preload("Product").First(&movement, id).Error; err != nil {
+	if err := r.DB.Preload("User").Preload("Product").Preload("Product.Category").First(&movement, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "movimiento no encontrado", err)
 		}

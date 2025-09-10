@@ -17,11 +17,11 @@ type ProductRepository interface {
 }
 
 type ProductService interface {
-	ProductGetByID(id uint) (*schemas.ProductResponse, error)
-	ProductGetByCode(code string) (*schemas.ProductResponse, error)
-	ProductGetByName(name string) ([]*schemas.ProductResponseDTO, error)
-	ProductGetByCategoryID(categoryID uint) ([]*schemas.ProductSimpleResponse, error)
-	ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductResponseDTO, int64, error)
+	ProductGetByID(id uint) (*schemas.ProductFullResponse, error)
+	ProductGetByCode(code string) (*schemas.ProductFullResponse, error)
+	ProductGetByName(name string) ([]*schemas.ProductFullResponse, error)
+	ProductGetByCategoryID(categoryID uint) ([]*schemas.ProductFullResponse, error)
+	ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductFullResponse, int64, error)
 	ProductCreate(productCreate *schemas.ProductCreate) (uint, error)
 	ProductUpdate(productUpdate *schemas.ProductUpdate) error
 	ProductDelete(id uint) error

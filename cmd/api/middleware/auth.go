@@ -64,10 +64,6 @@ func AuthMiddleware() fiber.Handler {
 			})
 		}
 
-		if user.IsAdmin {
-			return c.Next()
-		}
-
 		return c.Next()
 	}
 }

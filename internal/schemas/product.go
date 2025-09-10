@@ -6,6 +6,17 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type ProductFullResponse struct {
+	ID          uint   `json:"id"`
+	Code        string `json:"code"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Category    CategoryResponse `json:"category"`
+	Price       float64 `json:"price"`
+	StockPointSales []*PointSaleStock `gorm:"foreignKey:ProductID" json:"stock_point_sales"`
+	StockDeposit   *StockDepositResponse   `gorm:"foreignKey:ProductID" json:"stock_deposit"`
+}
+
 type ProductResponse struct {
 	ID          uint   `json:"id"`
 	Code        string `json:"code"`

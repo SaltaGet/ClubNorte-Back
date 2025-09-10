@@ -11,7 +11,7 @@ import (
 func (r *MainRepository) UserGetByID(id uint) (*models.User, error) {
 	var user *models.User
 
-	if err := r.DB.Preload("Role").Preload("PointSales").Where("id = ? AND is_admin = ?", id, false).First(&user).Error; err != nil {
+	if err := r.DB.Preload("Role").Preload("PointSales").Where("id = ?", id).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, schemas.ErrorResponse(404, "usuario no encontrado", err)
 		}

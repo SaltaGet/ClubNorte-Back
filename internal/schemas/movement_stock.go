@@ -9,7 +9,7 @@ import (
 
 type MovementStockResponse struct {
 	ID          uint            `json:"id"`
-	User        UserResponse    `json:"user"`
+	User        UserSimpleDTO    `json:"user"`
 	Product     ProductResponse `json:"product"`
 	Amount      float64         `json:"amount"`
 	FromID      uint            `json:"from_id"`
@@ -21,16 +21,16 @@ type MovementStockResponse struct {
 }
 
 type MovementStockResponseDTO struct {
-	ID          uint                     `json:"id"`
-	User        UserResponse             `json:"user"`
-	Product     ProductSimpleResponseDTO `json:"product"`
-	Amount      float64                  `json:"amount"`
-	FromID      uint                     `json:"from_id"`
-	FromType    string                   `json:"from_type"`
-	ToID        uint                     `json:"to_id"`
-	ToType      string                   `json:"to_type"`
-	IgnoreStock bool                     `json:"ignore_stock"`
-	CreatedAt   time.Time                `json:"created_at"`
+	ID          uint                  `json:"id"`
+	User        UserSimpleDTO       `json:"user"`
+	Product     ProductSimpleResponse `json:"product"`
+	Amount      float64               `json:"amount"`
+	FromID      uint                  `json:"from_id"`
+	FromType    string                `json:"from_type"`
+	ToID        uint                  `json:"to_id"`
+	ToType      string                `json:"to_type"`
+	IgnoreStock bool                  `json:"ignore_stock"`
+	CreatedAt   time.Time             `json:"created_at"`
 }
 
 type MovementStock struct {

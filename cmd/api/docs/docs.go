@@ -2295,7 +2295,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "body": {
-                                            "$ref": "#/definitions/schemas.ProductResponse"
+                                            "$ref": "#/definitions/schemas.ProductFullResponse"
                                         }
                                     }
                                 }
@@ -3410,7 +3410,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/schemas.UserResponse"
+                    "$ref": "#/definitions/schemas.UserSimpleDTO"
                 }
             }
         },
@@ -3439,6 +3439,20 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "schemas.PointSaleStock": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "number"
                 }
             }
         },
@@ -3483,6 +3497,38 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                }
+            }
+        },
+        "schemas.ProductFullResponse": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/schemas.CategoryResponse"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock_deposit": {
+                    "$ref": "#/definitions/schemas.StockDepositResponse"
+                },
+                "stock_point_sales": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.PointSaleStock"
+                    }
                 }
             }
         },
@@ -3593,6 +3639,17 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.StockDepositResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "number"
+                }
+            }
+        },
         "schemas.UserCreate": {
             "type": "object",
             "properties": {
@@ -3692,6 +3749,32 @@ const docTemplate = `{
                 },
                 "role": {
                     "$ref": "#/definitions/schemas.RoleResponse"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.UserSimpleDTO": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cellphone": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"

@@ -17,7 +17,7 @@ import (
 // @Produce		json
 // @Security		CookieAuth
 // @Param			id	path		string	true	"Id del producto"
-// @Success		200	{object}	schemas.Response{body=schemas.ProductResponse}
+// @Success		200	{object}	schemas.Response{body=schemas.ProductFullResponse}
 // @Failure		400	{object}	schemas.Response
 // @Failure		401	{object}	schemas.Response
 // @Failure		422	{object}	schemas.Response

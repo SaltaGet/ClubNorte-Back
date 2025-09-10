@@ -31,6 +31,16 @@ type UserResponseDTO struct {
 	Role      RoleResponse `json:"role"`
 }
 
+type UserSimpleDTO struct {
+	ID        uint         `json:"id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Address   *string      `json:"address"`
+	Cellphone *string      `json:"cellphone"`
+	Email     string       `json:"email"`
+	Username  string       `json:"username"`
+}
+
 type UserResponseToken struct {
 	ID        uint         `json:"id"`
 	FirstName string       `json:"first_name"`

@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
@@ -129,6 +130,7 @@ func (c *AuthController) LoginPointSale(ctx *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   true,
 		SameSite: "Strict",
+		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 
 	ctx.Cookie(cookie)
@@ -170,6 +172,7 @@ func (c *AuthController) LogoutPointSale(ctx *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   true,
 		SameSite: "Strict",
+		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 
 	ctx.Cookie(cookie)

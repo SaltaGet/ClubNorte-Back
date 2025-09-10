@@ -113,7 +113,7 @@ definitions:
       to_type:
         type: string
       user:
-        $ref: '#/definitions/schemas.UserResponse'
+        $ref: '#/definitions/schemas.UserSimpleDTO'
     type: object
   schemas.PointSaleCreate:
     properties:
@@ -132,6 +132,15 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  schemas.PointSaleStock:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      stock:
+        type: number
     type: object
   schemas.PointSaleUpdate:
     properties:
@@ -162,6 +171,27 @@ definitions:
     - code
     - name
     - price
+    type: object
+  schemas.ProductFullResponse:
+    properties:
+      category:
+        $ref: '#/definitions/schemas.CategoryResponse'
+      code:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock_deposit:
+        $ref: '#/definitions/schemas.StockDepositResponse'
+      stock_point_sales:
+        items:
+          $ref: '#/definitions/schemas.PointSaleStock'
+        type: array
     type: object
   schemas.ProductResponse:
     properties:
@@ -235,6 +265,13 @@ definitions:
         - repositor
         type: string
     type: object
+  schemas.StockDepositResponse:
+    properties:
+      id:
+        type: integer
+      stock:
+        type: number
+    type: object
   schemas.UserCreate:
     properties:
       address:
@@ -301,6 +338,23 @@ definitions:
         type: string
       role:
         $ref: '#/definitions/schemas.RoleResponse'
+      username:
+        type: string
+    type: object
+  schemas.UserSimpleDTO:
+    properties:
+      address:
+        type: string
+      cellphone:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
       username:
         type: string
     type: object
@@ -1753,7 +1807,7 @@ paths:
             - $ref: '#/definitions/schemas.Response'
             - properties:
                 body:
-                  $ref: '#/definitions/schemas.ProductResponse'
+                  $ref: '#/definitions/schemas.ProductFullResponse'
               type: object
         "400":
           description: Bad Request

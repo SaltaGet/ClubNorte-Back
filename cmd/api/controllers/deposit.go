@@ -23,7 +23,7 @@ import (
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/deposit/get/{id} [get]
+//	@Router			/api/v1/deposit/get/{id} [get]
 func (d *DepositController) DepositGetByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
@@ -62,7 +62,7 @@ func (d *DepositController) DepositGetByID(c *fiber.Ctx) error {
 //	@Failure		422		{object}	schemas.Response
 //	@Failure		404		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.Response
-//	@Router			/v1/deposit/get_by_code [get]
+//	@Router			/api/v1/deposit/get_by_code [get]
 func (d *DepositController) DepositGetByCode(c *fiber.Ctx) error {
 	code := c.Query("code")
 	if code == "" {
@@ -96,7 +96,7 @@ func (d *DepositController) DepositGetByCode(c *fiber.Ctx) error {
 //	@Failure		422		{object}	schemas.Response
 //	@Failure		404		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.Response
-//	@Router			/v1/deposit/get_by_name [get]
+//	@Router			/api/v1/deposit/get_by_name [get]
 func (d *DepositController) DepositGetByName(c *fiber.Ctx) error {
 	name := c.Query("name")
 	if len(name) < 3 {
@@ -129,7 +129,7 @@ func (d *DepositController) DepositGetByName(c *fiber.Ctx) error {
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/deposit/get_all [get]
+//	@Router			/api/v1/deposit/get_all [get]
 func (d *DepositController) DepositGetAll(c *fiber.Ctx) error {
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
@@ -170,7 +170,7 @@ func (d *DepositController) DepositGetAll(c *fiber.Ctx) error {
 //	@Failure		422				{object}	schemas.Response
 //	@Failure		404				{object}	schemas.Response
 //	@Failure		500				{object}	schemas.Response
-//	@Router			/v1/deposit/update_stock [put]
+//	@Router			/api/v1/deposit/update_stock [put]
 func (d *DepositController) DepositUpdateStock(c *fiber.Ctx) error {
 	var stockUpdate schemas.DepositUpdateStock
 	if err := c.BodyParser(&stockUpdate); err != nil {

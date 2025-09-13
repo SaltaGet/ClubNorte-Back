@@ -23,7 +23,7 @@ import (
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/category/get/{id} [get]
+// @Router			/api/v1/category/get/{id} [get]
 func (c *CategoryController) CategoryGet(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	if id == "" {
@@ -61,7 +61,7 @@ func (c *CategoryController) CategoryGet(ctx *fiber.Ctx) error {
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/category/get_all [get]
+// @Router			/api/v1/category/get_all [get]
 func (c *CategoryController) CategoryGetAll(ctx *fiber.Ctx) error {
 	categories, err := c.CategoryService.CategoryGetAll()
 	if err != nil {
@@ -90,7 +90,7 @@ func (c *CategoryController) CategoryGetAll(ctx *fiber.Ctx) error {
 // @Failure		422				{object}	schemas.Response
 // @Failure		404				{object}	schemas.Response
 // @Failure		500				{object}	schemas.Response
-// @Router			/v1/category/create [post]
+// @Router			/api/v1/category/create [post]
 func (c *CategoryController) CategoryCreate(ctx *fiber.Ctx) error {
 	var categoryCreate *schemas.CategoryCreate
 	if err := ctx.BodyParser(&categoryCreate); err != nil {
@@ -128,7 +128,7 @@ func (c *CategoryController) CategoryCreate(ctx *fiber.Ctx) error {
 // @Failure		422				{object}	schemas.Response
 // @Failure		404				{object}	schemas.Response
 // @Failure		500				{object}	schemas.Response
-// @Router			/v1/category/update [put]
+// @Router			/api/v1/category/update [put]
 func (c *CategoryController) CategoryUpdate(ctx *fiber.Ctx) error {
 	var categoryUpdate *schemas.CategoryUpdate
 	if err := ctx.BodyParser(&categoryUpdate); err != nil {
@@ -165,7 +165,7 @@ func (c *CategoryController) CategoryUpdate(ctx *fiber.Ctx) error {
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/category/delete/{id} [delete]
+// @Router			/api/v1/category/delete/{id} [delete]
 func (c *CategoryController) CategoryDelete(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	if id == "" {

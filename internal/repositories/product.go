@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -114,7 +115,7 @@ func (r *MainRepository) ProductGetByName(name string) ([]*models.Product, error
 // 	return products, total, nil
 // }
 
-func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*models.Product, int64, error) {
+func (r *MainRepository) ProductGetAll(page, limit int) ([]*models.Product, int64, error) {
 	var products []*models.Product
 	var total int64
 	offset := (page - 1) * limit
@@ -151,6 +152,9 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 	product.CategoryID = productCreate.CategoryID
 
 	if err := r.DB.Create(&product).Error; err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return 0, schemas.ErrorResponse(400, "el producto de codigo "+product.Code+" ya existe", err)
+		}
 		return 0, schemas.ErrorResponse(500, "error al crear el producto", err)
 	}
 
@@ -168,7 +172,7 @@ func (r *MainRepository) ProductUpdate(product *schemas.ProductUpdate) error {
 	}
 
 	if !exists {
-		return schemas.ErrorResponse(404, "producto no encontrado", nil)
+		return schemas.ErrorResponse(404, "producto no encontrado", fmt.Errorf("producto no encontrado id: %d", product.ID))
 	}
 
 	if err := r.DB.Model(&models.Product{}).

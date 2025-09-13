@@ -46,6 +46,7 @@ require (
 )
 
 require (
+	github.com/MarceloPetrucio/go-scalar-api-reference v0.0.0-20240521013641-ce5d2efe0e06
 	github.com/alexedwards/argon2id v1.0.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/gofiber/swagger v1.1.1

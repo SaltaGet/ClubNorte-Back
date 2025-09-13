@@ -19,6 +19,7 @@ import (
 	"github.com/gofiber/swagger"
 	"github.com/joho/godotenv"
 
+	"github.com/MarceloPetrucio/go-scalar-api-reference"
 	"github.com/newrelic/go-agent/v3/integrations/nrfiber"
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
@@ -70,6 +71,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		ProxyHeader: "X-Forwarded-For",
 	})
+	
 	app.Use(nrfiber.Middleware(nrApp))
 
 	app.Use(middleware.LoggingMiddleware)
@@ -108,7 +110,25 @@ func main() {
 
 	routes.SetupRoutes(app, dep)
 
-	app.Get("/swagger/*", swagger.HandlerDefault)
+	app.Get("/api/swagger/*", swagger.HandlerDefault)
+
+	app.Get("/reference", func(c *fiber.Ctx) error {
+		htmlContent, err := scalar.ApiReferenceHTML(&scalar.Options{
+			SpecURL: "./docs/swagger.json", // puede ser URL externa o archivo local
+			CustomOptions: scalar.CustomOptions{
+				PageTitle: "Simple API with Fiber",
+			},
+			DarkMode: true,
+		})
+
+		if err != nil {
+			log.Printf("error generating scalar HTML: %v", err)
+			return c.Status(500).SendString("error generating API reference")
+		}
+
+		// Importante: enviar como HTML
+		return c.Type("html").SendString(htmlContent)
+	})
 
 	log.Fatal(app.Listen(":3000"))
 }

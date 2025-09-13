@@ -7,7 +7,7 @@ import (
 )
 
 func MovementStockRoutes(app *fiber.App, controllers *controllers.MovementStockController) {
-	movementStock := app.Group("/v1/movement_stock", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
+	movementStock := app.Group("/api/v1/movement_stock", middleware.AuthMiddleware())
 
 	movementStock.Post("/move", controllers.MoveStock)
 	movementStock.Get("/get_all", controllers.MovementStockGetAll)

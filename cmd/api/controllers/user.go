@@ -10,20 +10,20 @@ import (
 
 // UserGetByID godoc
 //
-// @Summary		UserGetByID
-// @Description	UserGetByID obtener usuario por ID
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Param			id	path		string	true	"Id del usuario"
-// @Success		200	{object}	schemas.Response{body=schemas.UserResponse}
-// @Failure		400	{object}	schemas.Response
-// @Failure		401	{object}	schemas.Response
-// @Failure		422	{object}	schemas.Response
-// @Failure		404	{object}	schemas.Response
-// @Failure		500	{object}	schemas.Response
-// @Router			/v1/user/get/{id} [get]
+//	@Summary		UserGetByID
+//	@Description	UserGetByID obtener usuario por ID
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			id	path		string	true	"Id del usuario"
+//	@Success		200	{object}	schemas.Response{body=schemas.UserResponse}
+//	@Failure		400	{object}	schemas.Response
+//	@Failure		401	{object}	schemas.Response
+//	@Failure		422	{object}	schemas.Response
+//	@Failure		404	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.Response
+//	@Router			/api/v1/user/get/{id} [get]
 func (u *UserController) UserGetByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	if id == "" {
@@ -49,20 +49,20 @@ func (u *UserController) UserGetByID(ctx *fiber.Ctx) error {
 
 // UserGetByEmail godoc
 //
-// @Summary		UserGetByEmail
-// @Description	UserGetByEmail obtener usuario por Email
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Param			email	query		string	true	"email del usuario"
-// @Success		200		{object}	schemas.Response{body=schemas.UserResponse}
-// @Failure		400		{object}	schemas.Response
-// @Failure		401		{object}	schemas.Response
-// @Failure		422		{object}	schemas.Response
-// @Failure		404		{object}	schemas.Response
-// @Failure		500		{object}	schemas.Response
-// @Router			/v1/user/get_by_email [get]
+//	@Summary		UserGetByEmail
+//	@Description	UserGetByEmail obtener usuario por Email
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			email	query		string	true	"email del usuario"
+//	@Success		200		{object}	schemas.Response{body=schemas.UserResponse}
+//	@Failure		400		{object}	schemas.Response
+//	@Failure		401		{object}	schemas.Response
+//	@Failure		422		{object}	schemas.Response
+//	@Failure		404		{object}	schemas.Response
+//	@Failure		500		{object}	schemas.Response
+//	@Router			/api/v1/user/get_by_email [get]
 func (u *UserController) UserGetByEmail(ctx *fiber.Ctx) error {
 	email := ctx.Query("email")
 	if email == "" {
@@ -83,19 +83,19 @@ func (u *UserController) UserGetByEmail(ctx *fiber.Ctx) error {
 
 // UserGetAll godoc
 //
-// @Summary		UserGetAll
-// @Description	UserGetAll obtener todos los usuarios
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Success		200	{object}	schemas.Response{body=[]schemas.UserResponseDTO}
-// @Failure		400	{object}	schemas.Response
-// @Failure		401	{object}	schemas.Response
-// @Failure		422	{object}	schemas.Response
-// @Failure		404	{object}	schemas.Response
-// @Failure		500	{object}	schemas.Response
-// @Router			/v1/user/get_all [get]
+//	@Summary		UserGetAll
+//	@Description	UserGetAll obtener todos los usuarios
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Success		200	{object}	schemas.Response{body=[]schemas.UserResponseDTO}
+//	@Failure		400	{object}	schemas.Response
+//	@Failure		401	{object}	schemas.Response
+//	@Failure		422	{object}	schemas.Response
+//	@Failure		404	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.Response
+//	@Router			/api/v1/user/get_all [get]
 func (u *UserController) UserGetAll(ctx *fiber.Ctx) error {
 	users, err := u.UserService.UserGetAll()
 	if err != nil {
@@ -111,20 +111,20 @@ func (u *UserController) UserGetAll(ctx *fiber.Ctx) error {
 
 // UserCreate godoc
 //
-// @Summary		UserCreate
-// @Description	UserCreate Crear un nuevo usuario
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Param			user_create	body		schemas.UserCreate	true	"user create"
-// @Success		200			{object}	schemas.Response
-// @Failure		400			{object}	schemas.Response
-// @Failure		401			{object}	schemas.Response
-// @Failure		422			{object}	schemas.Response
-// @Failure		404			{object}	schemas.Response
-// @Failure		500			{object}	schemas.Response
-// @Router			/v1/user/create [post]
+//	@Summary		UserCreate
+//	@Description	UserCreate Crear un nuevo usuario
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			user_create	body		schemas.UserCreate	true	"user create"
+//	@Success		200			{object}	schemas.Response
+//	@Failure		400			{object}	schemas.Response
+//	@Failure		401			{object}	schemas.Response
+//	@Failure		422			{object}	schemas.Response
+//	@Failure		404			{object}	schemas.Response
+//	@Failure		500			{object}	schemas.Response
+//	@Router			/api/v1/user/create [post]
 func (u *UserController) UserCreate(ctx *fiber.Ctx) error {
 	var userCreate *schemas.UserCreate
 	if err := ctx.BodyParser(&userCreate); err != nil {
@@ -149,20 +149,20 @@ func (u *UserController) UserCreate(ctx *fiber.Ctx) error {
 
 // UserUpdate godoc
 //
-// @Summary		UserUpdate
-// @Description	UserUpdate Editar un usuario
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Param			user_update	body		schemas.UserUpdate	true	"user create"
-// @Success		200			{object}	schemas.Response
-// @Failure		400			{object}	schemas.Response
-// @Failure		401			{object}	schemas.Response
-// @Failure		422			{object}	schemas.Response
-// @Failure		404			{object}	schemas.Response
-// @Failure		500			{object}	schemas.Response
-// @Router			/v1/user/update [put]
+//	@Summary		UserUpdate
+//	@Description	UserUpdate Editar un usuario
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			user_update	body		schemas.UserUpdate	true	"user create"
+//	@Success		200			{object}	schemas.Response
+//	@Failure		400			{object}	schemas.Response
+//	@Failure		401			{object}	schemas.Response
+//	@Failure		422			{object}	schemas.Response
+//	@Failure		404			{object}	schemas.Response
+//	@Failure		500			{object}	schemas.Response
+//	@Router			/api/v1/user/update [put]
 func (u *UserController) UserUpdate(ctx *fiber.Ctx) error {
 	var userUpdate *schemas.UserUpdate
 	if err := ctx.BodyParser(&userUpdate); err != nil {
@@ -186,20 +186,20 @@ func (u *UserController) UserUpdate(ctx *fiber.Ctx) error {
 
 // UserDelete godoc
 //
-// @Summary		UserDelete
-// @Description	UserDelete Eliminar un usuario por ID
-// @Tags			User
-// @Accept			json
-// @Produce		json
-// @Security		CookieAuth
-// @Param			id	path		string	true	"Id del usuario"
-// @Success		200	{object}	schemas.Response
-// @Failure		400	{object}	schemas.Response
-// @Failure		401	{object}	schemas.Response
-// @Failure		422	{object}	schemas.Response
-// @Failure		404	{object}	schemas.Response
-// @Failure		500	{object}	schemas.Response
-// @Router			/v1/user/delete/{id} [delete]
+//	@Summary		UserDelete
+//	@Description	UserDelete Eliminar un usuario por ID
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			id	path		string	true	"Id del usuario"
+//	@Success		200	{object}	schemas.Response
+//	@Failure		400	{object}	schemas.Response
+//	@Failure		401	{object}	schemas.Response
+//	@Failure		422	{object}	schemas.Response
+//	@Failure		404	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.Response
+//	@Router			/api/v1/user/delete/{id} [delete]
 func (u *UserController) UserDelete(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	if id == "" {
@@ -222,6 +222,22 @@ func (u *UserController) UserDelete(ctx *fiber.Ctx) error {
 	})
 }
 
+// UserUpdatePassword godoc
+//
+//	@Summary		UserUpdatePassword
+//	@Description	UserUpdatePassword Actualizar la contraseña
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			pass_update	body		schemas.UserUpdatePassword	true	"update password"
+//	@Success		200			{object}	schemas.Response
+//	@Failure		400			{object}	schemas.Response
+//	@Failure		401			{object}	schemas.Response
+//	@Failure		422			{object}	schemas.Response
+//	@Failure		404			{object}	schemas.Response
+//	@Failure		500			{object}	schemas.Response
+//	@Router			/api/v1/user/update_password [put]
 func (u *UserController) UserUpdatePassword(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*schemas.UserContext)
 

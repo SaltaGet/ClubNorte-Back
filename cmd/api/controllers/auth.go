@@ -23,7 +23,7 @@ import (
 // @Failure		422			{object}	schemas.Response
 // @Failure		404			{object}	schemas.Response
 // @Failure		500			{object}	schemas.Response
-// @Router			/v1/auth/login [post]
+// @Router			/api/v1/auth/login [post]
 func (c *AuthController) Login(ctx *fiber.Ctx) error {
 	var credentials schemas.Login
 	err := ctx.BodyParser(&credentials)
@@ -45,8 +45,8 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Strict",
+		Secure:   false, // poner en true para prod
+		SameSite: "None",// para prod : "Strict",
 	}
 
 	ctx.Cookie(cookie)
@@ -73,14 +73,14 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/auth/logout [post]
+// @Router			/api/v1/auth/logout [post]
 func (c *AuthController) Logout(ctx *fiber.Ctx) error {
 	ctx.Cookie(&fiber.Cookie{
 		Name:     "access_token",
 		Value:    "",
 		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Strict",
+		Secure:   false, // poner en true para prod
+		SameSite: "None",// para prod : "Strict",
 	})
 
 	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -105,7 +105,7 @@ func (c *AuthController) Logout(ctx *fiber.Ctx) error {
 // @Failure		422				{object}	schemas.Response
 // @Failure		404				{object}	schemas.Response
 // @Failure		500				{object}	schemas.Response
-// @Router			/v1/auth/login_point_sale/{point_sale_id} [post]
+// @Router			/api/v1/auth/login_point_sale/{point_sale_id} [post]
 func (c *AuthController) LoginPointSale(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*schemas.UserContext)
 
@@ -128,8 +128,8 @@ func (c *AuthController) LoginPointSale(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Strict",
+		Secure:   false, // poner en true para prod
+		SameSite: "None",// para prod : "Strict",
 		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 
@@ -157,7 +157,7 @@ func (c *AuthController) LoginPointSale(ctx *fiber.Ctx) error {
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/auth/logout_point_sale [post]
+// @Router			/api/v1/auth/logout_point_sale [post]
 func (c *AuthController) LogoutPointSale(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*schemas.UserContext)
 
@@ -170,8 +170,8 @@ func (c *AuthController) LogoutPointSale(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Strict",
+		Secure:   false, // poner en true para prod
+		SameSite: "None",// para prod : "Strict",
 		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 
@@ -192,13 +192,13 @@ func (c *AuthController) LogoutPointSale(ctx *fiber.Ctx) error {
 // @Accept			json
 // @Produce		json
 // @Security		CookieAuth
-// @Success		200	{object}	schemas.Response
+// @Success		200	{object}	schemas.Response{body=schemas.UserResponse}
 // @Failure		400	{object}	schemas.Response
 // @Failure		401	{object}	schemas.Response
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/auth/current_user [get]
+// @Router			/api/v1/auth/current_user [get]
 func (c *AuthController) CurrentUser(ctx *fiber.Ctx) error {
 	user := ctx.Locals("user").(*schemas.UserContext)
 
@@ -228,7 +228,7 @@ func (c *AuthController) CurrentUser(ctx *fiber.Ctx) error {
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/auth/current_point_sale [get]
+// @Router			/api/v1/auth/current_point_sale [get]
 func (c *AuthController) CurrentPointSale(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 

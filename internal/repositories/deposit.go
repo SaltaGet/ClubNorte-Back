@@ -67,7 +67,7 @@ func (r *MainRepository) DepositUpdateStock(updateStock schemas.DepositUpdateSto
 			deposit.Stock += updateStock.Stock
 		case "subtract":
 			if deposit.Stock < updateStock.Stock {
-				return schemas.ErrorResponse(400, "stock insuficiente", nil)
+				return schemas.ErrorResponse(400, "stock insuficiente", fmt.Errorf("stock insuficiente: %.2f", updateStock.Stock))
 			}
 			deposit.Stock -= updateStock.Stock
 		case "set":

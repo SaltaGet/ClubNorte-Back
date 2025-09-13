@@ -23,7 +23,7 @@ import (
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/product/get/{id} [get]
+// @Router			/api/v1/product/get/{id} [get]
 func (p *ProductController) ProductGetByID(ctx *fiber.Ctx) error {
 	productID := ctx.Params("id")
 	if productID == "" {
@@ -66,7 +66,7 @@ func (p *ProductController) ProductGetByID(ctx *fiber.Ctx) error {
 // @Failure		422		{object}	schemas.Response
 // @Failure		404		{object}	schemas.Response
 // @Failure		500		{object}	schemas.Response
-// @Router			/v1/product/get_by_code [get]
+// @Router			/api/v1/product/get_by_code [get]
 func (p *ProductController) ProductGetByCode(ctx *fiber.Ctx) error {
 	code := ctx.Query("code")
 	if code == "" {
@@ -104,7 +104,7 @@ func (p *ProductController) ProductGetByCode(ctx *fiber.Ctx) error {
 // @Failure		422		{object}	schemas.Response
 // @Failure		404		{object}	schemas.Response
 // @Failure		500		{object}	schemas.Response
-// @Router			/v1/product/get_by_name [get]
+// @Router			/api/v1/product/get_by_name [get]
 func (p *ProductController) ProductGetByName(ctx *fiber.Ctx) error {
 	name := ctx.Query("name")
 	if len(name) < 3 {
@@ -142,7 +142,7 @@ func (p *ProductController) ProductGetByName(ctx *fiber.Ctx) error {
 // @Failure		422			{object}	schemas.Response
 // @Failure		404			{object}	schemas.Response
 // @Failure		500			{object}	schemas.Response
-// @Router			/v1/product/get_by_category/{category_id} [get]
+// @Router			/api/v1/product/get_by_category/{category_id} [get]
 func (p *ProductController) ProductGetByCategoryID(ctx *fiber.Ctx) error {
 	categoryID := ctx.Params("category_id")
 	if categoryID == "" {
@@ -182,10 +182,8 @@ func (p *ProductController) ProductGetByCategoryID(ctx *fiber.Ctx) error {
 //	@Failure		422		{object}	schemas.Response
 //	@Failure		404		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.Response
-//	@Router			/v1/product/get_all [get]
+//	@Router			/api/v1/product/get_all [get]
 func (p *ProductController) ProductGetAll(ctx *fiber.Ctx) error {
-	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
-
 	page, err := strconv.Atoi(ctx.Query("page", "1"))
 	if err != nil || page <= 0 {
 		page = 1
@@ -196,7 +194,7 @@ func (p *ProductController) ProductGetAll(ctx *fiber.Ctx) error {
 		limit = 10
 	}
 
-	products, total, err := p.ProductService.ProductGetAll(pointSale.ID, page, limit)
+	products, total, err := p.ProductService.ProductGetAll(page, limit)
 	if err != nil {
 		return schemas.HandleError(ctx, err)
 	}
@@ -225,7 +223,7 @@ func (p *ProductController) ProductGetAll(ctx *fiber.Ctx) error {
 //	@Failure		422				{object}	schemas.Response
 //	@Failure		404				{object}	schemas.Response
 //	@Failure		500				{object}	schemas.Response
-//	@Router			/v1/product/create [post]
+//	@Router			/api/v1/product/create [post]
 func (p *ProductController) ProductCreate(ctx *fiber.Ctx) error {
 	var productCreate schemas.ProductCreate
 	if err := ctx.BodyParser(&productCreate); err != nil {
@@ -267,7 +265,7 @@ func (p *ProductController) ProductCreate(ctx *fiber.Ctx) error {
 //	@Failure		422				{object}	schemas.Response
 //	@Failure		404				{object}	schemas.Response
 //	@Failure		500				{object}	schemas.Response
-//	@Router			/v1/product/update [put]
+//	@Router			/api/v1/product/update [put]
 func (p *ProductController) ProductUpdate(ctx *fiber.Ctx) error {
 	var productUpdate schemas.ProductUpdate
 	if err := ctx.BodyParser(&productUpdate); err != nil {
@@ -305,7 +303,7 @@ func (p *ProductController) ProductUpdate(ctx *fiber.Ctx) error {
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/product/delete/{id} [delete]
+//	@Router			/api/v1/product/delete/{id} [delete]
 func (p *ProductController) ProductDelete(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	if id == "" {

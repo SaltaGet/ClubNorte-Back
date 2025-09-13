@@ -7,7 +7,7 @@ import (
 )
 
 func RoleRoutes(app *fiber.App, controllers *controllers.RoleController) {
-	role := app.Group("/v1/role", middleware.AuthMiddleware())
+	role := app.Group("/api/v1/role", middleware.AuthMiddleware())
 
 	role.Get("/get_all", controllers.RoleGetAll)
 }

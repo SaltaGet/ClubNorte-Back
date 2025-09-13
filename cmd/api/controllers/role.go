@@ -19,7 +19,7 @@ import (
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/role/get_all [get]
+//	@Router			/api/v1/role/get_all [get]
 func (r *RoleController) RoleGetAll(c *fiber.Ctx) error {
 	roles, err := r.RoleService.RoleGetAll()
 	if err != nil {

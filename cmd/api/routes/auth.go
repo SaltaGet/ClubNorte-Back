@@ -7,7 +7,7 @@ import (
 )
 
 func AuthRoutes(app *fiber.App, controllers *controllers.AuthController) {
-	auth := app.Group("/v1/auth")
+	auth := app.Group("/api/v1/auth")
 
 	auth.Get("/current_user", middleware.AuthMiddleware(), controllers.CurrentUser)
 	auth.Get("/current_point_sale", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware(), controllers.CurrentPointSale)

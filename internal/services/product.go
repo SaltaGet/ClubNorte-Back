@@ -140,8 +140,8 @@ func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.Pro
 	return productsResponse, nil
 }
 
-func (s *ProductService) ProductGetAll(pointSaleID uint, page, limit int) ([]*schemas.ProductFullResponse, int64, error) {
-	products, total, err := s.ProductRepository.ProductGetAll(pointSaleID, page, limit)
+func (s *ProductService) ProductGetAll(page, limit int) ([]*schemas.ProductFullResponse, int64, error) {
+	products, total, err := s.ProductRepository.ProductGetAll(page, limit)
 	if err != nil {
 		return nil, 0, err
 	}

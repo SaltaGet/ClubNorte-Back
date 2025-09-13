@@ -23,7 +23,7 @@ import (
 // @Failure		422	{object}	schemas.Response
 // @Failure		404	{object}	schemas.Response
 // @Failure		500	{object}	schemas.Response
-// @Router			/v1/point_sale_product/get/{id} [get]
+// @Router			/api/v1/point_sale_product/get/{id} [get]
 func (s *StockController) StockProductGetByID(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 	
@@ -64,7 +64,7 @@ func (s *StockController) StockProductGetByID(ctx *fiber.Ctx) error {
 // @Failure		422		{object}	schemas.Response
 // @Failure		404		{object}	schemas.Response
 // @Failure		500		{object}	schemas.Response
-// @Router			/v1/point_sale_product/get_by_code [get]
+// @Router			/api/v1/point_sale_product/get_by_code [get]
 func (s *StockController) StockProductGetByCode(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 
@@ -100,7 +100,7 @@ func (s *StockController) StockProductGetByCode(ctx *fiber.Ctx) error {
 // @Failure		422		{object}	schemas.Response
 // @Failure		404		{object}	schemas.Response
 // @Failure		500		{object}	schemas.Response
-// @Router			/v1/point_sale_product/get_by_name [get]
+// @Router			/api/v1/point_sale_product/get_by_name [get]
 func (s *StockController) StockProductGetByName(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 
@@ -136,7 +136,7 @@ func (s *StockController) StockProductGetByName(ctx *fiber.Ctx) error {
 // @Failure		422			{object}	schemas.Response
 // @Failure		404			{object}	schemas.Response
 // @Failure		500			{object}	schemas.Response
-// @Router			/v1/point_sale_product/get_by_category/{category_id} [get]
+// @Router			/api/v1/point_sale_product/get_by_category/{category_id} [get]
 func (s *StockController) StockProductGetByCategoryID(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 
@@ -178,7 +178,7 @@ func (s *StockController) StockProductGetByCategoryID(ctx *fiber.Ctx) error {
 //	@Failure		422		{object}	schemas.Response
 //	@Failure		404		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.Response
-//	@Router			/v1/point_sale_product/get_all [get]
+//	@Router			/api/v1/point_sale_product/get_all [get]
 func (s *StockController) StockProductGetAll(ctx *fiber.Ctx) error {
 	pointSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
 

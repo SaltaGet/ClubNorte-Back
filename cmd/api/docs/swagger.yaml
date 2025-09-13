@@ -381,6 +381,15 @@ definitions:
       username:
         type: string
     type: object
+  schemas.UserUpdatePassword:
+    properties:
+      confirm_pass:
+        type: string
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a API for Club Norte
@@ -388,7 +397,7 @@ info:
   title: APP Club Norte
   version: "1.0"
 paths:
-  /v1/auth/current_point_sale:
+  /api/v1/auth/current_point_sale:
     get:
       consumes:
       - application/json
@@ -425,7 +434,7 @@ paths:
       summary: CurrentPointSale point sale
       tags:
       - Auth
-  /v1/auth/current_user:
+  /api/v1/auth/current_user:
     get:
       consumes:
       - application/json
@@ -436,7 +445,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemas.Response'
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.UserResponse'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -462,7 +476,7 @@ paths:
       summary: CurrentUser user
       tags:
       - Auth
-  /v1/auth/login:
+  /api/v1/auth/login:
     post:
       consumes:
       - application/json
@@ -504,7 +518,7 @@ paths:
       summary: Login user
       tags:
       - Auth
-  /v1/auth/login_point_sale/{point_sale_id}:
+  /api/v1/auth/login_point_sale/{point_sale_id}:
     post:
       consumes:
       - application/json
@@ -547,7 +561,7 @@ paths:
       summary: LoginPointSale user
       tags:
       - Auth
-  /v1/auth/logout:
+  /api/v1/auth/logout:
     post:
       consumes:
       - application/json
@@ -584,7 +598,7 @@ paths:
       summary: Logout user
       tags:
       - Auth
-  /v1/auth/logout_point_sale:
+  /api/v1/auth/logout_point_sale:
     post:
       consumes:
       - application/json
@@ -621,7 +635,7 @@ paths:
       summary: LogoutPointSale user
       tags:
       - Auth
-  /v1/category/create:
+  /api/v1/category/create:
     post:
       consumes:
       - application/json
@@ -670,7 +684,7 @@ paths:
       summary: CategoryCreate
       tags:
       - Category
-  /v1/category/delete/{id}:
+  /api/v1/category/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -713,7 +727,7 @@ paths:
       summary: CategoryDelete
       tags:
       - Category
-  /v1/category/get/{id}:
+  /api/v1/category/get/{id}:
     get:
       consumes:
       - application/json
@@ -761,7 +775,7 @@ paths:
       summary: CategoryGet
       tags:
       - Category
-  /v1/category/get_all:
+  /api/v1/category/get_all:
     get:
       consumes:
       - application/json
@@ -805,7 +819,7 @@ paths:
       summary: CategoryGet All
       tags:
       - Category
-  /v1/category/update:
+  /api/v1/category/update:
     put:
       consumes:
       - application/json
@@ -849,7 +863,7 @@ paths:
       summary: CategoryUpdate
       tags:
       - Category
-  /v1/deposit/get/{id}:
+  /api/v1/deposit/get/{id}:
     get:
       consumes:
       - application/json
@@ -897,7 +911,7 @@ paths:
       summary: DepositProductGetByID
       tags:
       - Deposit
-  /v1/deposit/get_all:
+  /api/v1/deposit/get_all:
     get:
       consumes:
       - application/json
@@ -941,7 +955,7 @@ paths:
       summary: DepositProductGetAll
       tags:
       - Deposit
-  /v1/deposit/get_by_code:
+  /api/v1/deposit/get_by_code:
     get:
       consumes:
       - application/json
@@ -989,7 +1003,7 @@ paths:
       summary: DepositProductGetByCode
       tags:
       - Deposit
-  /v1/deposit/get_by_name:
+  /api/v1/deposit/get_by_name:
     get:
       consumes:
       - application/json
@@ -1038,7 +1052,7 @@ paths:
       summary: DepositProductGetByName
       tags:
       - Deposit
-  /v1/deposit/update_stock:
+  /api/v1/deposit/update_stock:
     put:
       consumes:
       - application/json
@@ -1090,7 +1104,7 @@ paths:
       summary: DepositProductUpdateStock
       tags:
       - Deposit
-  /v1/movement_stock/get/{id}:
+  /api/v1/movement_stock/get/{id}:
     get:
       consumes:
       - application/json
@@ -1138,7 +1152,7 @@ paths:
       summary: MovementStockGet
       tags:
       - MovementStock
-  /v1/movement_stock/get_all:
+  /api/v1/movement_stock/get_all:
     get:
       consumes:
       - application/json
@@ -1193,7 +1207,7 @@ paths:
       summary: MovementStockGetAll
       tags:
       - MovementStock
-  /v1/movement_stock/move:
+  /api/v1/movement_stock/move:
     post:
       consumes:
       - application/json
@@ -1237,7 +1251,7 @@ paths:
       summary: MovementStock
       tags:
       - MovementStock
-  /v1/point_sale/create:
+  /api/v1/point_sale/create:
     post:
       consumes:
       - application/json
@@ -1281,7 +1295,7 @@ paths:
       summary: PointSaleCreate
       tags:
       - PointSale
-  /v1/point_sale/delete/{id}:
+  /api/v1/point_sale/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -1324,7 +1338,7 @@ paths:
       summary: PointSaleDelete
       tags:
       - PointSale
-  /v1/point_sale/get/{id}:
+  /api/v1/point_sale/get/{id}:
     get:
       consumes:
       - application/json
@@ -1371,7 +1385,7 @@ paths:
       summary: PointSaleGet
       tags:
       - PointSale
-  /v1/point_sale/get_all:
+  /api/v1/point_sale/get_all:
     get:
       consumes:
       - application/json
@@ -1408,7 +1422,7 @@ paths:
       summary: PointSaleGetAll
       tags:
       - PointSale
-  /v1/point_sale/update:
+  /api/v1/point_sale/update:
     put:
       consumes:
       - application/json
@@ -1452,7 +1466,7 @@ paths:
       summary: PointSaleUpdate
       tags:
       - PointSale
-  /v1/point_sale_product/get/{id}:
+  /api/v1/point_sale_product/get/{id}:
     get:
       consumes:
       - application/json
@@ -1500,7 +1514,7 @@ paths:
       summary: StockProductGetByID
       tags:
       - PointSaleProduct
-  /v1/point_sale_product/get_all:
+  /api/v1/point_sale_product/get_all:
     get:
       consumes:
       - application/json
@@ -1555,7 +1569,7 @@ paths:
       summary: StockProductGetAll
       tags:
       - PointSaleProduct
-  /v1/point_sale_product/get_by_category/{category_id}:
+  /api/v1/point_sale_product/get_by_category/{category_id}:
     get:
       consumes:
       - application/json
@@ -1603,7 +1617,7 @@ paths:
       summary: StockProductGetByCategory
       tags:
       - PointSaleProduct
-  /v1/point_sale_product/get_by_code:
+  /api/v1/point_sale_product/get_by_code:
     get:
       consumes:
       - application/json
@@ -1651,7 +1665,7 @@ paths:
       summary: StockProductGetByCode
       tags:
       - PointSaleProduct
-  /v1/point_sale_product/get_by_name:
+  /api/v1/point_sale_product/get_by_name:
     get:
       consumes:
       - application/json
@@ -1699,7 +1713,7 @@ paths:
       summary: StockProductGetByName
       tags:
       - PointSaleProduct
-  /v1/product/create:
+  /api/v1/product/create:
     post:
       consumes:
       - application/json
@@ -1743,7 +1757,7 @@ paths:
       summary: ProductCreate
       tags:
       - Product
-  /v1/product/delete/{id}:
+  /api/v1/product/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -1786,7 +1800,7 @@ paths:
       summary: ProductDelete
       tags:
       - Product
-  /v1/product/get/{id}:
+  /api/v1/product/get/{id}:
     get:
       consumes:
       - application/json
@@ -1834,7 +1848,7 @@ paths:
       summary: ProductGet
       tags:
       - Product
-  /v1/product/get_all:
+  /api/v1/product/get_all:
     get:
       consumes:
       - application/json
@@ -1889,7 +1903,7 @@ paths:
       summary: ProductGetAll
       tags:
       - Product
-  /v1/product/get_by_category/{category_id}:
+  /api/v1/product/get_by_category/{category_id}:
     get:
       consumes:
       - application/json
@@ -1937,7 +1951,7 @@ paths:
       summary: ProductGetByCategory
       tags:
       - Product
-  /v1/product/get_by_code:
+  /api/v1/product/get_by_code:
     get:
       consumes:
       - application/json
@@ -1985,7 +1999,7 @@ paths:
       summary: ProductGetByCode
       tags:
       - Product
-  /v1/product/get_by_name:
+  /api/v1/product/get_by_name:
     get:
       consumes:
       - application/json
@@ -2033,7 +2047,7 @@ paths:
       summary: ProductGetByName
       tags:
       - Product
-  /v1/product/update:
+  /api/v1/product/update:
     put:
       consumes:
       - application/json
@@ -2077,7 +2091,7 @@ paths:
       summary: ProductUpdate
       tags:
       - Product
-  /v1/role/get_all:
+  /api/v1/role/get_all:
     get:
       consumes:
       - application/json
@@ -2121,7 +2135,81 @@ paths:
       summary: RoleGetAll
       tags:
       - Role
-  /v1/user/create:
+  /api/v1/test_data/create:
+    post:
+      consumes:
+      - application/json
+      description: TestDataCreate
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: TestDataCreate
+      tags:
+      - Test
+  /api/v1/test_data/delete:
+    delete:
+      consumes:
+      - application/json
+      description: TestDataDelete
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: TestDataDelete
+      tags:
+      - Test
+  /api/v1/user/create:
     post:
       consumes:
       - application/json
@@ -2165,7 +2253,7 @@ paths:
       summary: UserCreate
       tags:
       - User
-  /v1/user/delete/{id}:
+  /api/v1/user/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -2208,7 +2296,7 @@ paths:
       summary: UserDelete
       tags:
       - User
-  /v1/user/get/{id}:
+  /api/v1/user/get/{id}:
     get:
       consumes:
       - application/json
@@ -2256,7 +2344,7 @@ paths:
       summary: UserGetByID
       tags:
       - User
-  /v1/user/get_all:
+  /api/v1/user/get_all:
     get:
       consumes:
       - application/json
@@ -2300,7 +2388,7 @@ paths:
       summary: UserGetAll
       tags:
       - User
-  /v1/user/get_by_email:
+  /api/v1/user/get_by_email:
     get:
       consumes:
       - application/json
@@ -2348,7 +2436,7 @@ paths:
       summary: UserGetByEmail
       tags:
       - User
-  /v1/user/update:
+  /api/v1/user/update:
     put:
       consumes:
       - application/json
@@ -2390,6 +2478,50 @@ paths:
       security:
       - CookieAuth: []
       summary: UserUpdate
+      tags:
+      - User
+  /api/v1/user/update_password:
+    put:
+      consumes:
+      - application/json
+      description: UserUpdatePassword Actualizar la contraseña
+      parameters:
+      - description: update password
+        in: body
+        name: pass_update
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.UserUpdatePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: UserUpdatePassword
       tags:
       - User
 securityDefinitions:

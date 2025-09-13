@@ -7,7 +7,7 @@ import (
 )
 
 func CategoryRoutes(app *fiber.App, controllers *controllers.CategoryController) {
-	category := app.Group("/v1/category",  middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
+	category := app.Group("/api/v1/category",  middleware.AuthMiddleware())
 
 	category.Post("/create", controllers.CategoryCreate)
 	category.Get("/get_all", controllers.CategoryGetAll)

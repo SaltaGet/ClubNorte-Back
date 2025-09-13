@@ -1,9 +1,11 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/utils"
-	"github.com/jinzhu/copier"	
+	"github.com/jinzhu/copier"
 )
 
 func (s *AuthService) Login(params *schemas.Login) (string, error) {
@@ -13,7 +15,7 @@ func (s *AuthService) Login(params *schemas.Login) (string, error) {
 	}
 
 	if !utils.CheckPasswordHash(params.Password, user.Password) {
-		return "", schemas.ErrorResponse(401, "Credenciales incorrectas", nil)
+		return "", schemas.ErrorResponse(401, "Credenciales incorrectas", fmt.Errorf("la contraseña no es correcta"))
 	}
 
 	var userResponse schemas.UserResponseToken

@@ -23,7 +23,7 @@ import (
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/movement_stock/get/{id} [get]
+//	@Router			/api/v1/movement_stock/get/{id} [get]
 func (m *MovementStockController) MovementStockGet(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if id == "" {
@@ -63,7 +63,7 @@ func (m *MovementStockController) MovementStockGet(c *fiber.Ctx) error {
 //	@Failure		422		{object}	schemas.Response
 //	@Failure		404		{object}	schemas.Response
 //	@Failure		500		{object}	schemas.Response
-//	@Router			/v1/movement_stock/get_all [get]
+//	@Router			/api/v1/movement_stock/get_all [get]
 func (m *MovementStockController) MovementStockGetAll(c *fiber.Ctx) error {
 	page, err := strconv.Atoi(c.Query("page", "1"))
 	if err != nil || page <= 0 {
@@ -104,7 +104,7 @@ func (m *MovementStockController) MovementStockGetAll(c *fiber.Ctx) error {
 //	@Failure		422				{object}	schemas.Response
 //	@Failure		404				{object}	schemas.Response
 //	@Failure		500				{object}	schemas.Response
-//	@Router			/v1/movement_stock/move [post]
+//	@Router			/api/v1/movement_stock/move [post]
 func (m *MovementStockController) MoveStock(c *fiber.Ctx) error {
 	user := c.Locals("user").(*schemas.UserContext)
 

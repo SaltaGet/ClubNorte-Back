@@ -9,5 +9,5 @@ type SportsCourt struct {
 	Description *string `gorm:"type:text"` 
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
-	PointSales       []User `gorm:"many2many:sports_courts_point_sales;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"point_sales"`
+	PointSales       []PointSale `gorm:"many2many:sports_courts_point_sales;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"point_sales"`
 }

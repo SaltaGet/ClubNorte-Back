@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/auth/current_point_sale": {
+        "/api/v1/auth/current_point_sale": {
             "get": {
                 "security": [
                     {
@@ -74,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/auth/current_user": {
+        "/api/v1/auth/current_user": {
             "get": {
                 "security": [
                     {
@@ -96,7 +96,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemas.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "$ref": "#/definitions/schemas.UserResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -132,7 +144,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Login user required email and password",
                 "consumes": [
@@ -196,7 +208,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/auth/login_point_sale/{point_sale_id}": {
+        "/api/v1/auth/login_point_sale/{point_sale_id}": {
             "post": {
                 "security": [
                     {
@@ -263,7 +275,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/auth/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "security": [
                     {
@@ -321,7 +333,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/auth/logout_point_sale": {
+        "/api/v1/auth/logout_point_sale": {
             "post": {
                 "security": [
                     {
@@ -379,7 +391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/category/create": {
+        "/api/v1/category/create": {
             "post": {
                 "security": [
                     {
@@ -460,7 +472,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/category/delete/{id}": {
+        "/api/v1/category/delete/{id}": {
             "delete": {
                 "security": [
                     {
@@ -527,7 +539,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/category/get/{id}": {
+        "/api/v1/category/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -606,7 +618,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/category/get_all": {
+        "/api/v1/category/get_all": {
             "get": {
                 "security": [
                     {
@@ -679,7 +691,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/category/update": {
+        "/api/v1/category/update": {
             "put": {
                 "security": [
                     {
@@ -748,7 +760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/deposit/get/{id}": {
+        "/api/v1/deposit/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -827,7 +839,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/deposit/get_all": {
+        "/api/v1/deposit/get_all": {
             "get": {
                 "security": [
                     {
@@ -900,7 +912,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/deposit/get_by_code": {
+        "/api/v1/deposit/get_by_code": {
             "get": {
                 "security": [
                     {
@@ -979,7 +991,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/deposit/get_by_name": {
+        "/api/v1/deposit/get_by_name": {
             "get": {
                 "security": [
                     {
@@ -1058,7 +1070,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/deposit/update_stock": {
+        "/api/v1/deposit/update_stock": {
             "put": {
                 "security": [
                     {
@@ -1142,7 +1154,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/movement_stock/get/{id}": {
+        "/api/v1/movement_stock/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -1221,7 +1233,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/movement_stock/get_all": {
+        "/api/v1/movement_stock/get_all": {
             "get": {
                 "security": [
                     {
@@ -1310,7 +1322,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/movement_stock/move": {
+        "/api/v1/movement_stock/move": {
             "post": {
                 "security": [
                     {
@@ -1379,7 +1391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale/create": {
+        "/api/v1/point_sale/create": {
             "post": {
                 "security": [
                     {
@@ -1448,7 +1460,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale/delete/{id}": {
+        "/api/v1/point_sale/delete/{id}": {
             "delete": {
                 "security": [
                     {
@@ -1515,7 +1527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale/get/{id}": {
+        "/api/v1/point_sale/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -1588,7 +1600,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale/get_all": {
+        "/api/v1/point_sale/get_all": {
             "get": {
                 "security": [
                     {
@@ -1646,7 +1658,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale/update": {
+        "/api/v1/point_sale/update": {
             "put": {
                 "security": [
                     {
@@ -1715,7 +1727,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale_product/get/{id}": {
+        "/api/v1/point_sale_product/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -1794,7 +1806,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale_product/get_all": {
+        "/api/v1/point_sale_product/get_all": {
             "get": {
                 "security": [
                     {
@@ -1883,7 +1895,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale_product/get_by_category/{category_id}": {
+        "/api/v1/point_sale_product/get_by_category/{category_id}": {
             "get": {
                 "security": [
                     {
@@ -1962,7 +1974,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale_product/get_by_code": {
+        "/api/v1/point_sale_product/get_by_code": {
             "get": {
                 "security": [
                     {
@@ -2041,7 +2053,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/point_sale_product/get_by_name": {
+        "/api/v1/point_sale_product/get_by_name": {
             "get": {
                 "security": [
                     {
@@ -2120,7 +2132,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/create": {
+        "/api/v1/product/create": {
             "post": {
                 "security": [
                     {
@@ -2189,7 +2201,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/delete/{id}": {
+        "/api/v1/product/delete/{id}": {
             "delete": {
                 "security": [
                     {
@@ -2256,7 +2268,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/get/{id}": {
+        "/api/v1/product/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -2335,7 +2347,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/get_all": {
+        "/api/v1/product/get_all": {
             "get": {
                 "security": [
                     {
@@ -2424,7 +2436,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/get_by_category/{category_id}": {
+        "/api/v1/product/get_by_category/{category_id}": {
             "get": {
                 "security": [
                     {
@@ -2503,7 +2515,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/get_by_code": {
+        "/api/v1/product/get_by_code": {
             "get": {
                 "security": [
                     {
@@ -2582,7 +2594,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/get_by_name": {
+        "/api/v1/product/get_by_name": {
             "get": {
                 "security": [
                     {
@@ -2661,7 +2673,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/product/update": {
+        "/api/v1/product/update": {
             "put": {
                 "security": [
                     {
@@ -2730,7 +2742,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/role/get_all": {
+        "/api/v1/role/get_all": {
             "get": {
                 "security": [
                     {
@@ -2803,7 +2815,123 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/create": {
+        "/api/v1/test_data/create": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "TestDataCreate",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "TestDataCreate",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/test_data/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "TestDataDelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "TestDataDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/create": {
             "post": {
                 "security": [
                     {
@@ -2872,7 +3000,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/delete/{id}": {
+        "/api/v1/user/delete/{id}": {
             "delete": {
                 "security": [
                     {
@@ -2939,7 +3067,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/get/{id}": {
+        "/api/v1/user/get/{id}": {
             "get": {
                 "security": [
                     {
@@ -3018,7 +3146,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/get_all": {
+        "/api/v1/user/get_all": {
             "get": {
                 "security": [
                     {
@@ -3091,7 +3219,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/get_by_email": {
+        "/api/v1/user/get_by_email": {
             "get": {
                 "security": [
                     {
@@ -3170,7 +3298,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/update": {
+        "/api/v1/user/update": {
             "put": {
                 "security": [
                     {
@@ -3196,6 +3324,75 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/schemas.UserUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/update_password": {
+            "put": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "UserUpdatePassword Actualizar la contraseña",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "UserUpdatePassword",
+                "parameters": [
+                    {
+                        "description": "update password",
+                        "name": "pass_update",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.UserUpdatePassword"
                         }
                     }
                 ],
@@ -3812,6 +4009,20 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.UserUpdatePassword": {
+            "type": "object",
+            "properties": {
+                "confirm_pass": {
+                    "type": "string"
+                },
+                "new_password": {
+                    "type": "string"
+                },
+                "old_password": {
                     "type": "string"
                 }
             }

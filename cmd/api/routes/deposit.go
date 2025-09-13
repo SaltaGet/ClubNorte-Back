@@ -7,7 +7,7 @@ import (
 )
 
 func DepositRoutes(app *fiber.App, controllers *controllers.DepositController) {
-	deposit := app.Group("/v1/deposit", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
+	deposit := app.Group("/api/v1/deposit", middleware.AuthMiddleware())
 
 	deposit.Get("/get_all", controllers.DepositGetAll)
 	deposit.Put("/update_stock", controllers.DepositUpdateStock)

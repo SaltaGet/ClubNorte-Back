@@ -51,7 +51,7 @@ func (u *UserService) UserCreate(userCreate *schemas.UserCreate) (uint, error) {
 	} 
 
 	if role.Name == "admin" {
-		return 0, schemas.ErrorResponse(400, "el usuario no puede ser creado con este rol", nil)
+		return 0, schemas.ErrorResponse(400, "el usuario no puede ser creado con este rol", fmt.Errorf("el usuario no puede ser creado con este rol %s", role.Name))
 	}
 
 	return u.UserRepository.UserCreate(userCreate)

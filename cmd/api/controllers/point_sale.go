@@ -23,7 +23,7 @@ import (
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/point_sale/get/{id} [get]
+//	@Router			/api/v1/point_sale/get/{id} [get]
 func (p *PointSaleController) PointSaleGet(c *fiber.Ctx) error {
 	var idParam = c.Params("id")
 	if idParam == "" {
@@ -64,7 +64,7 @@ func (p *PointSaleController) PointSaleGet(c *fiber.Ctx) error {
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/point_sale/get_all [get]
+//	@Router			/api/v1/point_sale/get_all [get]
 func (p *PointSaleController) PointSaleGetAll(c *fiber.Ctx) error {
 	pointsSales, err := p.PointSaleService.PointSaleGetAll()
 	if err != nil {
@@ -92,7 +92,7 @@ func (p *PointSaleController) PointSaleGetAll(c *fiber.Ctx) error {
 //	@Failure		422					{object}	schemas.Response
 //	@Failure		404					{object}	schemas.Response
 //	@Failure		500					{object}	schemas.Response
-//	@Router			/v1/point_sale/create [post]
+//	@Router			/api/v1/point_sale/create [post]
 func (p *PointSaleController) PointSaleCreate(c *fiber.Ctx) error {
 	var pointSaleCreate schemas.PointSaleCreate
 	if err := c.BodyParser(&pointSaleCreate); err != nil {
@@ -129,7 +129,7 @@ func (p *PointSaleController) PointSaleCreate(c *fiber.Ctx) error {
 //	@Failure		422					{object}	schemas.Response
 //	@Failure		404					{object}	schemas.Response
 //	@Failure		500					{object}	schemas.Response
-//	@Router			/v1/point_sale/update [put]
+//	@Router			/api/v1/point_sale/update [put]
 func (p *PointSaleController) PointSaleUpdate(c *fiber.Ctx) error {
 	var pointSaleUpdate schemas.PointSaleUpdate
 	if err := c.BodyParser(&pointSaleUpdate); err != nil {
@@ -166,7 +166,7 @@ func (p *PointSaleController) PointSaleUpdate(c *fiber.Ctx) error {
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/v1/point_sale/delete/{id} [delete]
+//	@Router			/api/v1/point_sale/delete/{id} [delete]
 func (p *PointSaleController) PointSaleDelete(c *fiber.Ctx) error {
 	var idParam = c.Params("id")
 	if idParam == "" {

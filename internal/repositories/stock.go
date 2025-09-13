@@ -12,6 +12,8 @@ func (r *MainRepository) StockProductGetByID(pointSaleID, id uint) (*models.Prod
 	var product *models.Product
 
 	if err := r.DB.
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Preload("Category").
 		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
 		Preload("StockPointSales.PointSale").
@@ -35,6 +37,8 @@ func (r *MainRepository) StockProductGetByCode(pointSaleID uint, code string) (*
 	// 	return nil, schemas.ErrorResponse(500, "error al obtener el producto", err)
 	// }
 	if err := r.DB.
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Preload("Category").
 		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
 		Preload("StockPointSales.PointSale").
@@ -56,6 +60,8 @@ func (r *MainRepository) StockProductGetByCategoryID(pointSaleID, categoryID uin
 	// 	return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	// }
 	if err := r.DB.
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Preload("Category").
 		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
 		Preload("StockPointSales.PointSale").
@@ -74,6 +80,8 @@ func (r *MainRepository) StockProductGetByName(pointSaleID uint, name string) ([
 	// 	return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	// }
 	if err := r.DB.
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Preload("Category").
 		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
 		Preload("StockPointSales.PointSale").
@@ -132,15 +140,34 @@ func (r *MainRepository) StockProductGetAll(pointSaleID uint, page, limit int) (
 	offset := (page - 1) * limit
 
 	// Contar los productos disponibles en el punto de venta
+	// if err := r.DB.
+	// 	Model(&models.Product{}).
+	// 	Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
+	// 	Count(&total).Error; err != nil {
+	// 	return nil, 0, schemas.ErrorResponse(500, "error al contar productos", err)
+	// }
 	if err := r.DB.
 		Model(&models.Product{}).
-		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
+		Preload("Category").
 		Count(&total).Error; err != nil {
-		return nil, 0, schemas.ErrorResponse(500, "error al contar productos", err)
+		return nil, 0, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
 	// Obtener productos con la categoría y el stock específico del punto de venta
+	// if err := r.DB.
+	// 	Preload("Category").
+	// 	Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
+	// 	Preload("StockPointSales.PointSale").
+	// 	Offset(offset).
+	// 	Limit(limit).
+	// 	Find(&products).Error; err != nil {
+	// 	return nil, 0, schemas.ErrorResponse(500, "error al obtener productos", err)
+	// }
 	if err := r.DB.
+		Joins("JOIN stock_point_sales sps ON sps.product_id = products.id").
+		Where("sps.point_sale_id = ?", pointSaleID).
 		Preload("Category").
 		Preload("StockPointSales", "point_sale_id = ?", pointSaleID).
 		Preload("StockPointSales.PointSale").

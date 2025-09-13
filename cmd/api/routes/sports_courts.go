@@ -11,6 +11,7 @@ func SportCourtsRoutes(app *fiber.App, controllers *controllers.SportCourtContro
 
 	sportCourt.Post("/create", controllers.SportCourtCreate)
 	sportCourt.Get("/get_all", controllers.SportCourtGetAll)
+	sportCourt.Get("/get_all_by_point_sale", controllers.SportCourtGetAllByPointSale)
 	sportCourt.Put("/update", controllers.SportCourtUpdate)
 	sportCourt.Get("/get_by_code", controllers.SportCourtGetByCode)
 	sportCourt.Get("/get/:id", controllers.SportCourtGetByID)

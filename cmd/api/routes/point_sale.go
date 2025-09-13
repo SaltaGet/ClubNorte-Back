@@ -7,11 +7,11 @@ import (
 )
 
 func PointSaleRoutes(app *fiber.App, controllers *controllers.PointSaleController) {
-	pointSale := app.Group("/api/v1/point_sale", middleware.AuthMiddleware(), middleware.IsAdmin())
+	pointSale := app.Group("/api/v1/point_sale")
 
-	pointSale.Post("/create", controllers.PointSaleCreate)
+	pointSale.Post("/create", controllers.PointSaleCreate, middleware.AuthMiddleware(), middleware.IsAdmin())
 	pointSale.Get("/get_all", controllers.PointSaleGetAll)
-	pointSale.Put("/update", controllers.PointSaleUpdate)
+	pointSale.Put("/update", controllers.PointSaleUpdate, middleware.AuthMiddleware(), middleware.IsAdmin())
 	pointSale.Get("/get/:id", controllers.PointSaleGet)
-	pointSale.Delete("/delete/:id", controllers.PointSaleDelete)
+	pointSale.Delete("/delete/:id", controllers.PointSaleDelete, middleware.AuthMiddleware(), middleware.IsAdmin())
 }

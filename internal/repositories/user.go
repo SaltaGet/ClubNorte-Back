@@ -127,3 +127,17 @@ func (r *MainRepository) UserUpdatePassword(userID uint, userUpdatePassword *sch
 
 	return nil
 }
+
+func (r *MainRepository) UserUpdateIsActive(userID uint) error {
+	var user models.User
+	if err := r.DB.First(&user, userID).Error; err != nil {
+		return schemas.ErrorResponse(404, "usuario no encontrado", err)
+	}
+
+	user.IsActive = !user.IsActive
+	if err := r.DB.Save(&user).Error; err != nil {
+		return schemas.ErrorResponse(500, "error al actualizar el estado del usuario", err)
+	}
+
+	return nil
+}

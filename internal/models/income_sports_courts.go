@@ -17,7 +17,7 @@ type IncomeSportsCourts struct {
 
 	RestPay           float64   `gorm:"not null" json:"rest_pay"`
 	RestPaymentMethod string    `gorm:"size:30;default:'efectivo'" json:"rest_payment_method" validate:"oneof=efectivo tarjeta transferencia"`
-	DateTotalPay       time.Time `gorm:"not null" json:"date_rest_pay"`
+	DateRestPay       time.Time `gorm:"not null" json:"date_rest_pay"`
 
 	Price     float64   `gorm:"not null" json:"price"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`

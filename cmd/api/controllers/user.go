@@ -262,3 +262,43 @@ func (u *UserController) UserUpdatePassword(ctx *fiber.Ctx) error {
 		Message: "Contraseña actualizada con éxito",
 	})
 }
+
+// UserUpdateIsActive godoc
+//
+//	@Summary		UserUpdateIsActive
+//	@Description	Actualizar un usuario a activo o inactivo
+//	@Tags			User
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			id	path		string	true	"id del usuario a activar o inactivar"
+//	@Success		200			{object}	schemas.Response
+//	@Failure		400			{object}	schemas.Response
+//	@Failure		401			{object}	schemas.Response
+//	@Failure		422			{object}	schemas.Response
+//	@Failure		404			{object}	schemas.Response
+//	@Failure		500			{object}	schemas.Response
+//	@Router			/api/v1/user/update_is_active/{id} [put]
+func (u *UserController) UserUpdateIsActive(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	if id == "" {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "se necesita el id del usuario", fmt.Errorf("se necesita el id del usuario")))
+	}
+
+	idUint, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(422, "el id debe ser un número", err))
+	}
+
+	if err := u.UserService.UserUpdateIsActive(uint(idUint)); err != nil {
+		return schemas.HandleError(ctx, err)
+	}
+
+	// plantear logout luego de cambias pass
+
+	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
+		Status:  true,
+		Body:    nil,
+		Message: "Contraseña actualizada con éxito",
+	})
+}

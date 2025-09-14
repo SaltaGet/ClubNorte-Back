@@ -86,3 +86,7 @@ func (u *UserService) UserUpdatePassword(userID uint, updatePass *schemas.UserUp
 
 	return u.UserRepository.UserUpdatePassword(userID, updatePass)
 }
+
+func (u *UserService) UserUpdateIsActive(userID uint) error {
+	return u.UserRepository.UserUpdateIsActive(userID)
+}

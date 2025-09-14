@@ -13,6 +13,7 @@ type UserRepository interface {
 	UserUpdate(userUpdate *schemas.UserUpdate) error
 	UserDelete(id uint)	error
 	UserUpdatePassword(userID uint, updatePass *schemas.UserUpdatePassword) error
+	UserUpdateIsActive(userID uint) error
 }
 
 type UserService interface {
@@ -23,4 +24,5 @@ type UserService interface {
 	UserUpdate(userUpdate *schemas.UserUpdate) error
 	UserDelete(id uint)	error
 	UserUpdatePassword(userID uint, updatePass *schemas.UserUpdatePassword) error
+	UserUpdateIsActive(userID uint) error
 }

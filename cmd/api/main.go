@@ -54,6 +54,7 @@ func main() {
 		newrelic.ConfigAppName(os.Getenv("NEW_RELIC_APP_NAME")),
 		newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
 		newrelic.ConfigDistributedTracerEnabled(true),
+		newrelic.ConfigAppLogForwardingEnabled(true),
 	)
 	if err != nil {
 		log.Fatalf("Error inicializando New Relic: %v", err)

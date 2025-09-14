@@ -26,7 +26,13 @@ func (r *MainRepository) MovementStockGetAll(page, limit int) ([]*models.Movemen
 
 	var movements []*models.MovementStock
 	var total int64
-	if err := r.DB.Preload("User").Preload("Product").Offset(offset).Limit(limit).Find(&movements).Error; err != nil {
+	if err := r.DB.
+		Preload("User").
+		Preload("Product").
+		Offset(offset).
+		Limit(limit).
+		Order("created_at desc").
+		Find(&movements).Error; err != nil {
 		return nil, 0, schemas.ErrorResponse(500, "error al obtener movimientos", err)
 	}
 
@@ -65,6 +71,18 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 			}()
 
 		case "point_sale":
+			var pointSaleExist bool
+			if err := tx.Model(&models.PointSale{}).
+				Select("count(*) > 0").
+				Where("id = ?", input.FromID).
+				Find(&pointSaleExist).Error; err != nil {
+				return schemas.ErrorResponse(500, "error al obtener el punto de venta", err)
+			}
+			
+			if !pointSaleExist {
+				return schemas.ErrorResponse(404, "punto de venta no encontrado", fmt.Errorf("punto de venta no encontrado"))
+			}
+
 			var ps models.StockPointSale
 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 				Where("product_id = ? AND point_sale_id = ?", input.ProductID, input.FromID).
@@ -108,6 +126,18 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 			}()
 
 		case "point_sale":
+			var pointSaleExist bool
+			if err := tx.Model(&models.PointSale{}).
+				Select("count(*) > 0").
+				Where("id = ?", input.ToID).
+				Find(&pointSaleExist).Error; err != nil {
+				return schemas.ErrorResponse(500, "error al obtener el punto de venta", err)
+			}
+			
+			if !pointSaleExist {
+				return schemas.ErrorResponse(404, "punto de venta no encontrado", fmt.Errorf("punto de venta no encontrado"))
+			}
+
 			var ps models.StockPointSale
 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 				Where("product_id = ? AND point_sale_id = ?", input.ProductID, input.ToID).

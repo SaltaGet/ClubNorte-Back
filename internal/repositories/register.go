@@ -51,11 +51,11 @@ func (r *MainRepository) RegisterClose(pointSaleID uint, userID uint, amountOpen
 	if err := r.DB.
 		Model(&models.IncomeSportsCourts{}).
 		Select("SUM(amount)").
-		Where().
+		// Where().
 		Scan(&totalIncomeCourts).Error; err != nil {
 		return schemas.ErrorResponse(500, "error al obtener el total de ingresos", err)
 	}
-Select("SUM(total_pay - COALESCE(partial_pay, 0))")
+// Select("SUM(total_pay - COALESCE(partial_pay, 0))")
 
 
 	register.CloseAmount = &amountOpen.CloseAmount

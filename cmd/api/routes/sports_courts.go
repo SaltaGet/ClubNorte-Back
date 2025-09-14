@@ -9,11 +9,11 @@ import (
 func SportCourtsRoutes(app *fiber.App, controllers *controllers.SportCourtController) {
 	sportCourt := app.Group("/api/v1/sport_court", middleware.AuthMiddleware())
 
-	sportCourt.Post("/create", controllers.SportCourtCreate)
+	sportCourt.Post("/create", middleware.AuthPointSaleMiddleware(), controllers.SportCourtCreate)
 	sportCourt.Get("/get_all", controllers.SportCourtGetAll)
-	sportCourt.Get("/get_all_by_point_sale", controllers.SportCourtGetAllByPointSale)
-	sportCourt.Put("/update", controllers.SportCourtUpdate)
-	sportCourt.Get("/get_by_code", controllers.SportCourtGetByCode)
-	sportCourt.Get("/get/:id", controllers.SportCourtGetByID)
-	sportCourt.Delete("/delete/:id", controllers.SportCourtDelete)
+	sportCourt.Get("/get_all_by_point_sale", middleware.AuthPointSaleMiddleware(), controllers.SportCourtGetAllByPointSale)
+	sportCourt.Put("/update", middleware.AuthPointSaleMiddleware(), controllers.SportCourtUpdate)
+	sportCourt.Get("/get_by_code", middleware.AuthPointSaleMiddleware(), controllers.SportCourtGetByCode)
+	sportCourt.Get("/get/:id", middleware.AuthPointSaleMiddleware(), controllers.SportCourtGetByID)
+	sportCourt.Delete("/delete/:id", middleware.AuthPointSaleMiddleware(), controllers.SportCourtDelete)
 }

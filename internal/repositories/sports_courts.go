@@ -12,7 +12,7 @@ func (r *MainRepository) SportCourtGetByID(pointSaleID, id uint) (*models.Sports
 	var sportCourt *models.SportsCourt
 
 	if err := r.DB.
-		Joins("JOIN sports_courts_point_sales scps ON scps.point_sale_id = point_sales.id").
+		Joins("JOIN sports_courts_point_sales scps ON scps.sports_court_id = sports_courts.id").
 		Where("scps.point_sale_id = ?", pointSaleID).
 		Preload("PointSales", "id = ?", pointSaleID).
 		First(&sportCourt, id).Error; err != nil {
@@ -29,7 +29,7 @@ func (r *MainRepository) SportCourtGetByCode(pointSaleID uint, code string) (*mo
 	var sportCourt *models.SportsCourt
 
 	if err := r.DB.
-		Joins("JOIN sports_courts_point_sales scps ON scps.point_sale_id = point_sales.id").
+		Joins("JOIN sports_courts_point_sales scps ON scps.sports_court_id = sports_courts.id").
 		Where("scps.point_sale_id = ?", pointSaleID).
 		Preload("PointSales", "id = ?", pointSaleID).
 		Where("code = ?", code).
@@ -47,7 +47,7 @@ func (r *MainRepository) SportCourtGetAllByPointSale(pointSaleID uint) ([]*model
 	var sportCourts []*models.SportsCourt
 
 	if err := r.DB.
-		Joins("JOIN sports_courts_point_sales scps ON scps.point_sale_id = point_sales.id").
+		Joins("JOIN sports_courts_point_sales scps ON scps.sports_court_id = sports_courts.id").
 		Where("scps.point_sale_id = ?", pointSaleID).
 		Preload("PointSales", "id = ?", pointSaleID).
 		Find(&sportCourts).Error; err != nil {

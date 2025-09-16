@@ -11,8 +11,8 @@ type Expense struct {
 	RegisterID    uint      `gorm:"not null" json:"register_id"`
 	Register      Register  `gorm:"foreignKey:RegisterID;references:ID" json:"register"`
 	Description   *string   `gorm:"size:255" json:"description"`
-	Amount        float64   `gorm:"not null" json:"amount"`
+	Total        float64   `gorm:"not null" json:"total"`
 	PaymentMethod string    `gorm:"size:30;default:'efectivo'" json:"payment_method" validate:"oneof=efectivo tarjeta transferencia"`
-	CreatedAt     time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt     time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 }

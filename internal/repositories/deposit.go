@@ -33,7 +33,7 @@ func (r *MainRepository) DepositGetByCode(code string) (*models.Product, error) 
 
 func (r *MainRepository) DepositGetByName(name string) ([]*models.Product, error) {
 	var products []*models.Product
-	if err := r.DB.Preload("Category").Preload("StockDeposit").Where("name LIKE ?", "%"+name+"%").First(&products).Error; err != nil {
+	if err := r.DB.Preload("Category").Preload("StockDeposit").Where("name LIKE ?", "%"+name+"%").Find(&products).Error; err != nil {
 		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 	return products, nil

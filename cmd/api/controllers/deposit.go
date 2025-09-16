@@ -123,12 +123,14 @@ func (d *DepositController) DepositGetByName(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
-//	@Success		200	{object}	schemas.Response{body=[]schemas.DepositResponse}
-//	@Failure		400	{object}	schemas.Response
-//	@Failure		401	{object}	schemas.Response
-//	@Failure		422	{object}	schemas.Response
-//	@Failure		404	{object}	schemas.Response
-//	@Failure		500	{object}	schemas.Response
+//	@Param			page	query		int	false	"pagina" default(1)
+//	@Param			limit	query		int	false	"limite" default(10)
+//	@Success		200		{object}	schemas.Response{body=[]schemas.DepositResponse}
+//	@Failure		400		{object}	schemas.Response
+//	@Failure		401		{object}	schemas.Response
+//	@Failure		422		{object}	schemas.Response
+//	@Failure		404		{object}	schemas.Response
+//	@Failure		500		{object}	schemas.Response
 //	@Router			/api/v1/deposit/get_all [get]
 func (d *DepositController) DepositGetAll(c *fiber.Ctx) error {
 	page, err := strconv.Atoi(c.Query("page", "1"))

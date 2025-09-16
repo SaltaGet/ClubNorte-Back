@@ -14,5 +14,5 @@ type MovementStock struct {
 	ToID        uint      `gorm:"not null" json:"to_id"`
 	ToType      string    `gorm:"not null" json:"to_type" validate:"oneof=deposit point_sale"`
 	IgnoreStock bool      `gorm:"not null;default:false" json:"ignore_stock"`
-	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
+	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
 }

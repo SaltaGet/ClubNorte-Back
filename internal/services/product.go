@@ -21,11 +21,19 @@ func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductFullResponse, 
 		Name: product.Category.Name,
 	}
 	productResponse.Price = product.Price
-	productResponse.StockDeposit = &schemas.StockDepositResponse{
-		ID:    product.StockDeposit.ID,
-		Stock: product.StockDeposit.Stock,
+	
+	if product.StockDeposit != nil {
+		productResponse.StockDeposit = &schemas.StockDepositResponse{
+			ID:    product.StockDeposit.ID,
+			Stock: product.StockDeposit.Stock,
+		}
+	} else {
+		productResponse.StockDeposit = &schemas.StockDepositResponse{
+			ID:    0,
+			Stock: 0,
+		}
 	}
-
+	
 	for _, stock := range product.StockPointSales {
 		productResponse.StockPointSales = append(productResponse.StockPointSales, &schemas.PointSaleStock{
 			ID:    stock.PointSale.ID,
@@ -54,9 +62,17 @@ func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductFullResp
 		Name: product.Category.Name,
 	}
 	productResponse.Price = product.Price
-	productResponse.StockDeposit = &schemas.StockDepositResponse{
-		ID:    product.StockDeposit.ID,
-		Stock: product.StockDeposit.Stock,
+
+	if product.StockDeposit != nil {
+		productResponse.StockDeposit = &schemas.StockDepositResponse{
+			ID:    product.StockDeposit.ID,
+			Stock: product.StockDeposit.Stock,
+		}
+	} else {
+		productResponse.StockDeposit = &schemas.StockDepositResponse{
+			ID:    0,
+			Stock: 0,
+		}
 	}
 
 	for _, stock := range product.StockPointSales {
@@ -88,10 +104,17 @@ func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductFullRe
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			StockDeposit: &schemas.StockDepositResponse{
+		}
+		if prod.StockDeposit != nil {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
 				ID:    prod.StockDeposit.ID,
 				Stock: prod.StockDeposit.Stock,
-			},
+			}
+		} else {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
+				ID:    0,
+				Stock: 0,
+			}
 		}
 		for _, stock := range prod.StockPointSales {
 			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
@@ -123,10 +146,17 @@ func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.Pro
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			StockDeposit: &schemas.StockDepositResponse{
+		}
+		if prod.StockDeposit != nil {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
 				ID:    prod.StockDeposit.ID,
 				Stock: prod.StockDeposit.Stock,
-			},
+			}
+		} else {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
+				ID:    0,
+				Stock: 0,
+			}
 		}
 		for _, stock := range prod.StockPointSales {
 			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
@@ -158,11 +188,19 @@ func (s *ProductService) ProductGetAll(page, limit int) ([]*schemas.ProductFullR
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			StockDeposit: &schemas.StockDepositResponse{
+		}
+		if prod.StockDeposit != nil {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
 				ID:    prod.StockDeposit.ID,
 				Stock: prod.StockDeposit.Stock,
-			},
+			}
+		} else {
+			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
+				ID:    0,
+				Stock: 0,
+			}
 		}
+
 		for _, stock := range prod.StockPointSales {
 			productsResponse[i].StockPointSales = append(productsResponse[i].StockPointSales, &schemas.PointSaleStock{
 				ID:    stock.PointSale.ID,

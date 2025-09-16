@@ -54,6 +54,111 @@ definitions:
       stock:
         type: number
     type: object
+  schemas.IncomeCreate:
+    properties:
+      description:
+        type: string
+      items:
+        description: <- dive recorre cada elemento
+        items:
+          $ref: '#/definitions/schemas.IncomeItemCreate'
+        type: array
+      payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+    required:
+    - items
+    - payment_method
+    type: object
+  schemas.IncomeDateRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    type: object
+  schemas.IncomeItemCreate:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: number
+    required:
+    - product_id
+    - quantity
+    type: object
+  schemas.IncomeItemResponse:
+    properties:
+      id:
+        type: integer
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/schemas.ProductSimpleResponseDTO'
+      quantity:
+        type: number
+      subtotal:
+        type: number
+    type: object
+  schemas.IncomeResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/schemas.IncomeItemResponse'
+        type: array
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.IncomeResponseDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.IncomeUpdate:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      items:
+        description: <- dive recorre cada elemento
+        items:
+          $ref: '#/definitions/schemas.IncomeItemCreate'
+        type: array
+      payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+    required:
+    - id
+    - items
+    - payment_method
+    type: object
   schemas.Login:
     properties:
       email:
@@ -225,6 +330,17 @@ definitions:
       stock:
         type: number
     type: object
+  schemas.ProductSimpleResponseDTO:
+    properties:
+      code:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+    type: object
   schemas.ProductUpdate:
     properties:
       category_id:
@@ -245,6 +361,25 @@ definitions:
     - id
     - name
     - price
+    type: object
+  schemas.RegisterClose:
+    properties:
+      close_amount:
+        type: number
+    type: object
+  schemas.RegisterInformRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    type: object
+  schemas.RegisterOpen:
+    properties:
+      open_amount:
+        type: number
     type: object
   schemas.Response:
     properties:
@@ -968,6 +1103,17 @@ paths:
       consumes:
       - application/json
       description: DepositProductGetAll obtener productos por paginacion
+      parameters:
+      - default: 1
+        description: pagina
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: limite
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -1156,6 +1302,240 @@ paths:
       summary: DepositProductUpdateStock
       tags:
       - Deposit
+  /api/v1/income/create:
+    post:
+      consumes:
+      - application/json
+      description: Crear un ingreso
+      parameters:
+      - description: Datos requeridos para crear un ingreso
+        in: body
+        name: income_create
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeCreate
+      tags:
+      - Income
+  /api/v1/income/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Eliminar un ingreso
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeDelte
+      tags:
+      - Income
+  /api/v1/income/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Obtener un ingreso por ID
+      parameters:
+      - description: ID del ingreso
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.IncomeResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeGetByID
+      tags:
+      - Income
+  /api/v1/income/get_by_date:
+    post:
+      consumes:
+      - application/json
+      description: Obtener ingresos por fechas
+      parameters:
+      - description: Fecha desde - hasta del ingreso
+        in: body
+        name: income_date
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeDateRequest'
+      - default: 1
+        description: Número de página
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Número de elementos por página
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.IncomeResponseDTO'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeGetByDate
+      tags:
+      - Income
+  /api/v1/income/update:
+    put:
+      consumes:
+      - application/json
+      description: Editar un ingreso
+      parameters:
+      - description: Datos requeridos para editar un ingreso
+        in: body
+        name: income_create
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeUpdate
+      tags:
+      - Income
   /api/v1/movement_stock/get/{id}:
     get:
       consumes:
@@ -2143,6 +2523,175 @@ paths:
       summary: ProductUpdate
       tags:
       - Product
+  /api/v1/register/close:
+    post:
+      consumes:
+      - application/json
+      description: Cierre de caja
+      parameters:
+      - description: Monto de cierre de caja
+        in: body
+        name: amount_close
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.RegisterClose'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: RegisterClose
+      tags:
+      - Register
+  /api/v1/register/exist_open:
+    get:
+      consumes:
+      - application/json
+      description: Verifica si existe apertura de caja
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: RegisterExistOpen
+      tags:
+      - Register
+  /api/v1/register/inform:
+    post:
+      consumes:
+      - application/json
+      description: Informes de caja
+      parameters:
+      - description: Fechas de solicitud de informe
+        in: body
+        name: register_request
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.RegisterInformRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: RegisterInform
+      tags:
+      - Register
+  /api/v1/register/open:
+    post:
+      consumes:
+      - application/json
+      description: Apertura de caja
+      parameters:
+      - description: Monto de apertura de caja
+        in: body
+        name: amount_open
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.RegisterOpen'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: RegisterOpen
+      tags:
+      - Register
   /api/v1/role/get_all:
     get:
       consumes:
@@ -2855,6 +3404,49 @@ paths:
       security:
       - CookieAuth: []
       summary: UserUpdate
+      tags:
+      - User
+  /api/v1/user/update_is_active/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Actualizar un usuario a activo o inactivo
+      parameters:
+      - description: id del usuario a activar o inactivar
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: UserUpdateIsActive
       tags:
       - User
   /api/v1/user/update_password:

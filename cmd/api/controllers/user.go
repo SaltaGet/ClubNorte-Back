@@ -272,12 +272,12 @@ func (u *UserController) UserUpdatePassword(ctx *fiber.Ctx) error {
 //	@Produce		json
 //	@Security		CookieAuth
 //	@Param			id	path		string	true	"id del usuario a activar o inactivar"
-//	@Success		200			{object}	schemas.Response
-//	@Failure		400			{object}	schemas.Response
-//	@Failure		401			{object}	schemas.Response
-//	@Failure		422			{object}	schemas.Response
-//	@Failure		404			{object}	schemas.Response
-//	@Failure		500			{object}	schemas.Response
+//	@Success		200	{object}	schemas.Response
+//	@Failure		400	{object}	schemas.Response
+//	@Failure		401	{object}	schemas.Response
+//	@Failure		422	{object}	schemas.Response
+//	@Failure		404	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.Response
 //	@Router			/api/v1/user/update_is_active/{id} [put]
 func (u *UserController) UserUpdateIsActive(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")

@@ -7,7 +7,7 @@ type SportsCourt struct {
 	Code        string  `gorm:"size:50;not null;uniqueIndex"`
 	Name        string  `gorm:"size:100;not null"`
 	Description *string `gorm:"type:text"` 
-	CreatedAt   time.Time `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
+	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 	PointSales       []PointSale `gorm:"many2many:sports_courts_point_sales;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"point_sales"`
 }

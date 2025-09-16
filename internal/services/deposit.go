@@ -21,7 +21,12 @@ func (s *DepositService) DepositGetByID(id uint) (*schemas.DepositResponse, erro
 			Name: product.Category.Name,
 		},
 		Price: product.Price,
-		Stock: product.StockDeposit.Stock,
+	}
+
+	if product.StockPointSales != nil {
+		productResponse.Stock = product.StockDeposit.Stock
+	} else {
+		productResponse.Stock = 0
 	}
 
 	return productResponse, nil
@@ -44,7 +49,12 @@ func (s *DepositService) DepositGetByCode(code string) (*schemas.DepositResponse
 			Name: product.Category.Name,
 		},
 		Price: product.Price,
-		Stock: product.StockDeposit.Stock,
+	}
+
+	if product.StockPointSales != nil {
+		productResponse.Stock = product.StockDeposit.Stock
+	} else {
+		productResponse.Stock = 0
 	}
 
 	return productResponse, nil
@@ -70,7 +80,11 @@ func (s *DepositService) DepositGetByName(name string) ([]*schemas.DepositRespon
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockDeposit.Stock,
+		}
+		if prod.StockPointSales != nil {
+			productsResponse[i].Stock = prod.StockDeposit.Stock
+		} else {
+			productsResponse[i].Stock = 0
 		}
 	}
 
@@ -97,8 +111,15 @@ func (s *DepositService) DepositGetAll(page, limit int) ([]*schemas.DepositRespo
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
-			Stock: prod.StockDeposit.Stock,
+			// Stock: utils.FloatDefault(&prod.StockDeposit.Stock, 0),
 		}
+
+		if prod.StockPointSales != nil {
+			productsResponse[i].Stock = prod.StockDeposit.Stock
+		} else {
+			productsResponse[i].Stock = 0
+		}
+
 	}
 
 	return productsResponse, total, nil

@@ -10,8 +10,8 @@ type Product struct {
 	Price          float64         `gorm:"not null" json:"price"`
 	CategoryID     uint            `gorm:"not null" json:"category_id"`
 	Category       Category        `gorm:"foreignKey:CategoryID;references:ID" json:"category"`
-	CreatedAt      time.Time       `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt      time.Time       `gorm:"autoUpdateTime" json:"updated_at"`
+	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 	StockDeposit   *StockDeposit   `gorm:"foreignKey:ProductID" json:"stock_deposit"`
 	StockPointSales []*StockPointSale `gorm:"foreignKey:ProductID" json:"stock_point_sales"`
 }

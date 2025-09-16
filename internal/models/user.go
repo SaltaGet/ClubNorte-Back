@@ -20,8 +20,8 @@ type User struct {
 	IsAdmin    bool        `gorm:"default:false" json:"is_admin"`
 	RoleID     uint        `gorm:"not null" json:"role_id"`
 	Role       Role        `gorm:"foreignKey:RoleID;references:ID" json:"role"`
-	CreatedAt  time.Time   `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt  time.Time   `gorm:"autoUpdateTime" json:"updated_at"`
+	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 	PointSales []PointSale `gorm:"many2many:user_point_sales;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"point_sales"`
 }
 

@@ -19,8 +19,9 @@ const (
 
 var logger = log.New(os.Stdout, "", 0)
 
-func logMessage(level string, color string, format string, args ...interface{}) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
+func logMessage(level string, color string, format string, args ...any) {
+	loc, _ := time.LoadLocation("America/Argentina/Buenos_Aires")
+	timestamp := time.Now().In(loc).Format("2006-01-02 15:04:05")
 	message := fmt.Sprintf(format, args...)
 	formatted := fmt.Sprintf("%s%s - %s - %s%s", color, timestamp, level, message, reset)
 	logger.Println(formatted)

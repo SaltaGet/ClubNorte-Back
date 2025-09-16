@@ -163,7 +163,7 @@ func connectMySQL() (*gorm.DB, error) {
 	// Migraciones
 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
 		&models.User{}, &models.Category{},
-		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
+		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{}, &models.IncomeItem{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
 		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},

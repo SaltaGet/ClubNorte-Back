@@ -28,6 +28,12 @@ type IncomeController struct {
 
 type MovementStockController struct {
 	MovementStockService ports.MovementStockService
+	NotificationController *NotificationController
+}
+
+type NotificationController struct {
+	NotificationService ports.NotificationService
+	NotifyCh         chan struct{}
 }
 
 type PointSaleController struct {

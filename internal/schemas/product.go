@@ -15,6 +15,8 @@ type ProductFullResponse struct {
 	Price       float64 `json:"price"`
 	StockPointSales []*PointSaleStock `gorm:"foreignKey:ProductID" json:"stock_point_sales"`
 	StockDeposit   *StockDepositResponse   `gorm:"foreignKey:ProductID" json:"stock_deposit"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 type ProductResponse struct {
@@ -25,6 +27,8 @@ type ProductResponse struct {
 	Category    CategoryResponse `json:"category"`
 	Price       float64 `json:"price"`
 	Stock       float64    `json:"stock"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 type ProductResponseDTO struct {
@@ -34,6 +38,8 @@ type ProductResponseDTO struct {
 	Category    *CategoryResponse `json:"category,omitempty"`
 	Price       float64 `json:"price"`
 	Stock       float64    `json:"stock"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 type ProductSimpleResponse struct {
@@ -42,6 +48,8 @@ type ProductSimpleResponse struct {
 	Name        string `json:"name"`
 	Price       float64 `json:"price"`
 	Stock       float64    `json:"stock"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 type ProductSimpleResponseDTO struct {
@@ -52,11 +60,13 @@ type ProductSimpleResponseDTO struct {
 }
 
 type ProductCreate struct {
-	Code        string  `json:"code" validate:"required"`
-	Name        string  `json:"name" validate:"required"`
+	Code        string  `json:"code" validate:"required" example:"ABC123"`
+	Name        string  `json:"name" validate:"required" example:"Producto1"`
 	Description *string `json:"description"`
 	CategoryID  uint    `json:"category_id" validate:"required"`
 	Price       float64 `json:"price" validate:"required"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 func (p *ProductCreate) Validate () error {
@@ -82,6 +92,8 @@ type ProductUpdate struct {
 	Description *string `json:"description"`
 	CategoryID  uint    `json:"category_id" validate:"required"`
 	Price       float64 `json:"price" validate:"required"`
+	Notifier    bool     `json:"notifier"`
+	MinAmount   float64  `json:"min_amount"`
 }
 
 func (p *ProductUpdate) Validate () error {

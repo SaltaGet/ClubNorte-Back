@@ -1780,6 +1780,27 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/notification/alert": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Enviar notificaciones",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/event-stream"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "NotificationAlert",
+                "responses": {}
+            }
+        },
         "/api/v1/point_sale/create": {
             "post": {
                 "security": [
@@ -2784,7 +2805,7 @@ const docTemplate = `{
                                         "body": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/schemas.ProductResponseDTO"
+                                                "$ref": "#/definitions/schemas.ProductFullResponse"
                                             }
                                         }
                                     }
@@ -5093,13 +5114,21 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ABC123"
                 },
                 "description": {
                     "type": "string"
                 },
+                "min_amount": {
+                    "type": "number"
+                },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Producto1"
+                },
+                "notifier": {
+                    "type": "boolean"
                 },
                 "price": {
                     "type": "number"
@@ -5121,8 +5150,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "min_amount": {
+                    "type": "number"
+                },
                 "name": {
                     "type": "string"
+                },
+                "notifier": {
+                    "type": "boolean"
                 },
                 "price": {
                     "type": "number"
@@ -5153,8 +5188,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "min_amount": {
+                    "type": "number"
+                },
                 "name": {
                     "type": "string"
+                },
+                "notifier": {
+                    "type": "boolean"
                 },
                 "price": {
                     "type": "number"
@@ -5176,8 +5217,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "min_amount": {
+                    "type": "number"
+                },
                 "name": {
                     "type": "string"
+                },
+                "notifier": {
+                    "type": "boolean"
                 },
                 "price": {
                     "type": "number"
@@ -5226,8 +5273,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "min_amount": {
+                    "type": "number"
+                },
                 "name": {
                     "type": "string"
+                },
+                "notifier": {
+                    "type": "boolean"
                 },
                 "price": {
                     "type": "number"
@@ -5435,6 +5488,9 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "is_admin": {
                     "type": "boolean"
                 },
@@ -5472,6 +5528,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "is_admin": {
                     "type": "boolean"

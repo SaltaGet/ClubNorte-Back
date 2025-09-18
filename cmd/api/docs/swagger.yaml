@@ -264,11 +264,17 @@ definitions:
       category_id:
         type: integer
       code:
+        example: ABC123
         type: string
       description:
         type: string
+      min_amount:
+        type: number
       name:
+        example: Producto1
         type: string
+      notifier:
+        type: boolean
       price:
         type: number
     required:
@@ -287,8 +293,12 @@ definitions:
         type: string
       id:
         type: integer
+      min_amount:
+        type: number
       name:
         type: string
+      notifier:
+        type: boolean
       price:
         type: number
       stock_deposit:
@@ -308,8 +318,12 @@ definitions:
         type: string
       id:
         type: integer
+      min_amount:
+        type: number
       name:
         type: string
+      notifier:
+        type: boolean
       price:
         type: number
       stock:
@@ -323,8 +337,12 @@ definitions:
         type: string
       id:
         type: integer
+      min_amount:
+        type: number
       name:
         type: string
+      notifier:
+        type: boolean
       price:
         type: number
       stock:
@@ -351,8 +369,12 @@ definitions:
         type: string
       id:
         type: integer
+      min_amount:
+        type: number
       name:
         type: string
+      notifier:
+        type: boolean
       price:
         type: number
     required:
@@ -494,6 +516,8 @@ definitions:
         type: string
       id:
         type: integer
+      is_active:
+        type: boolean
       is_admin:
         type: boolean
       last_name:
@@ -519,6 +543,8 @@ definitions:
         type: string
       id:
         type: integer
+      is_active:
+        type: boolean
       is_admin:
         type: boolean
       last_name:
@@ -1683,6 +1709,19 @@ paths:
       summary: MovementStock
       tags:
       - MovementStock
+  /api/v1/notification/alert:
+    get:
+      consumes:
+      - application/json
+      description: Enviar notificaciones
+      produces:
+      - text/event-stream
+      responses: {}
+      security:
+      - CookieAuth: []
+      summary: NotificationAlert
+      tags:
+      - Notification
   /api/v1/point_sale/create:
     post:
       consumes:
@@ -2307,7 +2346,7 @@ paths:
             - properties:
                 body:
                   items:
-                    $ref: '#/definitions/schemas.ProductResponseDTO'
+                    $ref: '#/definitions/schemas.ProductFullResponse'
                   type: array
               type: object
         "400":

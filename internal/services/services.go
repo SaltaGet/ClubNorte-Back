@@ -32,6 +32,10 @@ type MovementStockService struct {
 	MovementStockRepository ports.MovementStockRepository
 }
 
+type NotificationService struct {
+	NotificationRepository ports.NotificationRepository
+}
+
 type PointSaleService struct {
 	PointSaleRepository ports.PointSaleRepository
 }

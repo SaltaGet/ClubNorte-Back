@@ -16,12 +16,19 @@ type Register struct {
 	CloseAmount *float64   `gorm:"" json:"close_amount"`
 	HourClose   *time.Time `gorm:"" json:"hour_close"`
 
-	TotalIncomeCash    *float64 `gorm:"" json:"total_income_cash"`
-	TotalIncomeOthers  *float64 `gorm:"" json:"total_income_others"`
-	TotalExpenseCash   *float64 `gorm:"" json:"total_expense_cash"`
-	TotalExpenseOthers *float64 `gorm:"" json:"total_expense_others"`
+	TotalIncomeCash    *float64 `gorm:"-" json:"total_income_cash"`
+	TotalIncomeOthers  *float64 `gorm:"-" json:"total_income_others"`
+	TotalExpenseCash   *float64 `gorm:"-" json:"total_expense_cash"`
+	TotalExpenseOthers *float64 `gorm:"-" json:"total_expense_others"`
 
 	IsClose   bool      `gorm:"not null,default:false" json:"is_close"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
+}
+
+type TotalMovement struct {
+	TotalIncomeCash    *float64 `gorm:"" json:"total_income_cash"`
+	TotalIncomeOthers  *float64 `gorm:"" json:"total_income_others"`
+	TotalExpenseCash   *float64 `gorm:"" json:"total_expense_cash"`
+	TotalExpenseOthers *float64 `gorm:"" json:"total_expense_others"`
 }

@@ -15,14 +15,16 @@ type MainContainer struct {
 	IncomeSportCourtController *controllers.IncomeSportCourtController
 	IncomeController *controllers.IncomeController
 	MovementStockController *controllers.MovementStockController
+	NotificationController *controllers.NotificationController
 	PointSaleController *controllers.PointSaleController
 	ProductController *controllers.ProductController
 	RegisterController *controllers.RegisterController
 	RoleController *controllers.RoleController
 	SportCourtsController *controllers.SportCourtController
-	// StockDepositeController *controllers.StockDepositeController
 	StockController *controllers.StockController
 	UserController *controllers.UserController
+
+	NotificationChannel chan struct{}
 }
 
 func NewMainContainer(db *gorm.DB) *MainContainer {
@@ -35,14 +37,22 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 	incomeSportCourtSvc := &services.IncomeSportCourtService{IncomeSportCourtRepository: repo}
 	incomeSvc := &services.IncomeService{IncomeRepository: repo}
 	movementStockSvc := &services.MovementStockService{MovementStockRepository: repo}
+	notificationSvc := &services.NotificationService{NotificationRepository: repo}
 	pointSaleSvc := &services.PointSaleService{PointSaleRepository: repo}
 	productSvc := &services.ProductService{ProductRepository: repo}
 	registerSvc := &services.RegisterService{RegisterRepository: repo}
 	roleSvc := &services.RoleService{RoleRepository: repo}
 	sportCourtSvc := &services.SportCourtService{SportCourtRepository: repo}
 	stockSvc := &services.StockService{StockPointSaleRepository: repo}
-	// stockPointSaleSvc := &services.CategoryService{StockPointSaleRepository: repo}
 	userSvc := &services.UserService{UserRepository: repo, RoleRepository: repo}
+
+	notificationCh := make(chan struct{}, 10) // Buffer más grande para múltiples notificaciones
+
+	// Crear NotificationController primero
+	notificationCtrl := &controllers.NotificationController{
+		NotificationService: notificationSvc,
+		NotifyCh:           notificationCh,
+	}
 
 	return &MainContainer{
 		AuthController: &controllers.AuthController{AuthService: authSvc},
@@ -51,14 +61,16 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 		ExpenseController: &controllers.ExpenseController{ExpenseService: expenseSvc},
 		IncomeSportCourtController: &controllers.IncomeSportCourtController{IncomeSportCourtService: incomeSportCourtSvc},
 		IncomeController: &controllers.IncomeController{IncomeService: incomeSvc},
-		MovementStockController: &controllers.MovementStockController{MovementStockService: movementStockSvc},
+		MovementStockController: &controllers.MovementStockController{MovementStockService: movementStockSvc, NotificationController: notificationCtrl},
+		NotificationController: notificationCtrl,
 		PointSaleController: &controllers.PointSaleController{PointSaleService: pointSaleSvc},
 		ProductController: &controllers.ProductController{ProductService: productSvc},
 		RegisterController: &controllers.RegisterController{RegisterService: registerSvc},
 		RoleController: &controllers.RoleController{RoleService: roleSvc},
 		SportCourtsController: &controllers.SportCourtController{SportCourtService: sportCourtSvc},
 		StockController: &controllers.StockController{StockService: stockSvc},
-		// StockPointSaleController: &controllers.StockPointSaleController{StockPointSaleService: stockPointSaleSvc},
 		UserController: &controllers.UserController{UserService: userSvc},
+
+		NotificationChannel: notificationCh,
 	}
 }

@@ -122,6 +122,15 @@ func (m *MovementStockController) MoveStock(c *fiber.Ctx) error {
 		return schemas.HandleError(c, err)
 	}
 
+	if movementStock.FromType == "deposit" && movementStock.ToType == "point_sale" {
+		select {
+		case m.NotificationController.NotifyCh <- struct{}{}:
+		default:
+			fmt.Println("Canal de notificaciones lleno, no se pudo enviar notificación")
+		}
+	}
+
+
 	return c.Status(fiber.StatusOK).JSON(schemas.Response{
 		Status:  true,
 		Body:    nil,

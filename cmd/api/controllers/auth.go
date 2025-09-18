@@ -45,8 +45,8 @@ func (c *AuthController) Login(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   false, // poner en true para prod
-		SameSite: "None",// para prod : "Strict",
+		Secure:   false,  // poner en true para prod
+		SameSite: "None", // para prod : "Strict",
 	}
 
 	ctx.Cookie(cookie)
@@ -79,8 +79,8 @@ func (c *AuthController) Logout(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    "",
 		HTTPOnly: true,
-		Secure:   false, // poner en true para prod
-		SameSite: "None",// para prod : "Strict",
+		Secure:   false,  // poner en true para prod
+		SameSite: "None", // para prod : "Strict",
 	})
 
 	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
@@ -128,8 +128,8 @@ func (c *AuthController) LoginPointSale(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   false, // poner en true para prod
-		SameSite: "None",// para prod : "Strict",
+		Secure:   false,  // poner en true para prod
+		SameSite: "None", // para prod : "Strict",
 		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 
@@ -170,8 +170,8 @@ func (c *AuthController) LogoutPointSale(ctx *fiber.Ctx) error {
 		Name:     "access_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   false, // poner en true para prod
-		SameSite: "None",// para prod : "Strict",
+		Secure:   false,  // poner en true para prod
+		SameSite: "None", // para prod : "Strict",
 		Expires:  time.Now().AddDate(1, 0, 0),
 	}
 

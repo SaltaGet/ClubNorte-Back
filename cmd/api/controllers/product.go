@@ -176,7 +176,7 @@ func (p *ProductController) ProductGetByCategoryID(ctx *fiber.Ctx) error {
 //	@Security		CookieAuth
 //	@Param			page	query		int	false	"Número de página"				default(1)
 //	@Param			limit	query		int	false	"Número de elementos por página"	default(10)
-//	@Success		200		{object}	schemas.Response{body=[]schemas.ProductResponseDTO}
+//	@Success		200		{object}	schemas.Response{body=[]schemas.ProductFullResponse}
 //	@Failure		400		{object}	schemas.Response
 //	@Failure		401		{object}	schemas.Response
 //	@Failure		422		{object}	schemas.Response

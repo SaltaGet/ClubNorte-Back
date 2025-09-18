@@ -33,6 +33,9 @@ func (s *ProductService) ProductGetByID(id uint) (*schemas.ProductFullResponse, 
 			Stock: 0,
 		}
 	}
+
+	productResponse.Notifier = product.Notifier
+	productResponse.MinAmount = product.MinAmount
 	
 	for _, stock := range product.StockPointSales {
 		productResponse.StockPointSales = append(productResponse.StockPointSales, &schemas.PointSaleStock{
@@ -75,6 +78,9 @@ func (s *ProductService) ProductGetByCode(code string) (*schemas.ProductFullResp
 		}
 	}
 
+	productResponse.Notifier = product.Notifier
+	productResponse.MinAmount = product.MinAmount
+
 	for _, stock := range product.StockPointSales {
 		productResponse.StockPointSales = append(productResponse.StockPointSales, &schemas.PointSaleStock{
 			ID:    stock.PointSale.ID,
@@ -104,6 +110,8 @@ func (s *ProductService) ProductGetByName(name string) ([]*schemas.ProductFullRe
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
+			Notifier: prod.Notifier,
+			MinAmount: prod.MinAmount,
 		}
 		if prod.StockDeposit != nil {
 			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
@@ -146,6 +154,8 @@ func (s *ProductService) ProductGetByCategoryID(categoryID uint) ([]*schemas.Pro
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
+			Notifier: prod.Notifier,
+			MinAmount: prod.MinAmount,
 		}
 		if prod.StockDeposit != nil {
 			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{
@@ -188,6 +198,8 @@ func (s *ProductService) ProductGetAll(page, limit int) ([]*schemas.ProductFullR
 				Name: prod.Category.Name,
 			},
 			Price: prod.Price,
+			Notifier: prod.Notifier,
+			MinAmount: prod.MinAmount,
 		}
 		if prod.StockDeposit != nil {
 			productsResponse[i].StockDeposit = &schemas.StockDepositResponse{

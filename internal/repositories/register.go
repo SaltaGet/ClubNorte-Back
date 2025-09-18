@@ -74,108 +74,69 @@ func (r *MainRepository) RegisterClose(pointSaleID uint, userID uint, amountOpen
 	}
 
 	if user.Role.Name != "admin" || user.ID != register.UserOpenID {
-		return schemas.ErrorResponse(403, "no tienes permiso para cerrar la caja", nil)
+		return schemas.ErrorResponse(403, "no tienes permiso para cerrar la caja, solo el creador o el admin", nil)
 	}
 
-	var totalsIncome schemas.Totals
-	if err := r.DB.
-		Model(&models.Income{}).
-		Select(`
-		COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
-		COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
-	`).
-		Where("register_id = ?", register.ID).
-		Scan(&totalsIncome).Error; err != nil {
-		return schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
-	}
-
-	// var totalIncome *float64
+	// var totalsIncome schemas.Totals
 	// if err := r.DB.
 	// 	Model(&models.Income{}).
-	// 	Select("SUM(COALESCE(amount,0.0))").
+	// 	Select(`
+	// 	COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
+	// 	COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
+	// `).
 	// 	Where("register_id = ?", register.ID).
-	// 	Scan(&totalIncome).Error; err != nil {
-	// 	return schemas.ErrorResponse(500, "error al obtener el total de ingresos", err)
+	// 	Scan(&totalsIncome).Error; err != nil {
+	// 	return schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
 	// }
 
-	// if totalIncome == nil {
-	// 	totalIncome = new(float64)
-	// }
-
-	var totalsIncomeCourts schemas.Totals
-	if err := r.DB.
-		Model(&models.IncomeSportsCourts{}).
-		Select(`
-		COALESCE(
-			SUM(
-				CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END + 
-				CASE WHEN rest_payment_method = 'efectivo' THEN COALESCE(rest_pay,0) ELSE 0 END
-			),0
-		) AS cash,
-		COALESCE(
-        SUM(
-            CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
-            CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
-        ), 0
-    ) AS others
-	`).
-		Where("partial_register_id = ? OR rest_register_id = ?", register.ID, register.ID).
-		Scan(&totalsIncomeCourts).Error; err != nil {
-		return schemas.ErrorResponse(500, "error al obtener ingresos de canchas por métodos", err)
-	}
-
-	// var totalIncomeCourts *float64
+	// var totalsIncomeCourts schemas.Totals
 	// if err := r.DB.
 	// 	Model(&models.IncomeSportsCourts{}).
-	// 	Select("SUM(COALESCE(partial_pay, 0) + COALESCE(rest_pay, 0))").
+	// 	Select(`
+	// 	COALESCE(
+	// 		SUM(
+	// 			CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END + 
+	// 			CASE WHEN rest_payment_method = 'efectivo' THEN COALESCE(rest_pay,0) ELSE 0 END
+	// 		),0
+	// 	) AS cash,
+	// 	COALESCE(
+  //       SUM(
+  //           CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
+  //           CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
+  //       ), 0
+  //   ) AS others
+	// `).
 	// 	Where("partial_register_id = ? OR rest_register_id = ?", register.ID, register.ID).
-	// 	Scan(&totalIncomeCourts).Error; err != nil {
-	// 	return schemas.ErrorResponse(500, "error al obtener el total de ingresos de canchas", err)
+	// 	Scan(&totalsIncomeCourts).Error; err != nil {
+	// 	return schemas.ErrorResponse(500, "error al obtener ingresos de canchas por métodos", err)
 	// }
 
-	// if totalIncomeCourts == nil {
-	// 	totalIncomeCourts = new(float64)
-	// }
-
-	var totalsExpense schemas.Totals
-	if err := r.DB.
-		Model(&models.Expense{}).
-		Select(`
-		COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
-		COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
-	`).
-		Where("register_id = ?", register.ID).
-		Scan(&totalsExpense).Error; err != nil {
-		return schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
-	}
-
-	// var totalExpense *float64
+	// var totalsExpense schemas.Totals
 	// if err := r.DB.
 	// 	Model(&models.Expense{}).
-	// 	Select("SUM(COALESCE(amount,0.0))").
+	// 	Select(`
+	// 	COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
+	// 	COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
+	// `).
 	// 	Where("register_id = ?", register.ID).
-	// 	Scan(&totalExpense).Error; err != nil {
-	// 	return schemas.ErrorResponse(500, "error al obtener el total de egresos", err)
-	// }
-
-	// if totalExpense == nil {
-	// 	totalExpense = new(float64)
+	// 	Scan(&totalsExpense).Error; err != nil {
+	// 	return schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
 	// }
 
 	now := time.Now().UTC()
-	totalIncomesCash := totalsIncome.Cash + totalsIncomeCourts.Cash
-	totalIncomesOthers := totalsIncome.Others + totalsIncomeCourts.Others
-	totalExpenseCash := totalsExpense.Cash + totalsExpense.Cash
-	totalExpenseOthers := totalsExpense.Others + totalsExpense.Others
+	// totalIncomesCash := totalsIncome.Cash + totalsIncomeCourts.Cash
+	// totalIncomesOthers := totalsIncome.Others + totalsIncomeCourts.Others
+	// totalExpenseCash := totalsExpense.Cash + totalsExpense.Cash
+	// totalExpenseOthers := totalsExpense.Others + totalsExpense.Others
 
 	register.CloseAmount = &amountOpen.CloseAmount
 	register.IsClose = true
 	register.HourClose = &now
 	register.UserCloseID = &userID
-	register.TotalIncomeCash = &totalIncomesCash
-	register.TotalIncomeOthers = &totalIncomesOthers
-	register.TotalExpenseCash = &totalExpenseCash
-	register.TotalExpenseOthers = &totalExpenseOthers
+	// register.TotalIncomeCash = &totalIncomesCash
+	// register.TotalIncomeOthers = &totalIncomesOthers
+	// register.TotalExpenseCash = &totalExpenseCash
+	// register.TotalExpenseOthers = &totalExpenseOthers
 
 	if err := r.DB.Save(&register).Error; err != nil {
 		return schemas.ErrorResponse(500, "error al cerrar la caja", err)
@@ -201,9 +162,9 @@ func (r *MainRepository) RegisterInform(pointSaleID uint, userID uint, fromDate,
 		if err := r.DB.
 			Model(&models.Income{}).
 			Select(`
-		COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
-		COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
-	`).
+				COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
+				COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
+			`).
 			Where("register_id = ?", registers[i].ID).
 			Scan(&totalsIncome).Error; err != nil {
 			return nil, schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
@@ -213,9 +174,9 @@ func (r *MainRepository) RegisterInform(pointSaleID uint, userID uint, fromDate,
 		if err := r.DB.
 			Model(&models.Expense{}).
 			Select(`
-		COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
-		COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
-	`).
+				COALESCE(SUM(CASE WHEN payment_method = 'efectivo' THEN COALESCE(total,0) ELSE 0	END),0) AS cash,
+				COALESCE(SUM(CASE WHEN payment_method IN ('tarjeta','transferencia') THEN COALESCE(total,0) ELSE 0 END),0) AS others
+			`).
 			Where("register_id = ?", registers[i].ID).
 			Scan(&totalsExpense).Error; err != nil {
 			return nil, schemas.ErrorResponse(500, "error al obtener ingresos por métodos", err)
@@ -225,19 +186,19 @@ func (r *MainRepository) RegisterInform(pointSaleID uint, userID uint, fromDate,
 		if err := r.DB.
 			Model(&models.IncomeSportsCourts{}).
 			Select(`
-		COALESCE(
-			SUM(
-				CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END + 
-				CASE WHEN rest_payment_method = 'efectivo' THEN COALESCE(rest_pay,0) ELSE 0 END
-			),0
-		) AS cash,
-		COALESCE(
-        SUM(
-            CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
-            CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
-        ), 0
-    ) AS others
-	`).
+				COALESCE(
+					SUM(
+						CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END + 
+						CASE WHEN rest_payment_method = 'efectivo' THEN COALESCE(rest_pay,0) ELSE 0 END
+					),0
+				) AS cash,
+				COALESCE(
+						SUM(
+								CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
+								CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
+						), 0
+				) AS others
+			`).
 			Where("partial_register_id = ? OR rest_register_id = ?", registers[i].ID, registers[i].ID).
 			Scan(&totalsIncomeCourts).Error; err != nil {
 			return nil, schemas.ErrorResponse(500, "error al obtener ingresos de canchas por métodos", err)
@@ -256,3 +217,4 @@ func (r *MainRepository) RegisterInform(pointSaleID uint, userID uint, fromDate,
 
 	return registers, nil
 }
+

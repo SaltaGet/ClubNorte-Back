@@ -14,6 +14,7 @@ type UserResponse struct {
 	Cellphone *string      `json:"cellphone"`
 	Email     string       `json:"email"`
 	Username  string       `json:"username"`
+	IsActive  bool         `json:"is_active"`
 	IsAdmin   bool         `json:"is_admin"`
 	Role      RoleResponse `json:"role"`
 	PointSales []PointSaleResponse  `json:"point_sales"`
@@ -27,6 +28,7 @@ type UserResponseDTO struct {
 	Cellphone *string      `json:"cellphone"`
 	Email     string       `json:"email"`
 	Username  string       `json:"username"`
+	IsActive  bool         `json:"is_active"`
 	IsAdmin   bool         `json:"is_admin"`
 	Role      RoleResponse `json:"role"`
 }

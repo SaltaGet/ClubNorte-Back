@@ -71,38 +71,54 @@ func (r *MainRepository) UserCreate(userCreate *schemas.UserCreate) (uint, error
 }
 
 func (r *MainRepository) UserUpdate(userUpdate *schemas.UserUpdate) error {
-    return r.DB.Transaction(func(tx *gorm.DB) error {
-        var pointSales []models.PointSale
-        if err := tx.Where("id IN (?)", userUpdate.PointSaleIDs).Find(&pointSales).Error; err != nil {
-            return err
-        }
+	return r.DB.Transaction(func(tx *gorm.DB) error {
+		var pointSales []models.PointSale
+		if err := tx.Where("id IN (?)", userUpdate.PointSaleIDs).Find(&pointSales).Error; err != nil {
+			return err
+		}
 
-        // Actualizar datos básicos
-        if err := tx.Model(&models.User{}).
-            Where("id = ?", userUpdate.ID).
-            Updates(models.User{
-                FirstName: userUpdate.FirstName,
-                LastName:  userUpdate.LastName,
-                Address:   userUpdate.Address,
-                Cellphone: userUpdate.Cellphone,
-                Username:  userUpdate.Username,
-                Email:     userUpdate.Email,
-                RoleID:    userUpdate.RoleID,
-            }).Error; err != nil {
-            return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
-        }
+		// Actualizar datos básicos
+		// if err := tx.Model(&models.User{}).
+		//     Where("id = ?", userUpdate.ID).
+		//     Updates(models.User{
+		//         FirstName: userUpdate.FirstName,
+		//         LastName:  userUpdate.LastName,
+		//         Address:   userUpdate.Address,
+		//         Cellphone: userUpdate.Cellphone,
+		//         Username:  userUpdate.Username,
+		//         Email:     userUpdate.Email,
+		//         RoleID:    userUpdate.RoleID,
+		// 				IsActive:  userUpdate.IsActive,
+		//     }).Error; err != nil {
+		//     return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
+		// }
+		updates := map[string]interface{}{
+			"first_name": userUpdate.FirstName,
+			"last_name":  userUpdate.LastName,
+			"address":    userUpdate.Address,
+			"cellphone":  userUpdate.Cellphone,
+			"username":   userUpdate.Username,
+			"email":      userUpdate.Email,
+			"role_id":    userUpdate.RoleID,
+			"is_active":  userUpdate.IsActive,
+		}
 
-        // Actualizar relación con PointSales
-        if err := tx.Model(&models.User{ID: userUpdate.ID}).
-            Association("PointSales").
-            Replace(pointSales); err != nil {
-            return schemas.ErrorResponse(500, "error al actualizar la relación con los puntos de venta", err)
-        }
+		if err := tx.Model(&models.User{}).
+			Where("id = ?", userUpdate.ID).
+			Updates(updates).Error; err != nil {
+			return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
+		}
 
-        return nil
-    })
+		// Actualizar relación con PointSales
+		if err := tx.Model(&models.User{ID: userUpdate.ID}).
+			Association("PointSales").
+			Replace(pointSales); err != nil {
+			return schemas.ErrorResponse(500, "error al actualizar la relación con los puntos de venta", err)
+		}
+
+		return nil
+	})
 }
-
 
 func (r *MainRepository) UserDelete(id uint) error {
 	if err := r.DB.Where("id = ?", id).Delete(&models.User{}).Error; err != nil {

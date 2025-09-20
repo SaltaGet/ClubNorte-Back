@@ -150,6 +150,8 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 	product.Description = productCreate.Description
 	product.Price = productCreate.Price
 	product.CategoryID = productCreate.CategoryID
+	product.Notifier = productCreate.Notifier
+	product.MinAmount = productCreate.MinAmount
 
 	if err := r.DB.Create(&product).Error; err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {

@@ -60,7 +60,6 @@ func (i *IncomeUpdate) Validate() error {
 type IncomeItemCreate struct {
 	ProductID uint    `json:"product_id" validate:"required"`
 	Quantity  float64     `json:"quantity" validate:"required,gt=0"`
-	// Price     float64 `json:"price" validate:"required,gt=0"`
 }
 
 type IncomeResponse struct {
@@ -107,7 +106,6 @@ func (r *IncomeDateRequest) GetParsedDates() (time.Time, time.Time, error) {
 		return time.Time{}, time.Time{}, ErrorResponse(422, "error al parsear la fecha de fin", err)
 	}
 
-	// Ajustar horas
 	from = time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, from.Location())
 	to = time.Date(to.Year(), to.Month(), to.Day(), 23, 59, 59, int(time.Second-time.Nanosecond), to.Location())
 

@@ -107,6 +107,7 @@ type UserUpdate struct {
 	Email         string  `json:"email"`
 	Username      string  `json:"username"`
 	RoleID        uint    `json:"role_id"`
+	IsActive      bool    `json:"is_active"`
 	PointSaleIDs []uint  `json:"point_sales_ids"`
 }
 

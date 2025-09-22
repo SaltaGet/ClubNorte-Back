@@ -74,7 +74,7 @@ func (r *MainRepository) RegisterClose(pointSaleID uint, userID uint, amountOpen
 	}
 
 	if user.Role.Name != "admin" || user.ID != register.UserOpenID {
-		return schemas.ErrorResponse(403, "no tienes permiso para cerrar la caja, solo el creador o el admin", nil)
+		return schemas.ErrorResponse(403, "no tienes permiso para cerrar la caja, solo el creador o el admin", fmt.Errorf("no tienes permiso para cerrar la caja, solo el creador o el admin"))
 	}
 
 	// var totalsIncome schemas.Totals

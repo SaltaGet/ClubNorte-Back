@@ -137,6 +137,137 @@ definitions:
       user:
         $ref: '#/definitions/schemas.UserSimpleDTO'
     type: object
+  schemas.IncomeSportsCourtsCreate:
+    properties:
+      date_partial_pay:
+        type: string
+      date_play:
+        type: string
+      partial_pay:
+        type: number
+      partial_payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+      price:
+        type: number
+      shift:
+        enum:
+        - mañana
+        - tarde
+        - noche
+        type: string
+      sports_court_id:
+        type: integer
+    required:
+    - date_play
+    - shift
+    - sports_court_id
+    type: object
+  schemas.IncomeSportsCourtsDateRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    type: object
+  schemas.IncomeSportsCourtsResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/schemas.IncomeItemResponse'
+        type: array
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.IncomeSportsCourtsResponseDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.IncomeSportsCourtsRestPay:
+    properties:
+      id:
+        type: integer
+      rest_pay:
+        type: number
+      rest_payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+    required:
+    - id
+    type: object
+  schemas.IncomeSportsCourtsUpdate:
+    properties:
+      date_partial_pay:
+        type: string
+      date_play:
+        type: string
+      date_rest_pay:
+        type: string
+      id:
+        type: integer
+      partial_pay:
+        type: number
+      partial_payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+      partial_register_id:
+        type: integer
+      price:
+        type: number
+      rest_pay:
+        type: number
+      rest_payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+      rest_register_id:
+        type: integer
+      shift:
+        enum:
+        - mañana
+        - tarde
+        - noche
+        type: string
+      sports_court_id:
+        type: integer
+    required:
+    - date_play
+    - id
+    - shift
+    - sports_court_id
+    type: object
   schemas.IncomeUpdate:
     properties:
       description:
@@ -583,6 +714,8 @@ definitions:
         type: string
       id:
         type: integer
+      is_active:
+        type: boolean
       last_name:
         type: string
       point_sales_ids:
@@ -1562,6 +1695,240 @@ paths:
       summary: IncomeUpdate
       tags:
       - Income
+  /api/v1/income_sport_court/create:
+    post:
+      consumes:
+      - application/json
+      description: Crear un ingreso de una cancha
+      parameters:
+      - description: Datos requeridos para crear un ingreso
+        in: body
+        name: income_create
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeSportsCourtsCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeSportCourtCreate
+      tags:
+      - IncomeSportCourt
+  /api/v1/income_sport_court/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Eliminar un ingreso
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeSportCourtDelete
+      tags:
+      - IncomeSportCourt
+  /api/v1/income_sport_court/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Obtener un ingreso por ID de una cancha
+      parameters:
+      - description: ID del ingreso
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.IncomeSportsCourtsResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeSportCourtGetByID
+      tags:
+      - IncomeSportCourt
+  /api/v1/income_sport_court/get_by_date:
+    post:
+      consumes:
+      - application/json
+      description: Obtener ingresos por fechas
+      parameters:
+      - description: Fecha desde - hasta del ingreso
+        in: body
+        name: income_date
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeSportsCourtsDateRequest'
+      - default: 1
+        description: Número de página
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Número de elementos por página
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.IncomeSportsCourtsResponseDTO'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeSportCourtGetByDate
+      tags:
+      - IncomeSportCourt
+  /api/v1/income_sport_court/update:
+    put:
+      consumes:
+      - application/json
+      description: Editar un ingreso de una cancha
+      parameters:
+      - description: Datos requeridos para editar un ingreso
+        in: body
+        name: income_sport_court_update_pay
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.IncomeSportsCourtsRestPay'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: IncomeSportCourtUpdate
+      tags:
+      - IncomeSportCourt
   /api/v1/movement_stock/get/{id}:
     get:
       consumes:

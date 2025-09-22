@@ -43,7 +43,10 @@ func (r *MainRepository) IncomeGetByDate(pointSaleID uint, fromDate, toDate time
 	}
 
 	var total int64
-	if err := r.DB.Model(&models.Income{}).Where("created_at BETWEEN ? AND ?", fromDate, toDate).Count(&total).Error; err != nil {
+	if err := r.DB.Model(&models.Income{}).
+		Where("created_at BETWEEN ? AND ?", fromDate, toDate).
+		Where("point_sale_id = ?", pointSaleID).
+		Count(&total).Error; err != nil {
 		return nil, 0, schemas.ErrorResponse(500, "error al contar los ingresos", err)
 	}
 

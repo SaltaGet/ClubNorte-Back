@@ -58,7 +58,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				}
 				return schemas.ErrorResponse(500, "error al obtener el depósito", err)
 			}
-			fromID = deposit.ID
+			fromID = 100
 
 			if !input.IgnoreStock && deposit.Stock < input.Amount {
 				return schemas.ErrorResponse(400, "no hay suficiente stock en depósito para transferir", fmt.Errorf("no hay suficiente stock en depósito para transferir: %.2f", input.Amount))
@@ -92,7 +92,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				}).Error; err != nil {
 				return schemas.ErrorResponse(500, "error al obtener producto del punto de venta", err)
 			}
-			fromID = ps.ID
+			fromID = input.FromID
 
 			if !input.IgnoreStock && ps.Stock < input.Amount {
 				return schemas.ErrorResponse(400, "no hay suficiente stock en punto de venta para transferir", fmt.Errorf("no hay suficiente stock en punto de venta para transferir %.2f unidades", input.Amount))
@@ -119,7 +119,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				return schemas.ErrorResponse(500, "error al obtener el depósito de destino", err)
 			}
 			deposit.Stock += input.Amount
-			toID = deposit.ID
+			toID = 100
 
 			defer func() {
 				_ = tx.Save(&deposit).Error
@@ -148,7 +148,7 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 				return schemas.ErrorResponse(500, "error al obtener el punto de venta de destino", err)
 			}
 			ps.Stock += input.Amount
-			toID = ps.ID
+			toID = input.ToID
 
 			defer func() {
 				_ = tx.Save(&ps).Error

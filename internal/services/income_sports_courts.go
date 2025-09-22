@@ -22,6 +22,10 @@ func (i *IncomeSportCourtService) IncomeSportCourtUpdate(userID, pointSaleID uin
  return nil
 }
 
+func (i *IncomeSportCourtService) IncomeSportCourtUpdatePay(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsRestPay) error {
+ return i.IncomeSportCourtRepository.IncomeSportCourtUpdatePay(userID, pointSaleID, incomeUpdate)
+}
+
 func (i *IncomeSportCourtService) IncomeSportCourtDelete(pointSaleID, id uint) error {
 	return nil
 }

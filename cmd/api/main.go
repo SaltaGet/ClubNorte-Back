@@ -34,15 +34,15 @@ import (
 //	@description				Enter your JWT token here. Example: "eyJhbGciOiJIUz..."
 
 func main() {
-	err := godotenv.Load("/etc/variables/club-norte/.env")
-	if err != nil {
-		log.Fatalf("Error al cargar el archivo .env: %v", err)
+// 	err := godotenv.Load("/etc/variables/club-norte/.env")
+// 	if err != nil {
+// 		log.Fatalf("Error al cargar el archivo .env: %v", err)
+// 	}
+	if _, err := os.Stat(".env"); err == nil {
+		if err := godotenv.Load(".env"); err != nil {
+			log.Fatalf("Error cargando .env local: %v", err)
+		}
 	}
-	// if _, err := os.Stat(".env"); err == nil {
-	// 	if err := godotenv.Load(".env"); err != nil {
-	// 		log.Fatalf("Error cargando .env local: %v", err)
-	// 	}
-	// }
 
 	db, err := database.ConnectDB()
 	if err != nil {
@@ -72,7 +72,7 @@ func main() {
 	app := fiber.New(fiber.Config{
 		ProxyHeader: "X-Forwarded-For",
 	})
-	
+
 	app.Use(nrfiber.Middleware(nrApp))
 
 	app.Use(middleware.LoggingMiddleware)
@@ -85,11 +85,11 @@ func main() {
 
 	maxAge, err := strconv.Atoi(os.Getenv("MAXAGE"))
 	if err != nil {
-		maxAge = 300 
+		maxAge = 300
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     strings.ReplaceAll(os.Getenv("ORIGIN"), " ", ""), 
+		AllowOrigins:     strings.ReplaceAll(os.Getenv("ORIGIN"), " ", ""),
 		AllowMethods:     os.Getenv("METHODS"),
 		AllowHeaders:     os.Getenv("HEADERS"),
 		AllowCredentials: credentials,

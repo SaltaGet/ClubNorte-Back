@@ -46,12 +46,17 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 	stockSvc := &services.StockService{StockPointSaleRepository: repo}
 	userSvc := &services.UserService{UserRepository: repo, RoleRepository: repo}
 
-	notificationCh := make(chan struct{}, 10) // Buffer más grande para múltiples notificaciones
+	notificationCh := make(chan struct{}, 100) // Buffer más grande para múltiples notificaciones
 
 	// Crear NotificationController primero
 	notificationCtrl := &controllers.NotificationController{
 		NotificationService: notificationSvc,
 		NotifyCh:           notificationCh,
+	}
+
+	movementStockCtrl := &controllers.MovementStockController{
+		MovementStockService:   movementStockSvc,
+		NotificationController: notificationCtrl,
 	}
 
 	return &MainContainer{
@@ -61,7 +66,7 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 		ExpenseController: &controllers.ExpenseController{ExpenseService: expenseSvc},
 		IncomeSportCourtController: &controllers.IncomeSportCourtController{IncomeSportCourtService: incomeSportCourtSvc},
 		IncomeController: &controllers.IncomeController{IncomeService: incomeSvc},
-		MovementStockController: &controllers.MovementStockController{MovementStockService: movementStockSvc, NotificationController: notificationCtrl},
+		MovementStockController: movementStockCtrl,
 		NotificationController: notificationCtrl,
 		PointSaleController: &controllers.PointSaleController{PointSaleService: pointSaleSvc},
 		ProductController: &controllers.ProductController{ProductService: productSvc},

@@ -12,6 +12,7 @@ type IncomeSportCourtRepository interface {
 	IncomeSportCourtGetByDate(pointSaleID uint, fromDate, toDate time.Time, page, limit int) ([]*models.IncomeSportsCourts, int64, error)
 	IncomeSportCourtCreate(userID, pointSaleID uint, incomeCreate *schemas.IncomeSportsCourtsCreate) (uint, error)
 	IncomeSportCourtUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsUpdate) error
+	IncomeSportCourtUpdatePay(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsRestPay) error
 	IncomeSportCourtDelete(pointSaleID, id uint) error
 }
 
@@ -20,5 +21,6 @@ type IncomeSportCourtService interface {
 	IncomeSportCourtGetByDate(pointSaleID uint, fromDate, toDate time.Time, page, limit int) ([]*schemas.IncomeSportsCourtsResponseDTO, int64, error)
 	IncomeSportCourtCreate(userID, pointSaleID uint, incomeCreate *schemas.IncomeSportsCourtsCreate) (uint, error)
 	IncomeSportCourtUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsUpdate) error
+	IncomeSportCourtUpdatePay(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsRestPay) error
 	IncomeSportCourtDelete(pointSaleID, id uint) error
 }

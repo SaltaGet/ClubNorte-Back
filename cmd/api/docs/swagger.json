@@ -1535,6 +1535,379 @@
                 }
             }
         },
+        "/api/v1/income_sport_court/create": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Crear un ingreso de una cancha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IncomeSportCourt"
+                ],
+                "summary": "IncomeSportCourtCreate",
+                "parameters": [
+                    {
+                        "description": "Datos requeridos para crear un ingreso",
+                        "name": "income_create",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.IncomeSportsCourtsCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/income_sport_court/delete/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Eliminar un ingreso",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IncomeSportCourt"
+                ],
+                "summary": "IncomeSportCourtDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/income_sport_court/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Obtener un ingreso por ID de una cancha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IncomeSportCourt"
+                ],
+                "summary": "IncomeSportCourtGetByID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del ingreso",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "$ref": "#/definitions/schemas.IncomeSportsCourtsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/income_sport_court/get_by_date": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Obtener ingresos por fechas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IncomeSportCourt"
+                ],
+                "summary": "IncomeSportCourtGetByDate",
+                "parameters": [
+                    {
+                        "description": "Fecha desde - hasta del ingreso",
+                        "name": "income_date",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.IncomeSportsCourtsDateRequest"
+                        }
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Número de página",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Número de elementos por página",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/schemas.IncomeSportsCourtsResponseDTO"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/income_sport_court/update": {
+            "put": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Editar un ingreso de una cancha",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IncomeSportCourt"
+                ],
+                "summary": "IncomeSportCourtUpdate",
+                "parameters": [
+                    {
+                        "description": "Datos requeridos para editar un ingreso",
+                        "name": "income_sport_court_update_pay",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.IncomeSportsCourtsRestPay"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/movement_stock/get/{id}": {
             "get": {
                 "security": [
@@ -4912,6 +5285,196 @@
                 }
             }
         },
+        "schemas.IncomeSportsCourtsCreate": {
+            "type": "object",
+            "required": [
+                "date_play",
+                "shift",
+                "sports_court_id"
+            ],
+            "properties": {
+                "date_partial_pay": {
+                    "type": "string"
+                },
+                "date_play": {
+                    "type": "string"
+                },
+                "partial_pay": {
+                    "type": "number"
+                },
+                "partial_payment_method": {
+                    "type": "string",
+                    "enum": [
+                        "efectivo",
+                        "tarjeta",
+                        "transferencia"
+                    ]
+                },
+                "price": {
+                    "type": "number"
+                },
+                "shift": {
+                    "type": "string",
+                    "enum": [
+                        "mañana",
+                        "tarde",
+                        "noche"
+                    ]
+                },
+                "sports_court_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "schemas.IncomeSportsCourtsDateRequest": {
+            "type": "object",
+            "properties": {
+                "from_date": {
+                    "type": "string",
+                    "example": "2022-01-01"
+                },
+                "to_date": {
+                    "type": "string",
+                    "example": "2022-12-31"
+                }
+            }
+        },
+        "schemas.IncomeSportsCourtsResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.IncomeItemResponse"
+                    }
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                },
+                "user": {
+                    "$ref": "#/definitions/schemas.UserSimpleDTO"
+                }
+            }
+        },
+        "schemas.IncomeSportsCourtsResponseDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                },
+                "user": {
+                    "$ref": "#/definitions/schemas.UserSimpleDTO"
+                }
+            }
+        },
+        "schemas.IncomeSportsCourtsRestPay": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "rest_pay": {
+                    "type": "number"
+                },
+                "rest_payment_method": {
+                    "type": "string",
+                    "enum": [
+                        "efectivo",
+                        "tarjeta",
+                        "transferencia"
+                    ]
+                }
+            }
+        },
+        "schemas.IncomeSportsCourtsUpdate": {
+            "type": "object",
+            "required": [
+                "date_play",
+                "id",
+                "shift",
+                "sports_court_id"
+            ],
+            "properties": {
+                "date_partial_pay": {
+                    "type": "string"
+                },
+                "date_play": {
+                    "type": "string"
+                },
+                "date_rest_pay": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "partial_pay": {
+                    "type": "number"
+                },
+                "partial_payment_method": {
+                    "type": "string",
+                    "enum": [
+                        "efectivo",
+                        "tarjeta",
+                        "transferencia"
+                    ]
+                },
+                "partial_register_id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rest_pay": {
+                    "type": "number"
+                },
+                "rest_payment_method": {
+                    "type": "string",
+                    "enum": [
+                        "efectivo",
+                        "tarjeta",
+                        "transferencia"
+                    ]
+                },
+                "rest_register_id": {
+                    "type": "integer"
+                },
+                "shift": {
+                    "type": "string",
+                    "enum": [
+                        "mañana",
+                        "tarde",
+                        "noche"
+                    ]
+                },
+                "sports_court_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "schemas.IncomeUpdate": {
             "type": "object",
             "required": [
@@ -5581,6 +6144,9 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "last_name": {
                     "type": "string"

@@ -6,6 +6,8 @@ type IncomeSportsCourts struct {
 	ID            uint        `gorm:"primaryKey;autoIncrement" json:"id"`
 	SportsCourtID uint        `gorm:"not null" json:"sports_court_id"`
 	SportsCourt   SportsCourt `gorm:"foreignKey:SportsCourtID;references:ID" json:"sports_court"`
+	PointSaleID   uint        `gorm:"not null" json:"point_sale_id"`
+	PointSale     PointSale   `gorm:"foreignKey:PointSaleID;references:ID" json:"point_sale"`
 	Shift         string      `gorm:"not null" json:"shift" validate:"oneof=mañana tarde noche"`
 	DatePlay      time.Time   `gorm:"not null" json:"date_play"`
 	UserID        uint        `gorm:"not null" json:"user_id"`

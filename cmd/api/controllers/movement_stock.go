@@ -123,11 +123,16 @@ func (m *MovementStockController) MoveStock(c *fiber.Ctx) error {
 	}
 
 	if movementStock.FromType == "deposit" && movementStock.ToType == "point_sale" {
-		select {
-		case m.NotificationController.NotifyCh <- struct{}{}:
-		default:
-			fmt.Println("Canal de notificaciones lleno, no se pudo enviar notificación")
-		}
+		// select {
+		// case m.NotificationController.NotifyCh <- struct{}{}:
+		// default:
+		// 	fmt.Println("Canal de notificaciones lleno, no se pudo enviar notificación")
+		// }
+		if movementStock.FromType == "deposit" && movementStock.ToType == "point_sale" {
+    go func() {
+        m.NotificationController.NotifyCh <- struct{}{}
+    }()
+}
 	}
 
 

@@ -247,7 +247,7 @@ func (s *SportCourtController) SportCourtUpdate(c *fiber.Ctx) error {
 //	@Failure		422	{object}	schemas.Response
 //	@Failure		404	{object}	schemas.Response
 //	@Failure		500	{object}	schemas.Response
-//	@Router			/api/v1/sport_court/delete/{id} [post]
+//	@Router			/api/v1/sport_court/delete/{id} [delete]
 func (s *SportCourtController) SportCourtDelete(c *fiber.Ctx) error {
 	pointSale := c.Locals("point_sale").(*schemas.PointSaleContext)
 

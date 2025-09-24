@@ -9,7 +9,6 @@ import (
 func IncomeRoutes(app *fiber.App, controllers *controllers.IncomeController) {
 	income := app.Group("/api/v1/income", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
 
-	income.Put("/update", controllers.IncomeUpdate)
 	income.Post("/create", controllers.IncomeCreate)
 	income.Post("/get_by_date", controllers.IncomeGetByDate)
 	income.Get("/get/:id", controllers.IncomeGetByID)

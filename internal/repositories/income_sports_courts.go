@@ -27,8 +27,7 @@ func (r *MainRepository) IncomeSportCourtGetByDate(pointSaleID uint, fromDate, t
 
 	offSet := (page - 1) * limit
 
-	if err := r.DB.Preload("User").
-		Preload("SportsCourt").
+	if err := r.DB.Preload("SportsCourt").
 		Where("created_at BETWEEN ? AND ?", fromDate, toDate).
 		Where("point_sale_id = ?", pointSaleID).
 		Order("created_at DESC").
@@ -62,7 +61,9 @@ func (r *MainRepository) IncomeSportCourtCreate(userID, pointSaleID uint, income
 		return 0, schemas.ErrorResponse(500, "Error al obtener la apertura de caja", err)
 	}
 
-	// 🔹 Crear ingreso
+	loc, _ := time.LoadLocation("America/Argentina/Buenos_Aires")
+	now := time.Now().In(loc)
+
 	income := models.IncomeSportsCourts{
 		SportsCourtID:        incomeCreate.SportsCourtID,
 		Shift:                incomeCreate.Shift,
@@ -73,6 +74,7 @@ func (r *MainRepository) IncomeSportCourtCreate(userID, pointSaleID uint, income
 		PartialRegisterID:    pointSaleID,
 		Price:                incomeCreate.Price,
 		PointSaleID:          pointSaleID,
+		DatePartialPay:       now,
 	}
 
 	if incomeCreate.Price == incomeCreate.PartialPay {
@@ -89,43 +91,43 @@ func (r *MainRepository) IncomeSportCourtCreate(userID, pointSaleID uint, income
 	return income.ID, nil
 }
 
-func (r *MainRepository) IncomeSportCourtUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsUpdate) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		updateIncome := map[string]any{
-			"sport_court_id": incomeUpdate.SportsCourtID,
+// func (r *MainRepository) IncomeSportCourtUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsUpdate) error {
+// 	return r.DB.Transaction(func(tx *gorm.DB) error {
+// 		updateIncome := map[string]any{
+// 			"sport_court_id": incomeUpdate.SportsCourtID,
 
-			"shift":                  incomeUpdate.Shift,
-			"date_play":              incomeUpdate.DatePlay,
-			"partial_pay":            incomeUpdate.PartialPay,
-			"partial_payment_method": incomeUpdate.PartialPaymentMethod,
-			"date_partial_pay":       incomeUpdate.DatePartialPay,
+// 			"shift":                  incomeUpdate.Shift,
+// 			"date_play":              incomeUpdate.DatePlay,
+// 			"partial_pay":            incomeUpdate.PartialPay,
+// 			"partial_payment_method": incomeUpdate.PartialPaymentMethod,
+// 			"date_partial_pay":       incomeUpdate.DatePartialPay,
 
-			"rest_pay":            incomeUpdate.RestPay,
-			"rest_payment_method": incomeUpdate.RestPaymentMethod,
-			"date_rest_pay":       incomeUpdate.DateRestPay,
+// 			"rest_pay":            incomeUpdate.RestPay,
+// 			"rest_payment_method": incomeUpdate.RestPaymentMethod,
+// 			"date_rest_pay":       incomeUpdate.DateRestPay,
 
-			"price": incomeUpdate.Price,
-		}
+// 			"price": incomeUpdate.Price,
+// 		}
 
-		if err := tx.Model(&models.IncomeSportsCourts{}).Where("id = ? AND point_sale_id = ?", incomeUpdate.ID, pointSaleID).Updates(updateIncome).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
-			}
-			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
-		}
+// 		if err := tx.Model(&models.IncomeSportsCourts{}).Where("id = ? AND point_sale_id = ?", incomeUpdate.ID, pointSaleID).Updates(updateIncome).Error; err != nil {
+// 			if errors.Is(err, gorm.ErrRecordNotFound) {
+// 				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
+// 			}
+// 			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
+// 		}
 
-		if tx.RowsAffected == 0 {
-			return schemas.ErrorResponse(404, "Ingreso no encontrado", nil)
-		}
+// 		if tx.RowsAffected == 0 {
+// 			return schemas.ErrorResponse(404, "Ingreso no encontrado", nil)
+// 		}
 
-		return nil
-	})
-}
+// 		return nil
+// 	})
+// }
 
 func (r *MainRepository) IncomeSportCourtUpdatePay(userID, pointSaleID uint, incomeUpdate *schemas.IncomeSportsCourtsRestPay) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
 		var income models.IncomeSportsCourts
-		if err := tx.Where("id = ? AND point_sale_id = ?", incomeUpdate.ID, pointSaleID).First(income).Error; err != nil {
+		if err := tx.Where("id = ? AND point_sale_id = ?", incomeUpdate.ID, pointSaleID).First(&income).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
 			}
@@ -140,18 +142,12 @@ func (r *MainRepository) IncomeSportCourtUpdatePay(userID, pointSaleID uint, inc
 			return schemas.ErrorResponse(400, "Error al actualizar el ingreso", fmt.Errorf("el pago restante debe ser igual al precio menos el pago parcial"))
 		}
 
-		updateIncome := map[string]any{
-			"rest_pay":            incomeUpdate.RestPay,
-			"rest_payment_method": incomeUpdate.RestPaymentMethod,
-			"date_rest_pay":       &now,
-		}
+		income.RestPay = &incomeUpdate.RestPay
+		income.RestPaymentMethod = &incomeUpdate.RestPaymentMethod
+		income.DateRestPay = &now
 
-		if err := tx.Model(&models.IncomeSportsCourts{}).Where("id = ? AND point_sale_id = ?", incomeUpdate.ID, pointSaleID).Updates(updateIncome).Error; err != nil {
-			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
-		}
-
-		if tx.RowsAffected == 0 {
-			return schemas.ErrorResponse(404, "Ingreso no encontrado", nil)
+		if tx.Save(&income).Error != nil {
+			return schemas.ErrorResponse(500, "error al actualizar ingreso", fmt.Errorf("error al actualizar el ingreso"))
 		}
 
 		return nil
@@ -159,5 +155,12 @@ func (r *MainRepository) IncomeSportCourtUpdatePay(userID, pointSaleID uint, inc
 }
 
 func (r *MainRepository) IncomeSportCourtDelete(pointSaleID, id uint) error {
+	if err := r.DB.Where("id = ? AND point_sale_id = ?", id, pointSaleID).Delete(&models.IncomeSportsCourts{}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
+		}
+		return schemas.ErrorResponse(500, "Error al eliminar el ingreso", err)
+	}
+
 	return nil
 }

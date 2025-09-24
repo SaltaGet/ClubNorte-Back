@@ -1257,6 +1257,15 @@ const docTemplate = `{
                     "Income"
                 ],
                 "summary": "IncomeDelte",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del ingreso",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1474,75 +1483,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/income/update": {
-            "put": {
-                "security": [
-                    {
-                        "CookieAuth": []
-                    }
-                ],
-                "description": "Editar un ingreso",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Income"
-                ],
-                "summary": "IncomeUpdate",
-                "parameters": [
-                    {
-                        "description": "Datos requeridos para editar un ingreso",
-                        "name": "income_create",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/schemas.IncomeUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/schemas.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/income_sport_court/create": {
             "post": {
                 "security": [
@@ -1630,6 +1570,15 @@ const docTemplate = `{
                     "IncomeSportCourt"
                 ],
                 "summary": "IncomeSportCourtDelete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID del ingreso",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1847,7 +1796,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/income_sport_court/update": {
+        "/api/v1/income_sport_court/update_pay": {
             "put": {
                 "security": [
                     {
@@ -3945,7 +3894,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/sport_court/delete/{id}": {
-            "post": {
+            "delete": {
                 "security": [
                     {
                         "CookieAuth": []
@@ -5301,14 +5250,13 @@ const docTemplate = `{
                 "sports_court_id"
             ],
             "properties": {
-                "date_partial_pay": {
-                    "type": "string"
-                },
                 "date_play": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-08-01T12:00:00Z"
                 },
                 "partial_pay": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 },
                 "partial_payment_method": {
                     "type": "string",
@@ -5316,10 +5264,12 @@ const docTemplate = `{
                         "efectivo",
                         "tarjeta",
                         "transferencia"
-                    ]
+                    ],
+                    "example": "efectivo|tarjeta|transferencia"
                 },
                 "price": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 200
                 },
                 "shift": {
                     "type": "string",
@@ -5327,10 +5277,12 @@ const docTemplate = `{
                         "mañana",
                         "tarde",
                         "noche"
-                    ]
+                    ],
+                    "example": "mañana|tarde|noche"
                 },
                 "sports_court_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -5353,23 +5305,32 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "date_partial_pay": {
+                    "type": "string"
+                },
+                "date_rest_pay": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.IncomeItemResponse"
-                    }
+                "partial_pay": {
+                    "type": "number"
                 },
-                "payment_method": {
+                "partial_payment_method": {
                     "type": "string"
                 },
-                "total": {
+                "price": {
                     "type": "number"
+                },
+                "rest_pay": {
+                    "type": "number"
+                },
+                "rest_payment_method": {
+                    "type": "string"
                 },
                 "user": {
                     "$ref": "#/definitions/schemas.UserSimpleDTO"
@@ -5382,17 +5343,32 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "date_partial_pay": {
+                    "type": "string"
+                },
+                "date_rest_pay": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
-                "payment_method": {
-                    "type": "string"
-                },
-                "total": {
+                "partial_pay": {
                     "type": "number"
                 },
-                "user": {
-                    "$ref": "#/definitions/schemas.UserSimpleDTO"
+                "partial_payment_method": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rest_pay": {
+                    "type": "number"
+                },
+                "rest_payment_method": {
+                    "type": "string"
                 }
             }
         },
@@ -5409,102 +5385,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "rest_payment_method": {
-                    "type": "string",
-                    "enum": [
-                        "efectivo",
-                        "tarjeta",
-                        "transferencia"
-                    ]
-                }
-            }
-        },
-        "schemas.IncomeSportsCourtsUpdate": {
-            "type": "object",
-            "required": [
-                "date_play",
-                "id",
-                "shift",
-                "sports_court_id"
-            ],
-            "properties": {
-                "date_partial_pay": {
-                    "type": "string"
-                },
-                "date_play": {
-                    "type": "string"
-                },
-                "date_rest_pay": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "partial_pay": {
-                    "type": "number"
-                },
-                "partial_payment_method": {
-                    "type": "string",
-                    "enum": [
-                        "efectivo",
-                        "tarjeta",
-                        "transferencia"
-                    ]
-                },
-                "partial_register_id": {
-                    "type": "integer"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "rest_pay": {
-                    "type": "number"
-                },
-                "rest_payment_method": {
-                    "type": "string",
-                    "enum": [
-                        "efectivo",
-                        "tarjeta",
-                        "transferencia"
-                    ]
-                },
-                "rest_register_id": {
-                    "type": "integer"
-                },
-                "shift": {
-                    "type": "string",
-                    "enum": [
-                        "mañana",
-                        "tarde",
-                        "noche"
-                    ]
-                },
-                "sports_court_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "schemas.IncomeUpdate": {
-            "type": "object",
-            "required": [
-                "id",
-                "items",
-                "payment_method"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "items": {
-                    "description": "\u003c- dive recorre cada elemento",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.IncomeItemCreate"
-                    }
-                },
-                "payment_method": {
                     "type": "string",
                     "enum": [
                         "efectivo",

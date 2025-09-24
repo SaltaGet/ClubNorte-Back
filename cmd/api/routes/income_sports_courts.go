@@ -7,12 +7,11 @@ import (
 )
 
 func IncomeSportsCourtsRoutes(app *fiber.App, controllers *controllers.IncomeSportCourtController) {
-	income := app.Group("/api/v1/income_sport_court", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
+	incomeSportCourt := app.Group("/api/v1/income_sport_court", middleware.AuthMiddleware(), middleware.AuthPointSaleMiddleware())
 
-	income.Put("/update", controllers.IncomeSportCourtUpdate)
-	income.Put("/update_pay", controllers.IncomeSportCourtUpdatePay)
-	income.Post("/create", controllers.IncomeSportCourtCreate)
-	income.Post("/get_by_date", controllers.IncomeSportCourtGetByDate)
-	income.Get("/get/:id", controllers.IncomeSportCourtGetByID)
-	income.Delete("/delete/:id", controllers.IncomeSportCourtDelete)
+	incomeSportCourt.Post("/create", controllers.IncomeSportCourtCreate)
+	incomeSportCourt.Put("/update_pay", controllers.IncomeSportCourtUpdatePay)
+	incomeSportCourt.Post("/get_by_date", controllers.IncomeSportCourtGetByDate)
+	incomeSportCourt.Get("/get/:id", controllers.IncomeSportCourtGetByID)
+	incomeSportCourt.Delete("/delete/:id", controllers.IncomeSportCourtDelete)
 }

@@ -49,10 +49,6 @@ func (i *IncomeService) IncomeCreate(userID, pointSaleID uint, incomeCreate *sch
 	return i.IncomeRepository.IncomeCreate(userID, pointSaleID, incomeCreate)
 }
 
-func (i *IncomeService) IncomeUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeUpdate) error {
-	return i.IncomeRepository.IncomeUpdate(userID, pointSaleID, incomeUpdate)
-}
-
 func (i *IncomeService) IncomeDelete(pointSaleID, id uint) error {
 	return i.IncomeRepository.IncomeDelete(pointSaleID, id)
 }

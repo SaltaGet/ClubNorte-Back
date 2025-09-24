@@ -19,10 +19,10 @@ type IncomeSportsCourts struct {
 	PartialRegisterID    uint      `gorm:"" json:"partial_register_id"`
 	// PartialRegister             *Register  `gorm:"foreignKey:RegisterID;references:ID" json:"register"`
 
-	RestPay           *float64   `gorm:"not null" json:"rest_pay"`
+	RestPay           *float64   `gorm:"" json:"rest_pay"`
 	RestPaymentMethod *string    `gorm:"size:30;default:'efectivo'" json:"rest_payment_method" validate:"oneof=efectivo tarjeta transferencia"`
-	DateRestPay       *time.Time `gorm:"not null" json:"date_rest_pay"`
-	RestRegisterID    *uint      `gorm:"not null" json:"rest_register_id"`
+	DateRestPay       *time.Time `gorm:"" json:"date_rest_pay"`
+	RestRegisterID    *uint      `gorm:"" json:"rest_register_id"`
 
 	Price     float64   `gorm:"not null" json:"price"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`

@@ -143,46 +143,6 @@ func (i *IncomeSportCourtController) IncomeSportCourtCreate(c *fiber.Ctx) error 
 	})
 }
 
-// IncomeSportCourtUpdate godoc
-//
-//	@Summary		IncomeSportCourtUpdate
-//	@Description	Editar un ingreso de una cancha
-//	@Tags			IncomeSportCourt
-//	@Accept			json
-//	@Produce		json
-//	@Security		CookieAuth
-//	@Param			income_sport_court_update	body		schemas.IncomeSportsCourtsUpdate	true	"Datos requeridos para editar un ingreso"
-//	@Success		200							{object}	schemas.Response
-//	@Failure		400							{object}	schemas.Response
-//	@Failure		401							{object}	schemas.Response
-//	@Failure		422							{object}	schemas.Response
-//	@Failure		404							{object}	schemas.Response
-//	@Failure		500							{object}	schemas.Response
-//	@Router			/api/v1/income_sport_court/update [put]
-func (i *IncomeSportCourtController) IncomeSportCourtUpdate(c *fiber.Ctx) error {
-	var incomeSportCourtUpdate schemas.IncomeSportsCourtsUpdate
-	if err := c.BodyParser(&incomeSportCourtUpdate); err != nil {
-		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
-	}
-	if err := incomeSportCourtUpdate.Validate(); err != nil {
-		return schemas.HandleError(c, err)
-	}
-
-	pointSale := c.Locals("point_sale").(*schemas.PointSaleContext)
-	user := c.Locals("user").(*schemas.UserContext)
-
-	err := i.IncomeSportCourtService.IncomeSportCourtUpdate(user.ID, pointSale.ID, &incomeSportCourtUpdate)
-	if err != nil {
-		return schemas.HandleError(c, err)
-	}
-
-	return c.Status(200).JSON(schemas.Response{
-		Status:  true,
-		Body:    nil,
-		Message: "Ingreso actualizado exitosamente",
-	})
-}
-
 // IncomeSportCourtUpdatePay godoc
 //
 //	@Summary		IncomeSportCourtUpdate
@@ -198,7 +158,7 @@ func (i *IncomeSportCourtController) IncomeSportCourtUpdate(c *fiber.Ctx) error 
 //	@Failure		422								{object}	schemas.Response
 //	@Failure		404								{object}	schemas.Response
 //	@Failure		500								{object}	schemas.Response
-//	@Router			/api/v1/income_sport_court/update [put]
+//	@Router			/api/v1/income_sport_court/update_pay [put]
 func (i *IncomeSportCourtController) IncomeSportCourtUpdatePay(c *fiber.Ctx) error {
 	var incomeSportCourtUpdatePay schemas.IncomeSportsCourtsRestPay
 	if err := c.BodyParser(&incomeSportCourtUpdatePay); err != nil {
@@ -231,6 +191,7 @@ func (i *IncomeSportCourtController) IncomeSportCourtUpdatePay(c *fiber.Ctx) err
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
+//	@Param			id	path		string	true	"ID del ingreso"
 //	@Success		200	{object}	schemas.Response
 //	@Failure		400	{object}	schemas.Response
 //	@Failure		401	{object}	schemas.Response

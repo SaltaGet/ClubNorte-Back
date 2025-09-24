@@ -143,46 +143,6 @@ func (i *IncomeController) IncomeCreate(c *fiber.Ctx) error {
 	})
 }
 
-// IncomeUpdate godoc
-//
-//	@Summary		IncomeUpdate
-//	@Description	Editar un ingreso
-//	@Tags			Income
-//	@Accept			json
-//	@Produce		json
-//	@Security		CookieAuth
-//	@Param			income_create	body		schemas.IncomeUpdate	true	"Datos requeridos para editar un ingreso"
-//	@Success		200				{object}	schemas.Response
-//	@Failure		400				{object}	schemas.Response
-//	@Failure		401				{object}	schemas.Response
-//	@Failure		422				{object}	schemas.Response
-//	@Failure		404				{object}	schemas.Response
-//	@Failure		500				{object}	schemas.Response
-//	@Router			/api/v1/income/update [put]
-func (i *IncomeController) IncomeUpdate(c *fiber.Ctx) error {
-	var incomeUpdate schemas.IncomeUpdate
-	if err := c.BodyParser(&incomeUpdate); err != nil {
-		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
-	}
-	if err := incomeUpdate.Validate(); err != nil {
-		return schemas.HandleError(c, err)
-	}
-
-	pointSale := c.Locals("point_sale").(*schemas.PointSaleContext)
-	user := c.Locals("user").(*schemas.UserContext)
-
-	err := i.IncomeService.IncomeUpdate(user.ID, pointSale.ID, &incomeUpdate)
-	if err != nil {
-		return schemas.HandleError(c, err)
-	}
-
-	return c.Status(200).JSON(schemas.Response{
-		Status:  true,
-		Body:    nil,
-		Message: "Ingreso actualizado exitosamente",
-	})
-}
-
 // IncomeDelte godoc
 //
 //	@Summary		IncomeDelte
@@ -191,6 +151,7 @@ func (i *IncomeController) IncomeUpdate(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
+//	@Param			id	path		string	true	"ID del ingreso"
 //	@Success		200	{object}	schemas.Response
 //	@Failure		400	{object}	schemas.Response
 //	@Failure		401	{object}	schemas.Response

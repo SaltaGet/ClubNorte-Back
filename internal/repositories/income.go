@@ -279,96 +279,125 @@ func (r *MainRepository) IncomeCreate(userID, pointSaleID uint, incomeCreate *sc
 // 		return nil
 // 	})
 // }
-func (r *MainRepository) IncomeUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeUpdate) error {
-	return r.DB.Transaction(func(tx *gorm.DB) error {
-		// 1️⃣ Buscar el ingreso existente
-		var income models.Income
-		if err := tx.Preload("Items").First(&income, incomeUpdate.ID).Error; err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
-			}
-			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
-		}
+// func (r *MainRepository) IncomeUpdate(userID, pointSaleID uint, incomeUpdate *schemas.IncomeUpdate) error {
+// 	return r.DB.Transaction(func(tx *gorm.DB) error {
+// 		// 1️⃣ Buscar el ingreso existente
+// 		var income models.Income
+// 		if err := tx.Preload("Items").First(&income, incomeUpdate.ID).Error; err != nil {
+// 			if errors.Is(err, gorm.ErrRecordNotFound) {
+// 				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
+// 			}
+// 			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
+// 		}
 
-		// 2️⃣ Validar que pertenezca al punto de venta
-		if income.PointSaleID != pointSaleID {
-			return schemas.ErrorResponse(403, "El ingreso no pertenece al punto de venta", 
-				fmt.Errorf("el ingreso %d no pertenece al punto de venta %d", income.ID, pointSaleID))
-		}
+// 		// 2️⃣ Validar que pertenezca al punto de venta
+// 		if income.PointSaleID != pointSaleID {
+// 			return schemas.ErrorResponse(403, "El ingreso no pertenece al punto de venta", 
+// 				fmt.Errorf("el ingreso %d no pertenece al punto de venta %d", income.ID, pointSaleID))
+// 		}
 
-		// 3️⃣ Revertir stock de los ítems antiguos
-		for _, oldItem := range income.Items {
-			if err := tx.Model(&models.Product{}).
-				Where("id = ?", oldItem.ProductID).
-				Update("stock", gorm.Expr("stock + ?", oldItem.Quantity)).Error; err != nil {
-				return schemas.ErrorResponse(500, "Error al revertir el stock de los productos", err)
-			}
-		}
+// 		// 3️⃣ Revertir stock de los ítems antiguos
+// 		for _, oldItem := range income.Items {
+// 			if err := tx.Model(&models.Product{}).
+// 				Where("id = ?", oldItem.ProductID).
+// 				Update("stock", gorm.Expr("stock + ?", oldItem.Quantity)).Error; err != nil {
+// 				return schemas.ErrorResponse(500, "Error al revertir el stock de los productos", err)
+// 			}
+// 		}
 
-		// 4️⃣ Eliminar los ítems antiguos
-		if len(income.Items) > 0 {
-			if err := tx.Where("income_id = ?", income.ID).Delete(&models.IncomeItem{}).Error; err != nil {
-				return schemas.ErrorResponse(500, "Error al eliminar los items antiguos", err)
-			}
-		}
+// 		// 4️⃣ Eliminar los ítems antiguos
+// 		if len(income.Items) > 0 {
+// 			if err := tx.Where("income_id = ?", income.ID).Delete(&models.IncomeItem{}).Error; err != nil {
+// 				return schemas.ErrorResponse(500, "Error al eliminar los items antiguos", err)
+// 			}
+// 		}
 
-		// 5️⃣ Crear los nuevos ítems y ajustar stock
-		var newItems []*models.IncomeItem
-		total := 0.0
-		for _, item := range incomeUpdate.Items {
-			var product models.Product
-			if err := tx.First(&product, item.ProductID).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return schemas.ErrorResponse(400, fmt.Sprintf("El producto %d no existe", item.ProductID), err)
-				}
-				return schemas.ErrorResponse(500, "Error al obtener el producto", err)
-			}
+// 		// 5️⃣ Crear los nuevos ítems y ajustar stock
+// 		var newItems []*models.IncomeItem
+// 		total := 0.0
+// 		for _, item := range incomeUpdate.Items {
+// 			var product models.Product
+// 			if err := tx.First(&product, item.ProductID).Error; err != nil {
+// 				if errors.Is(err, gorm.ErrRecordNotFound) {
+// 					return schemas.ErrorResponse(400, fmt.Sprintf("El producto %d no existe", item.ProductID), err)
+// 				}
+// 				return schemas.ErrorResponse(500, "Error al obtener el producto", err)
+// 			}
 
-			subtotal := item.Quantity * product.Price
+// 			subtotal := item.Quantity * product.Price
 
-			newItems = append(newItems, &models.IncomeItem{
-				IncomeID:  income.ID,
-				ProductID: item.ProductID,
-				Quantity:  item.Quantity,
-				Price:     product.Price,
-				Subtotal:  subtotal,
-			})
-			total += subtotal
+// 			newItems = append(newItems, &models.IncomeItem{
+// 				IncomeID:  income.ID,
+// 				ProductID: item.ProductID,
+// 				Quantity:  item.Quantity,
+// 				Price:     product.Price,
+// 				Subtotal:  subtotal,
+// 			})
+// 			total += subtotal
 
-			// Descontar stock según la nueva cantidad
-			if err := tx.Model(&models.Product{}).
-				Where("id = ?", item.ProductID).
-				Update("stock", gorm.Expr("stock - ?", item.Quantity)).Error; err != nil {
-				return schemas.ErrorResponse(500, "Error al actualizar el stock de los productos", err)
-			}
-		}
+// 			// Descontar stock según la nueva cantidad
+// 			if err := tx.Model(&models.Product{}).
+// 				Where("id = ?", item.ProductID).
+// 				Update("stock", gorm.Expr("stock - ?", item.Quantity)).Error; err != nil {
+// 				return schemas.ErrorResponse(500, "Error al actualizar el stock de los productos", err)
+// 			}
+// 		}
 
-		// 6️⃣ Guardar los nuevos ítems
-		if len(newItems) > 0 {
-			if err := tx.Create(&newItems).Error; err != nil {
-				return schemas.ErrorResponse(500, "Error al crear los nuevos items", err)
-			}
-		}
+// 		// 6️⃣ Guardar los nuevos ítems
+// 		if len(newItems) > 0 {
+// 			if err := tx.Create(&newItems).Error; err != nil {
+// 				return schemas.ErrorResponse(500, "Error al crear los nuevos items", err)
+// 			}
+// 		}
 
-		// 7️⃣ Actualizar el ingreso
-		income.Total = total
-		income.Description = incomeUpdate.Description
-		income.PaymentMethod = incomeUpdate.PaymentMethod
-		income.UserID = userID
+// 		// 7️⃣ Actualizar el ingreso
+// 		income.Total = total
+// 		income.Description = incomeUpdate.Description
+// 		income.PaymentMethod = incomeUpdate.PaymentMethod
+// 		income.UserID = userID
 
-		if err := tx.Save(&income).Error; err != nil {
-			return schemas.ErrorResponse(500, "Error al actualizar el ingreso", err)
-		}
+// 		if err := tx.Save(&income).Error; err != nil {
+// 			return schemas.ErrorResponse(500, "Error al actualizar el ingreso", err)
+// 		}
 
-		return nil
-	})
-}
+// 		return nil
+// 	})
+// }
 
 
+
+// func (r *MainRepository) IncomeDelete(pointSaleID, id uint) error {
+// 	return r.DB.Transaction(func(tx *gorm.DB) error {
+// 		// 1️⃣ Buscar el ingreso
+// 		var income models.Income
+// 		if err := tx.Preload("Items").
+// 			Where("id = ? AND point_sale_id = ?", id, pointSaleID).
+// 			First(&income).Error; err != nil {
+// 			if errors.Is(err, gorm.ErrRecordNotFound) {
+// 				return schemas.ErrorResponse(404, "Ingreso no encontrado", err)
+// 			}
+// 			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
+// 		}
+
+// 		// 2️⃣ Eliminar items asociados
+// 		if len(income.Items) > 0 {
+// 			if err := tx.Where("income_id = ?", income.ID).Delete(&models.IncomeItem{}).Error; err != nil {
+// 				return schemas.ErrorResponse(500, "Error al eliminar los items asociados", err)
+// 			}
+// 		}
+
+// 		// 3️⃣ Eliminar el ingreso
+// 		if err := tx.Delete(&income).Error; err != nil {
+// 			return schemas.ErrorResponse(500, "Error al eliminar el ingreso", err)
+// 		}
+
+// 		return nil
+// 	})
+// }
 
 func (r *MainRepository) IncomeDelete(pointSaleID, id uint) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
-		// 1️⃣ Buscar el ingreso
+		// 1️⃣ Buscar el ingreso con sus items
 		var income models.Income
 		if err := tx.Preload("Items").
 			Where("id = ? AND point_sale_id = ?", id, pointSaleID).
@@ -379,14 +408,42 @@ func (r *MainRepository) IncomeDelete(pointSaleID, id uint) error {
 			return schemas.ErrorResponse(500, "Error al obtener el ingreso", err)
 		}
 
-		// 2️⃣ Eliminar items asociados
+		// 2️⃣ Devolver stock de cada item
+		for _, item := range income.Items {
+			var stock models.StockPointSale
+			if err := tx.
+				Where("point_sale_id = ? AND product_id = ?", pointSaleID, item.ProductID).
+				First(&stock).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					// Si no existe registro de stock, lo creamos
+					newStock := models.StockPointSale{
+						PointSaleID: pointSaleID,
+						ProductID:   item.ProductID,
+						Stock:       item.Quantity,
+					}
+					if err := tx.Create(&newStock).Error; err != nil {
+						return schemas.ErrorResponse(500, "Error al crear stock del producto", err)
+					}
+					continue
+				}
+				return schemas.ErrorResponse(500, "Error al obtener stock del producto", err)
+			}
+
+			// Sumar la cantidad al stock existente
+			stock.Stock += item.Quantity
+			if err := tx.Save(&stock).Error; err != nil {
+				return schemas.ErrorResponse(500, "Error al actualizar stock del producto", err)
+			}
+		}
+
+		// 3️⃣ Eliminar items asociados
 		if len(income.Items) > 0 {
 			if err := tx.Where("income_id = ?", income.ID).Delete(&models.IncomeItem{}).Error; err != nil {
 				return schemas.ErrorResponse(500, "Error al eliminar los items asociados", err)
 			}
 		}
 
-		// 3️⃣ Eliminar el ingreso
+		// 4️⃣ Eliminar el ingreso
 		if err := tx.Delete(&income).Error; err != nil {
 			return schemas.ErrorResponse(500, "Error al eliminar el ingreso", err)
 		}
@@ -394,4 +451,5 @@ func (r *MainRepository) IncomeDelete(pointSaleID, id uint) error {
 		return nil
 	})
 }
+
 

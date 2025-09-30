@@ -40,7 +40,8 @@ func connectSQLite() (*gorm.DB, error) {
 
 	if err := db.AutoMigrate(
 		&models.User{}, &models.Category{},
-		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{},
+		&models.Expense{}, &models.ExpenseBuy{}, &models.ItemExpenseBuy{},
+		&models.Income{}, &models.IncomeSportsCourts{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
 		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
@@ -163,7 +164,8 @@ func connectMySQL() (*gorm.DB, error) {
 	// Migraciones
 	if err := db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
 		&models.User{}, &models.Category{},
-		&models.Expense{}, &models.Income{}, &models.IncomeSportsCourts{}, &models.IncomeItem{},
+		&models.Expense{}, &models.ExpenseBuy{}, &models.ItemExpenseBuy{},
+		&models.Income{}, &models.IncomeSportsCourts{}, &models.IncomeItem{},
 		&models.MovementStock{}, &models.PointSale{}, &models.Product{},
 		&models.PointSale{}, &models.Register{}, &models.Role{},
 		&models.SportsCourt{}, &models.StockDeposit{}, &models.StockPointSale{},
@@ -278,7 +280,6 @@ func CloseDB(db *gorm.DB) error {
 	return nil
 }
 
-
 // func CreateTestData() error {
 //     // 2. Crear Categorías
 //     categories := []models.Category{
@@ -288,7 +289,7 @@ func CloseDB(db *gorm.DB) error {
 //         {ID: 4, Name: "Accesorios"},
 //         {ID: 5, Name: "Comida"},
 //     }
-    
+
 //     for _, category := range categories {
 //         dbTest.FirstOrCreate(&category, models.Category{ID: category.ID})
 //     }
@@ -296,22 +297,22 @@ func CloseDB(db *gorm.DB) error {
 //     // 3. Crear Puntos de Venta
 //     pointSales := []models.PointSale{
 //         {
-//             ID: 1, 
-//             Name: "Punto Central", 
+//             ID: 1,
+//             Name: "Punto Central",
 //             Description: stringPtr("Punto de venta principal del complejo"),
 //         },
 //         {
-//             ID: 2, 
-//             Name: "Cancha Norte", 
+//             ID: 2,
+//             Name: "Cancha Norte",
 //             Description: stringPtr("Kiosco ubicado en las canchas del sector norte"),
 //         },
 //         {
-//             ID: 3, 
-//             Name: "Área de Descanso", 
+//             ID: 3,
+//             Name: "Área de Descanso",
 //             Description: stringPtr("Punto de venta en la zona de descanso"),
 //         },
 //     }
-    
+
 //     for _, pointSale := range pointSales {
 //         dbTest.FirstOrCreate(&pointSale, models.PointSale{ID: pointSale.ID})
 //     }
@@ -343,14 +344,14 @@ func CloseDB(db *gorm.DB) error {
 //             Description: stringPtr("Cancha de básquetbol techada"),
 //         },
 //     }
-    
+
 //     for _, court := range sportsCourts {
 //         dbTest.FirstOrCreate(&court, models.SportsCourt{ID: court.ID})
 //     }
 
 // 		var sportsCourt1, sportsCourt2, sportsCourt3, sportsCourt4 models.SportsCourt
 //     var pointSport1, pointSport2, pointSport3 models.PointSale
-    
+
 //     dbTest.First(&sportsCourt1, 1)
 //     dbTest.First(&sportsCourt2, 2)
 //     dbTest.First(&sportsCourt3, 3)
@@ -358,7 +359,7 @@ func CloseDB(db *gorm.DB) error {
 //     dbTest.First(&pointSport1, 1)
 //     dbTest.First(&pointSport2, 2)
 //     dbTest.First(&pointSport3, 3)
-    
+
 //     // Asignar usuarios a puntos de venta
 //     dbTest.Model(&pointSport1).Association("SportsCourts").Append([]models.SportsCourt{sportsCourt1})
 //     dbTest.Model(&pointSport2).Association("SportsCourts").Append([]models.SportsCourt{sportsCourt2})
@@ -406,7 +407,7 @@ func CloseDB(db *gorm.DB) error {
 //             RoleID: 3,
 //         },
 //     }
-    
+
 //     for _, user := range users {
 //         dbTest.FirstOrCreate(&user, models.User{ID: user.ID})
 //     }
@@ -434,7 +435,7 @@ func CloseDB(db *gorm.DB) error {
 //         {ID: 19, Code: "BEB-005", Name: "Café Express", Description: stringPtr("Café espresso caliente"), Price: 180.0, CategoryID: 1},
 //         {ID: 20, Code: "SNK-005", Name: "Alfajor Triple", Description: stringPtr("Alfajor de dulce de leche"), Price: 220.0, CategoryID: 2},
 //     }
-    
+
 //     for _, product := range products {
 //         dbTest.FirstOrCreate(&product, models.Product{ID: product.ID})
 //     }
@@ -462,7 +463,7 @@ func CloseDB(db *gorm.DB) error {
 //         {ProductID: 19, Stock: 200.0},
 //         {ProductID: 20, Stock: 150.0},
 //     }
-    
+
 //     for _, stock := range stocksDeposit {
 //         dbTest.FirstOrCreate(&stock, models.StockDeposit{ProductID: stock.ProductID})
 //     }
@@ -512,14 +513,14 @@ func CloseDB(db *gorm.DB) error {
 //         {ProductID: 7, PointSaleID: 1, Stock: 150.0},
 //         {ProductID: 16, PointSaleID: 1, Stock: 10.0},
 //         {ProductID: 17, PointSaleID: 1, Stock: 50.0},
-        
+
 //         // Cancha Norte (ID: 2)
 //         {ProductID: 1, PointSaleID: 2, Stock: 30.0},
 //         {ProductID: 2, PointSaleID: 2, Stock: 50.0},
 //         {ProductID: 3, PointSaleID: 2, Stock: 25.0},
 //         {ProductID: 13, PointSaleID: 2, Stock: 20.0},
 //         {ProductID: 14, PointSaleID: 2, Stock: 15.0},
-        
+
 //         // Área de Descanso (ID: 3)
 //         {ProductID: 4, PointSaleID: 3, Stock: 20.0},
 //         {ProductID: 6, PointSaleID: 3, Stock: 40.0},
@@ -527,36 +528,36 @@ func CloseDB(db *gorm.DB) error {
 //         {ProductID: 19, PointSaleID: 3, Stock: 80.0},
 //         {ProductID: 20, PointSaleID: 3, Stock: 50.0},
 //     }
-    
+
 //     for _, stock := range stocksPointSale {
 //         dbTest.FirstOrCreate(&stock, models.StockPointSale{ProductID: stock.ProductID, PointSaleID: stock.PointSaleID})
 //     }
 
 //     // 9. Crear relaciones many-to-many
-    
+
 //     // Usuarios - Puntos de Venta
 //     var user1, user2, user3 models.User
 // 		var point1, point2, point3 models.PointSale
-    
+
 //     dbTest.First(&user1, 2)
 //     dbTest.First(&user2, 3)
 //     dbTest.First(&user3, 4)
 //     dbTest.First(&point1, 1)
 //     dbTest.First(&point2, 2)
 //     dbTest.First(&point3, 3)
-    
+
 //     // Asignar usuarios a puntos de venta
 //     dbTest.Model(&user1).Association("PointSales").Append([]models.PointSale{point1, point2, point3})
 //     dbTest.Model(&user2).Association("PointSales").Append([]models.PointSale{point1, point2})
 //     dbTest.Model(&user3).Association("PointSales").Append([]models.PointSale{point3})
-    
+
 //     // Puntos de Venta - Canchas Deportivas
 //     var court1, court2, court3, court4 models.SportsCourt
 //     dbTest.First(&court1, 1)
 //     dbTest.First(&court2, 2)
 //     dbTest.First(&court3, 3)
 //     dbTest.First(&court4, 4)
-    
+
 //     // Nota: Hay un error en tu modelo SportsCourt, debería ser []PointSale en lugar de []User
 //     // Asumo que quieres relacionar canchas con puntos de venta
 //     // db.Model(&point1).Association("SportsCourts").Append([]SportsCourt{court1, court2})
@@ -568,38 +569,37 @@ func CloseDB(db *gorm.DB) error {
 
 // func DeleteTestData() error {
 // 	fmt.Println("Iniciando eliminación de datos...")
-    
+
 //     // Orden de eliminación respetando foreign keys
 //     queries := []string{
 //         // 1. Eliminar relaciones many-to-many primero
 //         "DELETE FROM user_point_sales",
 //         "DELETE FROM sports_courts_point_sales",
 // 				"DELETE FROM movement_stocks",
-        
+
 //         // 2. Eliminar tablas con foreign keys (orden de dependencias)
 //         "DELETE FROM stock_point_sales",
-//         "DELETE FROM stock_deposits", 
+//         "DELETE FROM stock_deposits",
 //         "DELETE FROM products",
-        
+
 //         // 3. Eliminar tablas independientes
 //         "DELETE FROM sports_courts",
-//         "DELETE FROM point_sales", 
+//         "DELETE FROM point_sales",
 //         "DELETE FROM categories",
 //     }
-    
+
 //     // Ejecutar cada query
 //     for i, query := range queries {
 //         fmt.Printf("Ejecutando paso %d: %s\n", i+1, query)
-        
+
 //         if err := dbTest.Exec(query).Error; err != nil {
 //             return fmt.Errorf("error ejecutando '%s': %v", query, err)
 //         }
 //     }
-    
+
 //     fmt.Println("✓ Todos los datos eliminados exitosamente!")
 //     return nil
 // }
-
 
 // func stringPtr(s string) *string {
 //     return &s

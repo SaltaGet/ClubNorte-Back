@@ -38,6 +38,9 @@ func (r *MainRepository) PointSaleCreate(pointSaleCreate *schemas.PointSaleCreat
 	pointSale.Description = pointSaleCreate.Description
 
 	if err := r.DB.Create(&pointSale).Error; err != nil {
+		if IsDuplicateError(err) {
+			return 0, schemas.ErrorResponse(400, "la categoria "+pointSaleCreate.Name+" ya existe", err)
+		}
 		return 0, schemas.ErrorResponse(500, "error al crear el punto de venta", err)
 	}
 
@@ -45,13 +48,20 @@ func (r *MainRepository) PointSaleCreate(pointSaleCreate *schemas.PointSaleCreat
 }
 
 func (r *MainRepository) PointSaleUpdate(pointSaleUpdate *schemas.PointSaleUpdate) error {
-	err := r.DB.Model(&models.PointSale{}).
-		Where("id = ?", pointSaleUpdate.ID).
-		Updates(models.PointSale{Name: pointSaleUpdate.Name, Description: pointSaleUpdate.Description}).Error
-
-	if err != nil {
+	var ps models.PointSale
+	if err := r.DB.First(&ps, pointSaleUpdate.ID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return schemas.ErrorResponse(404, "punto de venta no encontrado", err)
+		}
+		return schemas.ErrorResponse(500, "error al obtener el punto de venta", err)
+	}
+
+	if err := r.DB.Model(&ps).Updates(models.PointSale{
+		Name:        pointSaleUpdate.Name,
+		Description: pointSaleUpdate.Description,
+	}).Error; err != nil {
+		if IsDuplicateError(err) {
+			return schemas.ErrorResponse(400, "el punto de venta "+pointSaleUpdate.Name+" ya existe", err)
 		}
 		return schemas.ErrorResponse(500, "error al actualizar el punto de venta", err)
 	}

@@ -1,6 +1,11 @@
 package models
 
-import "time"
+import (
+	"strings"
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type SportsCourt struct {
 	ID        uint      `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -10,4 +15,9 @@ type SportsCourt struct {
 	CreatedAt   time.Time  `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 	PointSales       []PointSale `gorm:"many2many:sports_courts_point_sales;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"point_sales"`
+}
+
+func (s *SportsCourt) BeforeCreate(tx *gorm.DB) (err error) {
+	s.Code = strings.ToLower(s.Code)
+	return
 }

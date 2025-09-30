@@ -20,12 +20,20 @@ type ExpenseService struct {
 	ExpenseRepository ports.ExpenseRepository
 }
 
+type ExpenseBuyService struct {
+	ExpenseBuyRepository ports.ExpenseBuyRepository
+}
+
 type IncomeSportCourtService struct {
 	IncomeSportCourtRepository ports.IncomeSportCourtRepository
 }
 
 type IncomeService struct {
 	IncomeRepository ports.IncomeRepository
+}
+
+type InformService struct {
+	InformRepository ports.InformRepository
 }
 
 type MovementStockService struct {

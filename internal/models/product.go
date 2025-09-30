@@ -19,3 +19,4 @@ type Product struct {
 	StockDeposit    *StockDeposit     `gorm:"foreignKey:ProductID" json:"stock_deposit"`
 	StockPointSales []*StockPointSale `gorm:"foreignKey:ProductID" json:"stock_point_sales"`
 }
+

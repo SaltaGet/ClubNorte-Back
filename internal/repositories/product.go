@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
@@ -74,60 +73,17 @@ func (r *MainRepository) ProductGetByName(name string) ([]*models.Product, error
 	return products, nil
 }
 
-// func (r *MainRepository) ProductGetAll(pointSaleID uint, page, limit int) ([]*models.Product, int64, error) {
-// 	var products []*models.Product
-// 	var total int64
-// 	offset := (page - 1) * limit
-
-// 	subQuery := r.DB.
-// 		Table("stock_point_sales").
-// 		Select("product_id").
-// 		Where("point_sale_id = ?", pointSaleID)
-// 	// if err := r.DB.Preload("StockPointSale").Where("stock_point_sale = ?", pointSaleID).Model(&models.Product{}).Count(&total).Error; err != nil {
-// 	// 	return nil, 0, err
-// 	// }
-
-// 	if err := r.DB.
-// 		Model(&models.Product{}).
-// 		Where("id IN (?)", subQuery).
-// 		Count(&total).Error; err != nil {
-// 		return nil, 0, err
-// 	}
-
-// 	// if err := r.DB.
-// 	// 	Preload("Category").
-// 	// 	Preload("StockPointSale").
-// 	// 	Limit(limit).
-// 	// 	Offset(offset).
-// 	// 	Find(&products).Error; err != nil {
-// 	// 	return nil, 0, err
-// 	// }
-// 	if err := r.DB.
-// 		Preload("Category").
-// 		Preload("StockPointSale", "point_sale_id = ?", pointSaleID).
-// 		Where("id IN (?)", subQuery).
-// 		Limit(limit).
-// 		Offset(offset).
-// 		Find(&products).Error; err != nil {
-// 		return nil, 0, err
-// 	}
-
-// 	return products, total, nil
-// }
-
 func (r *MainRepository) ProductGetAll(page, limit int) ([]*models.Product, int64, error) {
 	var products []*models.Product
 	var total int64
 	offset := (page - 1) * limit
 
-	// Contar los productos disponibles en el punto de venta
 	if err := r.DB.
 		Model(&models.Product{}).
 		Count(&total).Error; err != nil {
 		return nil, 0, schemas.ErrorResponse(500, "error al contar productos", err)
 	}
 
-	// Obtener productos con la categoría y el stock específico del punto de venta
 	if err := r.DB.
 		Preload("Category").
 		Preload("StockPointSales").
@@ -154,7 +110,7 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 	product.MinAmount = productCreate.MinAmount
 
 	if err := r.DB.Create(&product).Error; err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
+		if IsDuplicateError(err) {
 			return 0, schemas.ErrorResponse(400, "el producto de codigo "+product.Code+" ya existe", err)
 		}
 		return 0, schemas.ErrorResponse(500, "error al crear el producto", err)
@@ -164,22 +120,28 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 }
 
 func (r *MainRepository) ProductUpdate(product *schemas.ProductUpdate) error {
-	var exists bool
-
-	if err := r.DB.Model(&models.Product{}).
-		Select("count(*) > 0").
-		Where("id = ?", product.ID).
-		Find(&exists).Error; err != nil {
+	var p models.Product
+	if err := r.DB.First(&p, product.ID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return schemas.ErrorResponse(404, "producto no encontrado", err)
+		}
 		return schemas.ErrorResponse(500, "error al obtener el producto", err)
 	}
 
-	if !exists {
-		return schemas.ErrorResponse(404, "producto no encontrado", fmt.Errorf("producto no encontrado id: %d", product.ID))
+	updates := map[string]any{
+		"code":        product.Code,
+		"name":        product.Name,
+		"description": &product.Description,
+		"category_id": product.CategoryID,
+		"price":       product.Price,
+		"notifier":    product.Notifier,
+		"min_amount":  product.MinAmount,
 	}
 
-	if err := r.DB.Model(&models.Product{}).
-		Where("id = ?", product.ID).
-		Updates(product).Error; err != nil {
+	if err := r.DB.Model(&p).Updates(updates).Error; err != nil {
+		if IsDuplicateError(err) {
+			return schemas.ErrorResponse(400, "el producto de código "+product.Code+" ya existe", err)
+		}
 		return schemas.ErrorResponse(500, "error al actualizar el producto", err)
 	}
 

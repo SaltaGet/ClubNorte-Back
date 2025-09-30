@@ -54,6 +54,121 @@ definitions:
       stock:
         type: number
     type: object
+  schemas.ExpenseBuyCreate:
+    properties:
+      description:
+        type: string
+      item_expense_buys:
+        items:
+          $ref: '#/definitions/schemas.ItemExpenseBuyCreate'
+        type: array
+      payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+    required:
+    - item_expense_buys
+    type: object
+  schemas.ExpenseBuyDateRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    type: object
+  schemas.ExpenseBuyResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      item_expense_buys:
+        items:
+          $ref: '#/definitions/schemas.ItemExpenseBuyResponse'
+        type: array
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.ExpenseBuyResponseDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.ExpenseCreate:
+    properties:
+      description:
+        type: string
+      payment_method:
+        enum:
+        - efectivo
+        - tarjeta
+        - transferencia
+        type: string
+      total:
+        type: number
+    required:
+    - payment_method
+    - total
+    type: object
+  schemas.ExpenseDateRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    type: object
+  schemas.ExpenseResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      register_id:
+        type: integer
+      total:
+        type: number
+      user:
+        allOf:
+        - $ref: '#/definitions/schemas.UserSimpleDTO'
+        description: PointSale     PointSaleResponse `json:"point_sale"`
+    type: object
+  schemas.ExpenseResponseDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      total:
+        type: number
+      user:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
   schemas.IncomeCreate:
     properties:
       description:
@@ -241,6 +356,34 @@ definitions:
         type: string
     required:
     - id
+    type: object
+  schemas.ItemExpenseBuyCreate:
+    properties:
+      price:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        type: number
+    required:
+    - price
+    - product_id
+    - quantity
+    type: object
+  schemas.ItemExpenseBuyResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/schemas.ProductSimpleResponseDTO'
+      quantity:
+        type: integer
+      subtotal:
+        type: number
     type: object
   schemas.Login:
     properties:
@@ -1413,6 +1556,398 @@ paths:
       summary: DepositProductUpdateStock
       tags:
       - Deposit
+  /api/v1/expense/create:
+    post:
+      consumes:
+      - application/json
+      description: Crear un egreso
+      parameters:
+      - description: Datos requeridos para crear un egreso
+        in: body
+        name: expense_create
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.ExpenseCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseCreate
+      tags:
+      - Expense
+  /api/v1/expense/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Eliminar un egreso
+      parameters:
+      - description: ID del egreso
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseDelte
+      tags:
+      - Expense
+  /api/v1/expense/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Obtener un egreso por ID
+      parameters:
+      - description: ID del ingreso
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.ExpenseResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseGetByID
+      tags:
+      - Expense
+  /api/v1/expense/get_by_date:
+    post:
+      consumes:
+      - application/json
+      description: Obtener egresos por fechas
+      parameters:
+      - description: Fecha desde - hasta del egreso
+        in: body
+        name: expense_date
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.ExpenseDateRequest'
+      - default: 1
+        description: Número de página
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Número de elementos por página
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.ExpenseResponseDTO'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseGetByDate
+      tags:
+      - Expense
+  /api/v1/expense_buy/create:
+    post:
+      consumes:
+      - application/json
+      description: Crear un egreso de compra
+      parameters:
+      - description: Datos requeridos para crear un egreso de compra
+        in: body
+        name: expense_create
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.ExpenseBuyCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseBuyCreate
+      tags:
+      - ExpenseBuy
+  /api/v1/expense_buy/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Eliminar un egreso de compra
+      parameters:
+      - description: ID del egreso de compra
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseBuyDelte
+      tags:
+      - ExpenseBuy
+  /api/v1/expense_buy/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Obtener un egreso de compra por ID
+      parameters:
+      - description: ID del ingreso
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.ExpenseBuyResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseBuyGetByID
+      tags:
+      - ExpenseBuy
+  /api/v1/expense_buy/get_by_date:
+    post:
+      consumes:
+      - application/json
+      description: Obtener egresos de compra por fechas
+      parameters:
+      - description: Fecha desde - hasta del egreso
+        in: body
+        name: expense_date
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.ExpenseBuyDateRequest'
+      - default: 1
+        description: Número de página
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Número de elementos por página
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  items:
+                    $ref: '#/definitions/schemas.ExpenseBuyResponseDTO'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ExpenseBuyGetByDate
+      tags:
+      - ExpenseBuy
   /api/v1/income/create:
     post:
       consumes:

@@ -335,26 +335,103 @@ func CreateTestData() error {
 	}
 
 	incomes := []models.Income{
-		{ID: 1, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: items[0].Subtotal+items[1].Subtotal+items[2].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 1, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: items[0].Subtotal + items[1].Subtotal + items[2].Subtotal, PaymentMethod: "efectivo"},
 		{ID: 2, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: items[3].Subtotal, PaymentMethod: "transferencia"},
-		{ID: 3, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: items[4].Subtotal+items[5].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 3, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: items[4].Subtotal + items[5].Subtotal, PaymentMethod: "efectivo"},
 
-		{ID: 4, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[6].Subtotal+items[7].Subtotal, PaymentMethod: "tarjeta"},
-		{ID: 5, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[8].Subtotal+items[9].Subtotal, PaymentMethod: "efectivo"},
-		{ID: 6, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[10].Subtotal+items[11].Subtotal+items[12].Subtotal+items[13].Subtotal, PaymentMethod: "tarjeta"},
+		{ID: 4, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[6].Subtotal + items[7].Subtotal, PaymentMethod: "tarjeta"},
+		{ID: 5, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[8].Subtotal + items[9].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 6, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: items[10].Subtotal + items[11].Subtotal + items[12].Subtotal + items[13].Subtotal, PaymentMethod: "tarjeta"},
 
 		{ID: 7, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: items[14].Subtotal, PaymentMethod: "transferencia"},
-		{ID: 8, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: items[15].Subtotal+items[16].Subtotal, PaymentMethod: "efectivo"},
-		{ID: 9, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: items[17].Subtotal+items[18].Subtotal+items[19].Subtotal, PaymentMethod: "tarjeta"},
+		{ID: 8, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: items[15].Subtotal + items[16].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 9, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: items[17].Subtotal + items[18].Subtotal + items[19].Subtotal, PaymentMethod: "tarjeta"},
 	}
 
-	for _, income := range incomes{
+	for _, income := range incomes {
 		if err := dbTest.FirstOrCreate(&income).Error; err != nil {
 			return err
 		}
 	}
 
 	for _, item := range items {
+		if err := dbTest.FirstOrCreate(&item).Error; err != nil {
+			return err
+		}
+	}
+
+	expenses := []models.Expense{
+		{ID: 1, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: 1000.0, PaymentMethod: "efectivo"},
+		{ID: 2, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: 2000.0, PaymentMethod: "transferencia"},
+		{ID: 3, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: 1500.0, PaymentMethod: "efectivo"},
+
+		{ID: 4, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: 2500.0, PaymentMethod: "tarjeta"},
+		{ID: 5, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: 3000.0, PaymentMethod: "efectivo"},
+		{ID: 6, RegisterID: register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Description: nil, Total: 4000.0, PaymentMethod: "tarjeta"},
+
+		{ID: 7, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: 1200.0, PaymentMethod: "transferencia"},
+		{ID: 8, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: 1800.0, PaymentMethod: "efectivo"},
+		{ID: 9, RegisterID: register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Description: nil, Total: 2400.0, PaymentMethod: "tarjeta"},
+	}
+
+	for _, expense := range expenses {
+		if err := dbTest.FirstOrCreate(&expense).Error; err != nil {
+			return err
+		}
+	}
+
+	itemsExpenseBuy := []models.ItemExpenseBuy{
+		{ID: 1, ExpenseBuyID: 1, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2},
+		{ID: 2, ExpenseBuyID: 1, ProductID: products[1].ID, Quantity: 4, Price: products[1].Price, Subtotal: products[0].Price * 4},
+		{ID: 3, ExpenseBuyID: 1, ProductID: products[2].ID, Quantity: 6, Price: products[2].Price, Subtotal: products[0].Price * 6},
+
+		{ID: 4, ExpenseBuyID: 2, ProductID: products[0].ID, Quantity: 3, Price: products[0].Price, Subtotal: products[0].Price * 3},
+
+		{ID: 5, ExpenseBuyID: 3, ProductID: products[1].ID, Quantity: 5, Price: products[1].Price, Subtotal: products[0].Price * 5},
+		{ID: 6, ExpenseBuyID: 3, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7},
+
+		{ID: 7, ExpenseBuyID: 4, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2},
+		{ID: 8, ExpenseBuyID: 4, ProductID: products[1].ID, Quantity: 2, Price: products[1].Price, Subtotal: products[0].Price * 2},
+
+		{ID: 9, ExpenseBuyID: 5, ProductID: products[2].ID, Quantity: 1, Price: products[2].Price, Subtotal: products[0].Price * 1},
+		{ID: 10, ExpenseBuyID: 5, ProductID: products[0].ID, Quantity: 5, Price: products[0].Price, Subtotal: products[0].Price * 5},
+
+		{ID: 11, ExpenseBuyID: 6, ProductID: products[1].ID, Quantity: 6, Price: products[1].Price, Subtotal: products[0].Price * 6},
+		{ID: 12, ExpenseBuyID: 6, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4},
+		{ID: 13, ExpenseBuyID: 6, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6},
+		{ID: 14, ExpenseBuyID: 6, ProductID: products[1].ID, Quantity: 3, Price: products[1].Price, Subtotal: products[0].Price * 3},
+
+		{ID: 15, ExpenseBuyID: 7, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6},
+
+		{ID: 16, ExpenseBuyID: 8, ProductID: products[1].ID, Quantity: 9, Price: products[1].Price, Subtotal: products[0].Price * 9},
+		{ID: 17, ExpenseBuyID: 8, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7},
+
+		{ID: 18, ExpenseBuyID: 9, ProductID: products[0].ID, Quantity: 1, Price: products[0].Price, Subtotal: products[0].Price * 1},
+		{ID: 19, ExpenseBuyID: 9, ProductID: products[1].ID, Quantity: 1, Price: products[1].Price, Subtotal: products[0].Price * 1},
+		{ID: 20, ExpenseBuyID: 9, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4},
+	}
+
+	expenseBuy := []models.ExpenseBuy{
+		{ID: 1, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[0].Subtotal + itemsExpenseBuy[1].Subtotal + itemsExpenseBuy[2].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 2, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[3].Subtotal, PaymentMethod: "transferencia"},
+		{ID: 3, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[4].Subtotal + itemsExpenseBuy[5].Subtotal, PaymentMethod: "efectivo"},
+
+		{ID: 4, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[6].Subtotal + itemsExpenseBuy[7].Subtotal, PaymentMethod: "tarjeta"},
+		{ID: 5, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[8].Subtotal + itemsExpenseBuy[9].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 6, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[10].Subtotal + itemsExpenseBuy[11].Subtotal + itemsExpenseBuy[12].Subtotal + itemsExpenseBuy[13].Subtotal, PaymentMethod: "tarjeta"},
+
+		{ID: 7, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[14].Subtotal, PaymentMethod: "transferencia"},
+		{ID: 8, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[15].Subtotal + itemsExpenseBuy[16].Subtotal, PaymentMethod: "efectivo"},
+		{ID: 9, UserID: users[1].ID, Description: nil, Total: itemsExpenseBuy[17].Subtotal + itemsExpenseBuy[18].Subtotal + itemsExpenseBuy[19].Subtotal, PaymentMethod: "tarjeta"},
+	}
+
+	for _, expense := range expenseBuy {
+		if err := dbTest.FirstOrCreate(&expense).Error; err != nil {
+			return err
+		}
+	}
+
+	for _, item := range itemsExpenseBuy {
 		if err := dbTest.FirstOrCreate(&item).Error; err != nil {
 			return err
 		}
@@ -370,18 +447,21 @@ func DeleteTestData() error {
 	queries := []string{
 		// 1. Eliminar relaciones many-to-many primero
 		"DELETE FROM user_point_sales",
+		"DELETE FROM income_sports_courts",
 		"DELETE FROM sports_courts_point_sales",
 		"DELETE FROM movement_stocks",
 		"DELETE FROM income_items",
+		"DELETE FROM item_expense_buys",
 
 		// 2. Eliminar tablas con foreign keys (orden de dependencias)
 		"DELETE FROM stock_point_sales",
 		"DELETE FROM stock_deposits",
 		"DELETE FROM products",
 		"DELETE FROM incomes",
+		"DELETE FROM expenses",
+		"DELETE FROM expense_buys",
 		"DELETE FROM registers",
-		
-		
+
 		// 3. Eliminar tablas independientes
 		"DELETE FROM sports_courts",
 		"DELETE FROM point_sales",

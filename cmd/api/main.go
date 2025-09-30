@@ -20,8 +20,8 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/MarceloPetrucio/go-scalar-api-reference"
-	"github.com/newrelic/go-agent/v3/integrations/nrfiber"
-	"github.com/newrelic/go-agent/v3/newrelic"
+	// "github.com/newrelic/go-agent/v3/integrations/nrfiber"
+	// "github.com/newrelic/go-agent/v3/newrelic"
 )
 
 //	@title						APP Club Norte
@@ -34,15 +34,15 @@ import (
 //	@description				Enter your JWT token here. Example: "eyJhbGciOiJIUz..."
 
 func main() {
-	// err := godotenv.Load("/etc/variables/club-norte/.env")
-	// if err != nil {
-	// 	log.Fatalf("Error al cargar el archivo .env: %v", err)
-	// }
-	if _, err := os.Stat(".env"); err == nil {
-		if err := godotenv.Load(".env"); err != nil {
-			log.Fatalf("Error cargando .env local: %v", err)
-		}
+	err := godotenv.Load("/etc/variables/club-norte/.env")
+	if err != nil {
+		log.Fatalf("Error al cargar el archivo .env: %v", err)
 	}
+	// if _, err := os.Stat(".env"); err == nil {
+	// 	if err := godotenv.Load(".env"); err != nil {
+	// 		log.Fatalf("Error cargando .env local: %v", err)
+	// 	}
+	// }
 
 	db, err := database.ConnectDB()
 	if err != nil {
@@ -50,15 +50,15 @@ func main() {
 	}
 	defer database.CloseDB(db)
 
-	nrApp, err := newrelic.NewApplication(
-		newrelic.ConfigAppName(os.Getenv("NEW_RELIC_APP_NAME")),
-		newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
-		newrelic.ConfigDistributedTracerEnabled(true),
-		newrelic.ConfigAppLogForwardingEnabled(true),
-	)
-	if err != nil {
-		log.Fatalf("Error inicializando New Relic: %v", err)
-	}
+	// nrApp, err := newrelic.NewApplication(
+	// 	newrelic.ConfigAppName(os.Getenv("NEW_RELIC_APP_NAME")),
+	// 	newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
+	// 	newrelic.ConfigDistributedTracerEnabled(true),
+	// 	newrelic.ConfigAppLogForwardingEnabled(true),
+	// )
+	// if err != nil {
+	// 	log.Fatalf("Error inicializando New Relic: %v", err)
+	// }
 
 	local := os.Getenv("LOCAL")
 	if local == "true" {
@@ -73,7 +73,7 @@ func main() {
 		ProxyHeader: "X-Forwarded-For",
 	})
 
-	app.Use(nrfiber.Middleware(nrApp))
+	// app.Use(nrfiber.Middleware(nrApp))
 
 	app.Use(middleware.LoggingMiddleware)
 	app.Use(middleware.InjectionDepends(dep))

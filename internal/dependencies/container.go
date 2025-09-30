@@ -12,8 +12,10 @@ type MainContainer struct {
 	CategoryController *controllers.CategoryController
 	DepositController *controllers.DepositController
 	ExpenseController *controllers.ExpenseController
+	ExpenseBuyController *controllers.ExpenseBuyController
 	IncomeSportCourtController *controllers.IncomeSportCourtController
 	IncomeController *controllers.IncomeController
+	InformController *controllers.InformController
 	MovementStockController *controllers.MovementStockController
 	NotificationController *controllers.NotificationController
 	PointSaleController *controllers.PointSaleController
@@ -34,8 +36,10 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 	categorySvc := &services.CategoryService{CategoryRepository: repo}
 	depositSvc := &services.DepositService{DepositRepository: repo}
 	expenseSvc := &services.ExpenseService{ExpenseRepository: repo}
+	expenseBuySvc := &services.ExpenseBuyService{ExpenseBuyRepository: repo}
 	incomeSportCourtSvc := &services.IncomeSportCourtService{IncomeSportCourtRepository: repo}
 	incomeSvc := &services.IncomeService{IncomeRepository: repo}
+	informSvc := &services.InformService{InformRepository: repo}
 	movementStockSvc := &services.MovementStockService{MovementStockRepository: repo}
 	notificationSvc := &services.NotificationService{NotificationRepository: repo}
 	pointSaleSvc := &services.PointSaleService{PointSaleRepository: repo}
@@ -64,8 +68,10 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 		CategoryController: &controllers.CategoryController{CategoryService: categorySvc},
 		DepositController: &controllers.DepositController{DepositService: depositSvc},
 		ExpenseController: &controllers.ExpenseController{ExpenseService: expenseSvc},
+		ExpenseBuyController: &controllers.ExpenseBuyController{ExpenseBuyService: expenseBuySvc},
 		IncomeSportCourtController: &controllers.IncomeSportCourtController{IncomeSportCourtService: incomeSportCourtSvc},
 		IncomeController: &controllers.IncomeController{IncomeService: incomeSvc},
+		InformController: &controllers.InformController{InformService: informSvc},
 		MovementStockController: movementStockCtrl,
 		NotificationController: notificationCtrl,
 		PointSaleController: &controllers.PointSaleController{PointSaleService: pointSaleSvc},

@@ -38,6 +38,9 @@ func (r *MainRepository) CategoryCreate(categoryCreate *schemas.CategoryCreate) 
 	category.Name = categoryCreate.Name
 
 	if err := r.DB.Create(&category).Error; err != nil {
+		if IsDuplicateError(err) {
+			return 0, schemas.ErrorResponse(400, "la categoria "+categoryCreate.Name+" ya existe", err)
+		}
 		return 0, schemas.ErrorResponse(500, "error al crear la categoria", err)
 	}
 
@@ -60,9 +63,12 @@ func (r *MainRepository) CategoryUpdate(categoryUpdate *schemas.CategoryUpdate) 
 
 	if err := r.DB.Model(&models.Category{}).
 		Where("id = ?", categoryUpdate.ID).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"name": categoryUpdate.Name,
 		}).Error; err != nil {
+		if IsDuplicateError(err) {
+			return schemas.ErrorResponse(400, "la categoria "+categoryUpdate.Name+" ya existe", err)
+		}
 		return schemas.ErrorResponse(500, "error al actualizar la categoria", err)
 	}
 

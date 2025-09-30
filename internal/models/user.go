@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/utils"
@@ -31,6 +32,13 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return err
 	}
 	u.Password = hashedPassword
+
+	address := strings.ToLower(*u.Address)
+	u.Email = strings.ToLower(u.Email)
+	u.FirstName = strings.ToLower(u.FirstName)
+	u.LastName = strings.ToLower(u.LastName)
+	u.Address = &address
+
 	return
 }
 

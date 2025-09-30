@@ -101,8 +101,11 @@ func (r *MainRepository) SportCourtCreate(pointSaleID uint, sportCourtCreate *sc
 	var pointSaleIDCreate uint
 	err := r.DB.Transaction(func(tx *gorm.DB) error {
 		var pointSale models.PointSale
-		if err := r.DB.Where("id = ?", pointSaleID).First(&pointSale).Error; err != nil {
-			return schemas.ErrorResponse(404, "punto de venta no encontrado", err)
+		if err := tx.Where("id = ?", pointSaleID).First(&pointSale).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return schemas.ErrorResponse(404, "punto de venta no encontrado", err)
+			}
+			return schemas.ErrorResponse(500, "error al obtener el punto de venta", err)
 		}
 
 		sportCourt := models.SportsCourt{
@@ -111,11 +114,14 @@ func (r *MainRepository) SportCourtCreate(pointSaleID uint, sportCourtCreate *sc
 			Description: sportCourtCreate.Description,
 		}
 
-		if err := r.DB.Create(&sportCourt).Error; err != nil {
+		if err := tx.Create(&sportCourt).Error; err != nil {
+			if IsDuplicateError(err) {
+				return schemas.ErrorResponse(400, "la cancha "+sportCourtCreate.Name+" ya existe", err)
+			}
 			return schemas.ErrorResponse(500, "error al crear la cancha", err)
 		}
 
-		if err := r.DB.Model(&sportCourt).Association("PointSales").Append(&pointSale); err != nil {
+		if err := tx.Model(&sportCourt).Association("PointSales").Append(&pointSale); err != nil {
 			return schemas.ErrorResponse(500, "error al asociar la cancha al punto de venta", err)
 		}
 

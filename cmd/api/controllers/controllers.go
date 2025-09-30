@@ -18,12 +18,20 @@ type ExpenseController struct {
 	ExpenseService ports.ExpenseService
 }
 
+type ExpenseBuyController struct {
+	ExpenseBuyService ports.ExpenseBuyService
+}
+
 type IncomeSportCourtController struct {
 	IncomeSportCourtService ports.IncomeSportCourtService
 }
 
 type IncomeController struct {
 	IncomeService ports.IncomeService
+}
+
+type InformController struct {
+	InformService ports.InformService
 }
 
 type MovementStockController struct {

@@ -64,6 +64,17 @@ func (r *MainRepository) UserCreate(userCreate *schemas.UserCreate) (uint, error
 	}
 
 	if err := r.DB.Create(&user).Error; err != nil {
+		if IsDuplicateError(err) {
+			field := DuplicateField(err)
+			switch field {
+			case "email":
+				return 0, schemas.ErrorResponse(400, "el email "+user.Email+" ya existe", err)
+			case "username":
+				return 0, schemas.ErrorResponse(400, "el username "+user.Username+" ya existe", err)
+			default:
+				return 0, schemas.ErrorResponse(400, "ya existe un registro con ese valor único", err)
+			}
+		}
 		return 0, schemas.ErrorResponse(500, "error al crear el usuario", err)
 	}
 
@@ -72,27 +83,20 @@ func (r *MainRepository) UserCreate(userCreate *schemas.UserCreate) (uint, error
 
 func (r *MainRepository) UserUpdate(userUpdate *schemas.UserUpdate) error {
 	return r.DB.Transaction(func(tx *gorm.DB) error {
+		var u models.User
+		if err := tx.First(&u, userUpdate.ID).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return schemas.ErrorResponse(404, "usuario no encontrado", err)
+			}
+			return schemas.ErrorResponse(500, "error al obtener el usuario", err)
+		}
+
 		var pointSales []models.PointSale
 		if err := tx.Where("id IN (?)", userUpdate.PointSaleIDs).Find(&pointSales).Error; err != nil {
 			return err
 		}
 
-		// Actualizar datos básicos
-		// if err := tx.Model(&models.User{}).
-		//     Where("id = ?", userUpdate.ID).
-		//     Updates(models.User{
-		//         FirstName: userUpdate.FirstName,
-		//         LastName:  userUpdate.LastName,
-		//         Address:   userUpdate.Address,
-		//         Cellphone: userUpdate.Cellphone,
-		//         Username:  userUpdate.Username,
-		//         Email:     userUpdate.Email,
-		//         RoleID:    userUpdate.RoleID,
-		// 				IsActive:  userUpdate.IsActive,
-		//     }).Error; err != nil {
-		//     return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
-		// }
-		updates := map[string]interface{}{
+		updates := map[string]any{
 			"first_name": userUpdate.FirstName,
 			"last_name":  userUpdate.LastName,
 			"address":    userUpdate.Address,
@@ -103,9 +107,20 @@ func (r *MainRepository) UserUpdate(userUpdate *schemas.UserUpdate) error {
 			"is_active":  userUpdate.IsActive,
 		}
 
-		if err := tx.Model(&models.User{}).
+		if err := tx.Model(&u).
 			Where("id = ?", userUpdate.ID).
 			Updates(updates).Error; err != nil {
+			if IsDuplicateError(err) {
+				field := DuplicateField(err)
+				switch field {
+				case "email":
+					return schemas.ErrorResponse(400, "el email "+userUpdate.Email+" ya existe", err)
+				case "username":
+					return schemas.ErrorResponse(400, "el username "+userUpdate.Username+" ya existe", err)
+				default:
+					return schemas.ErrorResponse(400, "ya existe un registro con ese valor único", err)
+				}
+			}
 			return schemas.ErrorResponse(500, "error al actualizar el usuario", err)
 		}
 

@@ -34,16 +34,16 @@ type MovementStockResponseDTO struct {
 }
 
 type MovementStock struct {
-	ProductID uint    `json:"product_id" validate:"required"`
-	Amount    float64 `json:"amount" validate:"required"`
+	ProductID uint    `json:"product_id" validate:"required" example:"1"`
+	Amount    float64 `json:"amount" validate:"required" example:"10"`
 
-	FromType string `json:"from_type" validate:"oneof=deposit point_sale"`
-	FromID   uint   `json:"from_id" validate:"required"`
+	FromType string `json:"from_type" validate:"oneof=deposit point_sale" example:"deposit|point_sale"`
+	FromID   uint   `json:"from_id" validate:"required" example:"1"`
 
-	ToType string `json:"to_type" validate:"oneof=deposit point_sale"`
-	ToID   uint   `json:"to_id" validate:"required"`
+	ToType string `json:"to_type" validate:"oneof=deposit point_sale" example:"deposit|point_sale"`
+	ToID   uint   `json:"to_id" validate:"required" example:"1"`
 
-	IgnoreStock bool `json:"ignore_stock"`
+	IgnoreStock bool `json:"ignore_stock" validate:"required" example:"false"`
 }
 
 func (m *MovementStock) Validate() error {

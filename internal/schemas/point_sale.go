@@ -18,8 +18,8 @@ type PointSaleResponse struct {
 }
 
 type PointSaleCreate struct {
-	Name        string `json:"name" validate:"required"`
-	Description *string `json:"description"`
+	Name        string `json:"name" validate:"required" example:"Punto de venta 1"`
+	Description *string `json:"description" example:"description|null"`
 }
 
 func (p *PointSaleCreate) Validate() error {
@@ -39,9 +39,9 @@ func (p *PointSaleCreate) Validate() error {
 }
 
 type PointSaleUpdate struct {
-	ID          uint   `json:"id" validate:"required"`
-	Name        string `json:"name" validate:"required"`
-	Description *string `json:"description"`
+	ID          uint   `json:"id" validate:"required" example:"1"`
+	Name        string `json:"name" validate:"required" example:"Punto de venta 1"`
+	Description *string `json:"description" example:"description|null"`
 }
 
 func (p *PointSaleUpdate) Validate() error {

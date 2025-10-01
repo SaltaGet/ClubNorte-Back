@@ -27,6 +27,90 @@ func (r *MainRepository) RegisterExistOpen(pointSaleID uint) (bool, error) {
 	return false, nil
 }
 
+func (r *MainRepository) RegisterGetByID(pointSaleID, id uint) (*models.Register, error) {
+	var register models.Register
+	if err := r.DB.
+		Preload("UserOpen").
+		Preload("UserClose").
+		Where("id = ? AND point_sale_id = ?", id, pointSaleID).
+		First(&register).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, schemas.ErrorResponse(404, "caja no encontrada", err)
+		}
+		return nil, schemas.ErrorResponse(500, "error obtener caja", err)
+	}
+
+	var incomes []models.Income
+	if err := r.DB.
+		Preload("Items").
+		Preload("Items.Product").
+		Where("register_id = ?", id).
+		Find(&incomes).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al obtener ingresos de caja", err)
+	}
+
+	var expenses []models.Expense
+	if err := r.DB.
+		Where("register_id = ?", id).
+		Find(&expenses).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al obtener egresos de caja", err)
+	}
+
+	var IncomeSportsCourts []models.IncomeSportsCourts
+	if err := r.DB.
+		Preload("SportsCourt").
+		Where("partial_register_id = ? OR rest_register_id = ?", id, id).
+		Find(&IncomeSportsCourts).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al obtener ingresos de cancha de caja", err)
+	}
+
+	var totalIncomeCash float64
+	var totalIncomeOther float64
+	for _, income := range incomes {
+		if income.PaymentMethod == "efectivo" {
+			totalIncomeCash += income.Total
+		} else {
+			totalIncomeOther += income.Total
+		}
+	}
+
+	var totalExpenseCash float64
+	var totalExpenseOther float64
+	for _, expense := range expenses {
+		if expense.PaymentMethod == "efectivo" {
+			totalExpenseCash += expense.Total
+		} else {
+			totalExpenseOther += expense.Total
+		}
+	}
+
+	var totalIncomeSportsCourtsCash float64
+	var totalIncomeSportsCourtsOther float64
+	for _, income := range IncomeSportsCourts {
+		if income.PartialPaymentMethod == "efectivo" || *income.RestPaymentMethod == "efectivo" {
+			totalIncomeSportsCourtsCash += income.PartialPay
+			totalIncomeSportsCourtsCash += *income.RestPay
+		} else {
+			totalIncomeSportsCourtsOther += income.PartialPay
+			totalIncomeSportsCourtsOther += *income.RestPay
+		}
+	}
+
+	totalIncomesCash := totalIncomeCash + totalIncomeSportsCourtsCash
+	totalIncomesOther := totalIncomeOther + totalIncomeSportsCourtsOther
+
+	register.TotalIncomeCash = &totalIncomesCash
+	register.TotalIncomeOthers = &totalIncomesOther
+	register.TotalExpenseCash = &totalExpenseCash
+	register.TotalExpenseOthers = &totalExpenseOther
+
+	register.Income = incomes
+	register.Expense = expenses
+	register.IncomeSportsCourts = IncomeSportsCourts
+
+	return &register, nil
+}
+
 func (r *MainRepository) RegisterOpen(pointSaleID uint, userID uint, amountOpen schemas.RegisterOpen) error {
 	var existRegisterOpen float64
 
@@ -95,16 +179,16 @@ func (r *MainRepository) RegisterClose(pointSaleID uint, userID uint, amountOpen
 	// 	Select(`
 	// 	COALESCE(
 	// 		SUM(
-	// 			CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END + 
+	// 			CASE WHEN partial_payment_method = 'efectivo' THEN COALESCE(partial_pay,0) ELSE 0	END +
 	// 			CASE WHEN rest_payment_method = 'efectivo' THEN COALESCE(rest_pay,0) ELSE 0 END
 	// 		),0
 	// 	) AS cash,
 	// 	COALESCE(
-  //       SUM(
-  //           CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
-  //           CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
-  //       ), 0
-  //   ) AS others
+	//       SUM(
+	//           CASE WHEN partial_payment_method IN ('tarjeta','transferencia') THEN COALESCE(partial_pay,0) ELSE 0 END +
+	//           CASE WHEN rest_payment_method IN ('tarjeta','transferencia') THEN COALESCE(rest_pay,0) ELSE 0 END
+	//       ), 0
+	//   ) AS others
 	// `).
 	// 	Where("partial_register_id = ? OR rest_register_id = ?", register.ID, register.ID).
 	// 	Scan(&totalsIncomeCourts).Error; err != nil {
@@ -217,4 +301,3 @@ func (r *MainRepository) RegisterInform(pointSaleID uint, userID uint, fromDate,
 
 	return registers, nil
 }
-

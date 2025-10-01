@@ -11,6 +11,18 @@ func (r *RegisterService) RegisterExistOpen(pointSaleID uint) (bool, error) {
 	return r.RegisterRepository.RegisterExistOpen(pointSaleID)
 }
 
+func (r *RegisterService) RegisterGetByID(pointSaleID, id uint) (*schemas.RegisterFullResponse, error) {
+	register, err := r.RegisterRepository.RegisterGetByID(pointSaleID, id)
+	if err != nil {
+		return nil, err
+	}
+
+	var registerResponse schemas.RegisterFullResponse
+	_ = copier.Copy(&registerResponse, &register)
+
+	return &registerResponse, nil
+}
+
 func (r *RegisterService) RegisterOpen(pointSaleID uint, userID uint, amountOpen schemas.RegisterOpen) error {
 	return r.RegisterRepository.RegisterOpen(pointSaleID, userID, amountOpen)
 }

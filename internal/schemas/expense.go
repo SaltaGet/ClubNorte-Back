@@ -8,8 +8,8 @@ import (
 )
 
 type ExpenseCreate struct {
-	Total         float64 `json:"total" validate:"required"`
-	Description   *string `json:"description"`
+	Total         float64 `json:"total" validate:"required" example:"1000"`
+	Description   *string `json:"description" example:"description|null"`
 	PaymentMethod string  `json:"payment_method" validate:"required,oneof=efectivo tarjeta transferencia"`
 }
 
@@ -43,6 +43,13 @@ type ExpenseResponse struct {
 type ExpenseResponseDTO struct {
 	ID            uint          `json:"id"`
 	User  UserSimpleDTO `json:"user"`
+	Total         float64       `json:"total"`
+	PaymentMethod string        `json:"payment_method"`
+	CreatedAt     time.Time     `json:"created_at"`
+}
+
+type ExpenseSimpleResponseDTO struct {
+	ID            uint          `json:"id"`
 	Total         float64       `json:"total"`
 	PaymentMethod string        `json:"payment_method"`
 	CreatedAt     time.Time     `json:"created_at"`

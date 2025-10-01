@@ -2,6 +2,7 @@ definitions:
   schemas.CategoryCreate:
     properties:
       name:
+        example: Categoria1
         type: string
     required:
     - name
@@ -16,8 +17,10 @@ definitions:
   schemas.CategoryUpdate:
     properties:
       id:
+        example: 1
         type: integer
       name:
+        example: Categoria1
         type: string
     required:
     - id
@@ -50,13 +53,19 @@ definitions:
         example: add|subtract|set
         type: string
       product_id:
+        example: 1
         type: integer
       stock:
+        example: 10
         type: number
+    required:
+    - product_id
+    - stock
     type: object
   schemas.ExpenseBuyCreate:
     properties:
       description:
+        example: description|null
         type: string
       item_expense_buys:
         items:
@@ -67,6 +76,7 @@ definitions:
         - efectivo
         - tarjeta
         - transferencia
+        example: efectivo|tarjeta|transferencia
         type: string
     required:
     - item_expense_buys
@@ -115,6 +125,7 @@ definitions:
   schemas.ExpenseCreate:
     properties:
       description:
+        example: description|null
         type: string
       payment_method:
         enum:
@@ -123,6 +134,7 @@ definitions:
         - transferencia
         type: string
       total:
+        example: 1000
         type: number
     required:
     - payment_method
@@ -169,12 +181,23 @@ definitions:
       user:
         $ref: '#/definitions/schemas.UserSimpleDTO'
     type: object
+  schemas.ExpenseSimpleResponseDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      payment_method:
+        type: string
+      total:
+        type: number
+    type: object
   schemas.IncomeCreate:
     properties:
       description:
+        example: description|null
         type: string
       items:
-        description: <- dive recorre cada elemento
         items:
           $ref: '#/definitions/schemas.IncomeItemCreate'
         type: array
@@ -183,6 +206,7 @@ definitions:
         - efectivo
         - tarjeta
         - transferencia
+        example: efectivo|tarjeta|transferencia
         type: string
     required:
     - items
@@ -200,8 +224,10 @@ definitions:
   schemas.IncomeItemCreate:
     properties:
       product_id:
+        example: 1
         type: integer
       quantity:
+        example: 10
         type: number
     required:
     - product_id
@@ -251,6 +277,23 @@ definitions:
         type: number
       user:
         $ref: '#/definitions/schemas.UserSimpleDTO'
+    type: object
+  schemas.IncomeSimpleResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/schemas.IncomeItemResponse'
+        type: array
+      payment_method:
+        type: string
+      total:
+        type: number
     type: object
   schemas.IncomeSportsCourtsCreate:
     properties:
@@ -345,14 +388,17 @@ definitions:
   schemas.IncomeSportsCourtsRestPay:
     properties:
       id:
+        example: 1
         type: integer
       rest_pay:
+        example: 100
         type: number
       rest_payment_method:
         enum:
         - efectivo
         - tarjeta
         - transferencia
+        example: efectivo|tarjeta|transferencia
         type: string
     required:
     - id
@@ -360,10 +406,13 @@ definitions:
   schemas.ItemExpenseBuyCreate:
     properties:
       price:
+        example: 100
         type: number
       product_id:
+        example: 1
         type: integer
       quantity:
+        example: 10
         type: number
     required:
     - price
@@ -388,8 +437,10 @@ definitions:
   schemas.Login:
     properties:
       email:
+        example: a@b.com
         type: string
       password:
+        example: Password123*
         type: string
     required:
     - email
@@ -398,28 +449,36 @@ definitions:
   schemas.MovementStock:
     properties:
       amount:
+        example: 10
         type: number
       from_id:
+        example: 1
         type: integer
       from_type:
         enum:
         - deposit
         - point_sale
+        example: deposit|point_sale
         type: string
       ignore_stock:
+        example: false
         type: boolean
       product_id:
+        example: 1
         type: integer
       to_id:
+        example: 1
         type: integer
       to_type:
         enum:
         - deposit
         - point_sale
+        example: deposit|point_sale
         type: string
     required:
     - amount
     - from_id
+    - ignore_stock
     - product_id
     - to_id
     type: object
@@ -449,8 +508,10 @@ definitions:
   schemas.PointSaleCreate:
     properties:
       description:
+        example: description|null
         type: string
       name:
+        example: Punto de venta 1
         type: string
     required:
     - name
@@ -476,10 +537,13 @@ definitions:
   schemas.PointSaleUpdate:
     properties:
       description:
+        example: description|null
         type: string
       id:
+        example: 1
         type: integer
       name:
+        example: Punto de venta 1
         type: string
     required:
     - id
@@ -488,20 +552,25 @@ definitions:
   schemas.ProductCreate:
     properties:
       category_id:
+        example: 1
         type: integer
       code:
         example: ABC123
         type: string
       description:
+        example: description|null
         type: string
       min_amount:
+        example: 10
         type: number
       name:
         example: Producto1
         type: string
       notifier:
+        example: false
         type: boolean
       price:
+        example: 100
         type: number
     required:
     - category_id
@@ -588,20 +657,28 @@ definitions:
   schemas.ProductUpdate:
     properties:
       category_id:
+        example: 1
         type: integer
       code:
+        example: ABC123
         type: string
       description:
+        example: description|null
         type: string
       id:
+        example: 1
         type: integer
       min_amount:
+        example: 10
         type: number
       name:
+        example: Producto1
         type: string
       notifier:
+        example: false
         type: boolean
       price:
+        example: 100
         type: number
     required:
     - category_id
@@ -613,7 +690,49 @@ definitions:
   schemas.RegisterClose:
     properties:
       close_amount:
+        example: 100
         type: number
+    type: object
+  schemas.RegisterFullResponse:
+    properties:
+      close_amount:
+        type: number
+      created_at:
+        type: string
+      expenses:
+        items:
+          $ref: '#/definitions/schemas.ExpenseSimpleResponseDTO'
+        type: array
+      hour_close:
+        type: string
+      hour_open:
+        type: string
+      id:
+        type: integer
+      income:
+        items:
+          $ref: '#/definitions/schemas.IncomeSimpleResponse'
+        type: array
+      income_sports_courts:
+        items:
+          $ref: '#/definitions/schemas.IncomeSportsCourtsResponseDTO'
+        type: array
+      is_close:
+        type: boolean
+      open_amount:
+        type: number
+      total_expense_cash:
+        type: number
+      total_expense_others:
+        type: number
+      total_income_cash:
+        type: number
+      total_income_others:
+        type: number
+      user_close:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
+      user_open:
+        $ref: '#/definitions/schemas.UserSimpleDTO'
     type: object
   schemas.RegisterInformRequest:
     properties:
@@ -623,10 +742,14 @@ definitions:
       to_date:
         example: "2022-12-31"
         type: string
+    required:
+    - from_date
+    - to_date
     type: object
   schemas.RegisterOpen:
     properties:
       open_amount:
+        example: 100
         type: number
     type: object
   schemas.Response:
@@ -651,11 +774,17 @@ definitions:
   schemas.SportCourtCreate:
     properties:
       code:
+        example: ABC123
         type: string
       description:
+        example: description|null
         type: string
       name:
+        example: Pista 1
         type: string
+    required:
+    - code
+    - name
     type: object
   schemas.SportCourtResponse:
     properties:
@@ -692,13 +821,21 @@ definitions:
   schemas.SportCourtUpdate:
     properties:
       code:
+        example: ABC123
         type: string
       description:
+        example: description|null
         type: string
       id:
+        example: 1
         type: integer
       name:
+        example: Pista 1
         type: string
+    required:
+    - code
+    - id
+    - name
     type: object
   schemas.StockDepositResponse:
     properties:
@@ -710,25 +847,45 @@ definitions:
   schemas.UserCreate:
     properties:
       address:
+        example: address|null
         type: string
       cellphone:
+        example: cellphone|null
         type: string
       email:
+        example: a@b.com
         type: string
       first_name:
+        example: John
         type: string
       last_name:
+        example: Doe
         type: string
       password:
+        example: Password123*
         type: string
       point_sales_ids:
+        example:
+        - 1
+        - 2
+        - 3
         items:
           type: integer
         type: array
       role_id:
+        example: 1
         type: integer
       username:
+        example: johndoe
         type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - point_sales_ids
+    - role_id
+    - username
     type: object
   schemas.UserResponse:
     properties:
@@ -800,36 +957,65 @@ definitions:
   schemas.UserUpdate:
     properties:
       address:
+        example: address|null
         type: string
       cellphone:
+        example: cellphone|null
         type: string
       email:
+        example: a@b.com
         type: string
       first_name:
+        example: John
         type: string
       id:
+        example: 1
         type: integer
       is_active:
+        example: true
         type: boolean
       last_name:
+        example: Doe
         type: string
       point_sales_ids:
+        example:
+        - 1
+        - 2
+        - 3
         items:
           type: integer
         type: array
       role_id:
+        example: 1
         type: integer
       username:
+        example: johndoe
         type: string
+    required:
+    - email
+    - first_name
+    - id
+    - is_active
+    - last_name
+    - point_sales_ids
+    - role_id
+    - username
     type: object
   schemas.UserUpdatePassword:
     properties:
       confirm_pass:
+        example: Password123*
         type: string
       new_password:
+        example: Password123*
         type: string
       old_password:
+        example: Password123*
         type: string
+    required:
+    - confirm_pass
+    - new_password
+    - old_password
     type: object
 info:
   contact: {}
@@ -3463,6 +3649,54 @@ paths:
       security:
       - CookieAuth: []
       summary: RegisterExistOpen
+      tags:
+      - Register
+  /api/v1/register/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: obtener caja por id
+      parameters:
+      - description: id de la caja
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.RegisterFullResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: RegisterGetByID
       tags:
       - Register
   /api/v1/register/inform:

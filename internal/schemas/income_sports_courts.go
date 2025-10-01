@@ -73,9 +73,9 @@ func (i *IncomeSportsCourtsCreate) Validate() error {
 // }
 
 type IncomeSportsCourtsRestPay struct {
-	ID                uint    `json:"id" validate:"required"`
-	RestPay           float64 `json:"rest_pay"`
-	RestPaymentMethod string  `json:"rest_payment_method" validate:"oneof=efectivo tarjeta transferencia"`
+	ID                uint    `json:"id" validate:"required" example:"1"`
+	RestPay           float64 `json:"rest_pay" example:"100.00"`
+	RestPaymentMethod string  `json:"rest_payment_method" validate:"oneof=efectivo tarjeta transferencia" example:"efectivo|tarjeta|transferencia"` 
 }
 
 func (i *IncomeSportsCourtsRestPay) Validate() error {

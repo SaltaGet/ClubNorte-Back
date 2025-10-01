@@ -62,11 +62,11 @@ type ProductSimpleResponseDTO struct {
 type ProductCreate struct {
 	Code        string  `json:"code" validate:"required" example:"ABC123"`
 	Name        string  `json:"name" validate:"required" example:"Producto1"`
-	Description *string `json:"description"`
-	CategoryID  uint    `json:"category_id" validate:"required"`
-	Price       float64 `json:"price" validate:"required"`
-	Notifier    bool     `json:"notifier"`
-	MinAmount   float64  `json:"min_amount"`
+	Description *string `json:"description" example:"description|null"`
+	CategoryID  uint    `json:"category_id" validate:"required" example:"1"`
+	Price       float64 `json:"price" validate:"required" example:"100.00"`
+	Notifier    bool     `json:"notifier" example:"false"`
+	MinAmount   float64  `json:"min_amount" example:"10.00"`
 }
 
 func (p *ProductCreate) Validate () error {
@@ -86,14 +86,14 @@ func (p *ProductCreate) Validate () error {
 }
 
 type ProductUpdate struct {
-	ID          uint    `json:"id" validate:"required"`
-	Code        string  `json:"code" validate:"required"`
-	Name        string  `json:"name" validate:"required"`
-	Description *string `json:"description"`
-	CategoryID  uint    `json:"category_id" validate:"required"`
-	Price       float64 `json:"price" validate:"required"`
-	Notifier    bool     `json:"notifier"`
-	MinAmount   float64  `json:"min_amount"`
+	ID          uint    `json:"id" validate:"required" example:"1"`
+	Code        string  `json:"code" validate:"required" example:"ABC123"`
+	Name        string  `json:"name" validate:"required" example:"Producto1"`
+	Description *string `json:"description" example:"description|null"`
+	CategoryID  uint    `json:"category_id" validate:"required" example:"1"`
+	Price       float64 `json:"price" validate:"required" example:"100.00"`
+	Notifier    bool     `json:"notifier" example:"false"`
+	MinAmount   float64  `json:"min_amount" example:"10.00"`
 }
 
 func (p *ProductUpdate) Validate () error {

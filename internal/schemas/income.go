@@ -13,9 +13,9 @@ type Totals struct {
 }
 
 type IncomeCreate struct {
-	Items         []IncomeItemCreate `json:"items" validate:"required,dive"` // <- dive recorre cada elemento
-	Description   *string            `json:"description"`
-	PaymentMethod string             `json:"payment_method" validate:"required,oneof=efectivo tarjeta transferencia"`
+	Items         []IncomeItemCreate `json:"items" validate:"required,dive"`
+	Description   *string            `json:"description" example:"description|null"`
+	PaymentMethod string             `json:"payment_method" validate:"required,oneof=efectivo tarjeta transferencia" example:"efectivo|tarjeta|transferencia"`
 }
 
 func (i *IncomeCreate) Validate() error {
@@ -35,10 +35,10 @@ func (i *IncomeCreate) Validate() error {
 }
 
 type IncomeUpdate struct {
-	ID            uint               `json:"id" validate:"required"`
-	Items         []IncomeItemCreate `json:"items" validate:"required,dive"` // <- dive recorre cada elemento
-	Description   *string            `json:"description"`
-	PaymentMethod string             `json:"payment_method" validate:"required,oneof=efectivo tarjeta transferencia"`
+	ID            uint               `json:"id" validate:"required" example:"1"`
+	Items         []IncomeItemCreate `json:"items" validate:"required,dive"`
+	Description   *string            `json:"description" example:"description|null"`
+	PaymentMethod string             `json:"payment_method" validate:"required,oneof=efectivo tarjeta transferencia" example:"efectivo|tarjeta|transferencia"`
 }
 
 func (i *IncomeUpdate) Validate() error {
@@ -58,13 +58,22 @@ func (i *IncomeUpdate) Validate() error {
 }
 
 type IncomeItemCreate struct {
-	ProductID uint    `json:"product_id" validate:"required"`
-	Quantity  float64     `json:"quantity" validate:"required,gt=0"`
+	ProductID uint    `json:"product_id" validate:"required" example:"1"`
+	Quantity  float64     `json:"quantity" validate:"required,gt=0" example:"10"`
 }
 
 type IncomeResponse struct {
 	ID            uint                 `json:"id"`
 	UserResponse  UserSimpleDTO        `json:"user"`
+	Items         []IncomeItemResponse `json:"items"`
+	Description   *string              `json:"description"`
+	Total         float64              `json:"total"`
+	PaymentMethod string               `json:"payment_method"`
+	CreatedAt     time.Time            `json:"created_at"`
+}
+
+type IncomeSimpleResponse struct {
+	ID            uint                 `json:"id"`
 	Items         []IncomeItemResponse `json:"items"`
 	Description   *string              `json:"description"`
 	Total         float64              `json:"total"`

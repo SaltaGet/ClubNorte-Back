@@ -9,6 +9,7 @@ import (
 
 type RegisterRepository interface {
 	RegisterOpen(pointSaleID uint, userID uint, amountOpen schemas.RegisterOpen) error
+	RegisterGetByID(pointSaleID, id uint) (*models.Register, error)
 	RegisterClose(pointSaleID uint, userID uint, amountOpen schemas.RegisterClose) error
 	RegisterInform(pointSaleID uint, userID uint, fromDate, toDate time.Time) ([]*models.Register, error)
 	RegisterExistOpen(pointSaleID uint) (bool, error)
@@ -16,6 +17,7 @@ type RegisterRepository interface {
 
 type RegisterService interface {
 	RegisterOpen(pointSaleID uint, userID uint, amountOpen schemas.RegisterOpen) error
+	RegisterGetByID(pointSaleID, id uint) (*schemas.RegisterFullResponse, error)
 	RegisterClose(pointSaleID uint, userID uint, amountOpen schemas.RegisterClose) error
 	RegisterInform(pointSaleID uint, userID uint, fromDate, toDate time.Time) ([]*schemas.RegisterInformResponse, error)
 	RegisterExistOpen(pointSaleID uint) (bool, error)

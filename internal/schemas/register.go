@@ -8,7 +8,7 @@ import (
 )
 
 type RegisterOpen struct {
-	OpenAmount float64 `json:"open_amount"`
+	OpenAmount float64 `json:"open_amount" example:"100.00"`
 }
 
 func (r *RegisterOpen) Validate() error {
@@ -28,7 +28,7 @@ func (r *RegisterOpen) Validate() error {
 }
 
 type RegisterClose struct {
-	CloseAmount float64 `json:"close_amount"`
+	CloseAmount float64 `json:"close_amount" example:"100.00"`
 }
 
 func (r *RegisterClose) Validate() error {
@@ -48,8 +48,8 @@ func (r *RegisterClose) Validate() error {
 }
 
 type RegisterInformRequest struct {
-	FromDate string `json:"from_date" example:"2022-01-01"`
-	ToDate   string `json:"to_date" example:"2022-12-31"`
+	FromDate string `json:"from_date" validate:"required" example:"2022-01-01"`
+	ToDate   string `json:"to_date" validate:"required" example:"2022-12-31"`
 }
 
 func (r *RegisterInformRequest) GetParsedDates() (time.Time, time.Time, error) {
@@ -103,4 +103,26 @@ type RegisterInformResponseDTO struct {
 
 	IsClose   bool      `json:"is_close"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+type RegisterFullResponse struct {
+	ID          uint           `json:"id"`
+	UserOpen    UserSimpleDTO  `json:"user_open"`
+	OpenAmount  float64        `json:"open_amount"`
+	HourOpen    time.Time      `json:"hour_open"`
+	UserClose   *UserSimpleDTO `json:"user_close"`
+	CloseAmount *float64       `json:"close_amount"`
+	HourClose   *time.Time     `json:"hour_close"`
+
+	TotalIncomeCash    *float64 `json:"total_income_cash"`
+	TotalIncomeOthers  *float64 `json:"total_income_others"`
+	TotalExpenseCash   *float64 `json:"total_expense_cash"`
+	TotalExpenseOthers *float64 `json:"total_expense_others"`
+
+	IsClose   bool      `json:"is_close"`
+	CreatedAt time.Time `json:"created_at"`
+
+	Income             []IncomeSimpleResponse          `json:"income"`
+	IncomeSportsCourts []IncomeSportsCourtsResponseDTO `json:"income_sports_courts"`
+	Expense           []ExpenseSimpleResponseDTO      `json:"expenses"`
 }

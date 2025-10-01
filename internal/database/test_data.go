@@ -360,6 +360,28 @@ func CreateTestData() error {
 		}
 	}
 
+	restPay:= 2000.0
+	restMethodPay := "efectivo"
+	IncomeSportsCourts := []models.IncomeSportsCourts{
+		{ID: 1, PartialRegisterID: register1.ID, RestRegisterID: &register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Shift: "tarde", SportsCourtID: 1, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "efectivo", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 2, PartialRegisterID: register1.ID, RestRegisterID: &register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Shift: "tarde", SportsCourtID: 1, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "transferencia", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 3, PartialRegisterID: register1.ID, RestRegisterID: &register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Shift: "tarde", SportsCourtID: 1, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "efectivo", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+
+		{ID: 4, PartialRegisterID: register2.ID, RestRegisterID: &register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Shift: "tarde", SportsCourtID: 2, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "tarjeta", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 5, PartialRegisterID: register2.ID, RestRegisterID: &register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Shift: "tarde", SportsCourtID: 2, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "efectivo", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 6, PartialRegisterID: register2.ID, RestRegisterID: &register2.ID, UserID: users[2].ID, PointSaleID: point2.ID, Shift: "tarde", SportsCourtID: 2, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "tarjeta", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+
+		{ID: 7, PartialRegisterID: register3.ID, RestRegisterID: &register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Shift: "tarde", SportsCourtID: 4, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "transferencia", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 8, PartialRegisterID: register3.ID, RestRegisterID: &register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Shift: "tarde", SportsCourtID: 3, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "efectivo", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+		{ID: 9, PartialRegisterID: register3.ID, RestRegisterID: &register3.ID, UserID: users[2].ID, PointSaleID: point3.ID, Shift: "tarde", SportsCourtID: 4, DatePlay: now, PartialPay: 1000, RestPay: &restPay, Price: 3000, PartialPaymentMethod: "tarjeta", RestPaymentMethod: &restMethodPay, DatePartialPay: now, DateRestPay: &now},
+	}
+
+	for _, item := range IncomeSportsCourts {
+		if err := dbTest.FirstOrCreate(&item).Error; err != nil {
+			return err
+		}
+	}
+
 	expenses := []models.Expense{
 		{ID: 1, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: 1000.0, PaymentMethod: "efectivo"},
 		{ID: 2, RegisterID: register1.ID, UserID: users[2].ID, PointSaleID: point1.ID, Description: nil, Total: 2000.0, PaymentMethod: "transferencia"},

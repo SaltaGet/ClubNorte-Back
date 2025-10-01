@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
 )
@@ -40,6 +43,47 @@ func (r *RegisterController) RegisterExistOpen(ctx *fiber.Ctx) error {
 		Status:  true,
 		Body:    existOpen,
 		Message: message,
+	})
+}
+
+// RegisterGetByID godoc
+//
+//	@Summary		RegisterGetByID
+//	@Description	obtener caja por id
+//	@Tags			Register
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			id	path		int	true	"id de la caja"
+//	@Success		200	{object}	schemas.Response{body=schemas.RegisterFullResponse}
+//	@Failure		400	{object}	schemas.Response
+//	@Failure		401	{object}	schemas.Response
+//	@Failure		422	{object}	schemas.Response
+//	@Failure		404	{object}	schemas.Response
+//	@Failure		500	{object}	schemas.Response
+//	@Router			/api/v1/register/get/{id} [get]
+func (r *RegisterController) RegisterGetByID(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	if id == "" {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "se necesita el id de la caja", fmt.Errorf("se necesita el id de la caja")))
+	}
+
+	idUint, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(422, "el id ser un número", err))
+	}
+
+	pointaSale := ctx.Locals("point_sale").(*schemas.PointSaleContext)
+	
+	register, err := r.RegisterService.RegisterGetByID(pointaSale.ID, uint(idUint))
+	if err != nil {
+		return schemas.HandleError(ctx, err)
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
+		Status:  true,
+		Body:    register,
+		Message: "Caja obtenida con éxito",
 	})
 }
 

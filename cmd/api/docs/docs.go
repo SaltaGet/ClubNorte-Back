@@ -4227,6 +4227,85 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/register/get/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "obtener caja por id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Register"
+                ],
+                "summary": "RegisterGetByID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id de la caja",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "$ref": "#/definitions/schemas.RegisterFullResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/register/inform": {
             "post": {
                 "security": [
@@ -5668,7 +5747,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Categoria1"
                 }
             }
         },
@@ -5691,10 +5771,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Categoria1"
                 }
             }
         },
@@ -5726,6 +5808,10 @@ const docTemplate = `{
         },
         "schemas.DepositUpdateStock": {
             "type": "object",
+            "required": [
+                "product_id",
+                "stock"
+            ],
             "properties": {
                 "method": {
                     "type": "string",
@@ -5737,10 +5823,12 @@ const docTemplate = `{
                     "example": "add|subtract|set"
                 },
                 "product_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "stock": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 }
             }
         },
@@ -5751,7 +5839,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "item_expense_buys": {
                     "type": "array",
@@ -5765,7 +5854,8 @@ const docTemplate = `{
                         "efectivo",
                         "tarjeta",
                         "transferencia"
-                    ]
+                    ],
+                    "example": "efectivo|tarjeta|transferencia"
                 }
             }
         },
@@ -5839,7 +5929,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "payment_method": {
                     "type": "string",
@@ -5850,7 +5941,8 @@ const docTemplate = `{
                     ]
                 },
                 "total": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 1000
                 }
             }
         },
@@ -5918,6 +6010,23 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.ExpenseSimpleResponseDTO": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
+                }
+            }
+        },
         "schemas.IncomeCreate": {
             "type": "object",
             "required": [
@@ -5926,10 +6035,10 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "items": {
-                    "description": "\u003c- dive recorre cada elemento",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/schemas.IncomeItemCreate"
@@ -5941,7 +6050,8 @@ const docTemplate = `{
                         "efectivo",
                         "tarjeta",
                         "transferencia"
-                    ]
+                    ],
+                    "example": "efectivo|tarjeta|transferencia"
                 }
             }
         },
@@ -5966,10 +6076,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "product_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "quantity": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 }
             }
         },
@@ -6039,6 +6151,32 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/schemas.UserSimpleDTO"
+                }
+            }
+        },
+        "schemas.IncomeSimpleResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.IncomeItemResponse"
+                    }
+                },
+                "payment_method": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "number"
                 }
             }
         },
@@ -6179,10 +6317,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "rest_pay": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 },
                 "rest_payment_method": {
                     "type": "string",
@@ -6190,7 +6330,8 @@ const docTemplate = `{
                         "efectivo",
                         "tarjeta",
                         "transferencia"
-                    ]
+                    ],
+                    "example": "efectivo|tarjeta|transferencia"
                 }
             }
         },
@@ -6203,13 +6344,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "price": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 },
                 "product_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "quantity": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 }
             }
         },
@@ -6244,10 +6388,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "a@b.com"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Password123*"
                 }
             }
         },
@@ -6256,38 +6402,46 @@ const docTemplate = `{
             "required": [
                 "amount",
                 "from_id",
+                "ignore_stock",
                 "product_id",
                 "to_id"
             ],
             "properties": {
                 "amount": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 },
                 "from_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "from_type": {
                     "type": "string",
                     "enum": [
                         "deposit",
                         "point_sale"
-                    ]
+                    ],
+                    "example": "deposit|point_sale"
                 },
                 "ignore_stock": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "product_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "to_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "to_type": {
                     "type": "string",
                     "enum": [
                         "deposit",
                         "point_sale"
-                    ]
+                    ],
+                    "example": "deposit|point_sale"
                 }
             }
         },
@@ -6333,10 +6487,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Punto de venta 1"
                 }
             }
         },
@@ -6376,13 +6532,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Punto de venta 1"
                 }
             }
         },
@@ -6396,27 +6555,32 @@ const docTemplate = `{
             ],
             "properties": {
                 "category_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "code": {
                     "type": "string",
                     "example": "ABC123"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "min_amount": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 },
                 "name": {
                     "type": "string",
                     "example": "Producto1"
                 },
                 "notifier": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "price": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 }
             }
         },
@@ -6547,28 +6711,36 @@ const docTemplate = `{
             ],
             "properties": {
                 "category_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ABC123"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "min_amount": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 10
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Producto1"
                 },
                 "notifier": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "price": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 }
             }
         },
@@ -6576,12 +6748,79 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "close_amount": {
+                    "type": "number",
+                    "example": 100
+                }
+            }
+        },
+        "schemas.RegisterFullResponse": {
+            "type": "object",
+            "properties": {
+                "close_amount": {
                     "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "expenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ExpenseSimpleResponseDTO"
+                    }
+                },
+                "hour_close": {
+                    "type": "string"
+                },
+                "hour_open": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "income": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.IncomeSimpleResponse"
+                    }
+                },
+                "income_sports_courts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.IncomeSportsCourtsResponseDTO"
+                    }
+                },
+                "is_close": {
+                    "type": "boolean"
+                },
+                "open_amount": {
+                    "type": "number"
+                },
+                "total_expense_cash": {
+                    "type": "number"
+                },
+                "total_expense_others": {
+                    "type": "number"
+                },
+                "total_income_cash": {
+                    "type": "number"
+                },
+                "total_income_others": {
+                    "type": "number"
+                },
+                "user_close": {
+                    "$ref": "#/definitions/schemas.UserSimpleDTO"
+                },
+                "user_open": {
+                    "$ref": "#/definitions/schemas.UserSimpleDTO"
                 }
             }
         },
         "schemas.RegisterInformRequest": {
             "type": "object",
+            "required": [
+                "from_date",
+                "to_date"
+            ],
             "properties": {
                 "from_date": {
                     "type": "string",
@@ -6597,7 +6836,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "open_amount": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 }
             }
         },
@@ -6631,15 +6871,22 @@ const docTemplate = `{
         },
         "schemas.SportCourtCreate": {
             "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ABC123"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Pista 1"
                 }
             }
         },
@@ -6694,18 +6941,27 @@ const docTemplate = `{
         },
         "schemas.SportCourtUpdate": {
             "type": "object",
+            "required": [
+                "code",
+                "id",
+                "name"
+            ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "ABC123"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "description|null"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Pista 1"
                 }
             }
         },
@@ -6722,36 +6978,58 @@ const docTemplate = `{
         },
         "schemas.UserCreate": {
             "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "point_sales_ids",
+                "role_id",
+                "username"
+            ],
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "address|null"
                 },
                 "cellphone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "cellphone|null"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "a@b.com"
                 },
                 "first_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "John"
                 },
                 "last_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Doe"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Password123*"
                 },
                 "point_sales_ids": {
                     "type": "array",
                     "items": {
                         "type": "integer"
-                    }
+                    },
+                    "example": [
+                        1,
+                        2,
+                        3
+                    ]
                 },
                 "role_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "johndoe"
                 }
             }
         },
@@ -6859,53 +7137,85 @@ const docTemplate = `{
         },
         "schemas.UserUpdate": {
             "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "id",
+                "is_active",
+                "last_name",
+                "point_sales_ids",
+                "role_id",
+                "username"
+            ],
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "address|null"
                 },
                 "cellphone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "cellphone|null"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "a@b.com"
                 },
                 "first_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "John"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "is_active": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": true
                 },
                 "last_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Doe"
                 },
                 "point_sales_ids": {
                     "type": "array",
                     "items": {
                         "type": "integer"
-                    }
+                    },
+                    "example": [
+                        1,
+                        2,
+                        3
+                    ]
                 },
                 "role_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "johndoe"
                 }
             }
         },
         "schemas.UserUpdatePassword": {
             "type": "object",
+            "required": [
+                "confirm_pass",
+                "new_password",
+                "old_password"
+            ],
             "properties": {
                 "confirm_pass": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Password123*"
                 },
                 "new_password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Password123*"
                 },
                 "old_password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Password123*"
                 }
             }
         }

@@ -12,7 +12,7 @@ type CategoryResponse struct{
 }
 
 type CategoryCreate struct{
-	Name string `json:"name" validate:"required"`
+	Name string `json:"name" validate:"required" example:"Categoria1"`
 }	
 
 func (c CategoryCreate) Validate() error {
@@ -32,8 +32,8 @@ func (c CategoryCreate) Validate() error {
 }
 
 type CategoryUpdate struct{
-	ID   uint   `json:"id" validate:"required"`
-	Name string `json:"name" validate:"required"`
+	ID   uint   `json:"id" validate:"required" example:"1"`
+	Name string `json:"name" validate:"required" example:"Categoria1"`
 }
 
 func (c CategoryUpdate) Validate() error {

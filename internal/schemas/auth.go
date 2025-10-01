@@ -7,8 +7,8 @@ import (
 )
 
 type Login struct {
-	Email    string `json:"email" validate:"email,required"`
-	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"email,required" example:"a@b.com"`
+	Password string `json:"password" validate:"required" example:"Password123*"`
 }
 
 func(l *Login) Validate() error {

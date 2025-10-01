@@ -13,4 +13,5 @@ func RegisterRoutes(app *fiber.App, controllers *controllers.RegisterController)
 	register.Post("/open", controllers.RegisterOpen)
 	register.Post("/inform", controllers.RegiterInform)
 	register.Post("/close", controllers.RegisterClose)
+	register.Get("/get/:id", controllers.RegisterGetByID)
 }

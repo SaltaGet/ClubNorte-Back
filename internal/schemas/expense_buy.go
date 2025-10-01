@@ -35,15 +35,15 @@ type ItemExpenseBuyResponse struct {
 }
 
 type ExpenseBuyCreate struct {
-	Description     *string           `json:"description"`
+	Description     *string           `json:"description" example:"description|null"`
 	ItemExpenseBuys []*ItemExpenseBuyCreate `json:"item_expense_buys" validate:"required,dive"`
-	PaymentMethod   string            `json:"payment_method" validate:"oneof=efectivo tarjeta transferencia"`
+	PaymentMethod   string            `json:"payment_method" validate:"oneof=efectivo tarjeta transferencia" example:"efectivo|tarjeta|transferencia"`
 }
 
 type ItemExpenseBuyCreate struct {
-	ProductID uint `json:"product_id" validate:"required"`
-	Quantity  float64 `json:"quantity" validate:"required"`
-	Price     float64 `json:"price" validate:"required"`
+	ProductID uint `json:"product_id" validate:"required" example:"1"`
+	Quantity  float64 `json:"quantity" validate:"required" example:"10"`
+	Price     float64 `json:"price" validate:"required" example:"100"`
 }
 
 func (i *ExpenseBuyCreate) Validate() error {

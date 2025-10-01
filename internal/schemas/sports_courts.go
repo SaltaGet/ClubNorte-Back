@@ -26,9 +26,9 @@ type SportCourtResponseDTO struct {
 }
 
 type SportCourtCreate struct {
-	Code         string  `json:"code"`
-	Name         string  `json:"name"`
-	Description  *string `json:"description,omitempty"`
+	Code         string  `json:"code" validate:"required" example:"ABC123"`
+	Name         string  `json:"name" validate:"required" example:"Pista 1"`
+	Description  *string `json:"description,omitempty" example:"description|null"`
 }
 
 func (s *SportCourtCreate) Validate() error {
@@ -48,10 +48,10 @@ func (s *SportCourtCreate) Validate() error {
 }
 
 type SportCourtUpdate struct {
-	ID           uint    `json:"id"`
-	Code         string  `json:"code"`
-	Name         string  `json:"name"`
-	Description  *string `json:"description,omitempty"`
+	ID           uint    `json:"id" validate:"required" example:"1"`
+	Code         string  `json:"code" validate:"required" example:"ABC123"`
+	Name         string  `json:"name" validate:"required" example:"Pista 1"`
+	Description  *string `json:"description,omitempty" example:"description|null"`
 }
 
 func (s *SportCourtUpdate) Validate() error {

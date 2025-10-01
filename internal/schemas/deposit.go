@@ -17,8 +17,8 @@ type DepositResponse struct {
 }
 
 type DepositUpdateStock struct {
-	ProductID uint   `json:"product_id"`
-	Stock     float64 `json:"stock"`
+	ProductID uint   `json:"product_id" validate:"required" example:"1"`
+	Stock     float64 `json:"stock" validate:"required" example:"10"`
 	Method    string `json:"method" validate:"oneof=add subtract set" example:"add|subtract|set"`
 }
 

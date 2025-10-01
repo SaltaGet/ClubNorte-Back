@@ -24,6 +24,10 @@ type Register struct {
 	IsClose   bool      `gorm:"not null,default:false" json:"is_close"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
+
+	Income             []Income             `gorm:"-" json:"income"`
+	IncomeSportsCourts []IncomeSportsCourts `gorm:"-" json:"income_sports_courts"`
+	Expense            []Expense            `gorm:"-" json:"expense"`
 }
 
 type TotalMovement struct {

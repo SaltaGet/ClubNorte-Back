@@ -109,6 +109,9 @@ func (s *InformService) Inform() (any, error) {
 	excel := excelize.NewFile()
 	sheet := "Sheet1"
 
+	excel.SetSheetName(sheet, "productos")
+	sheet = "productos"
+
 	// Encabezados
 	headers := []string{"ID", "Code", "Name", "Description", "Price", "Category", "Notifier", "Min Amount"}
 	for i, h := range headers {
@@ -184,9 +187,6 @@ func (s *InformService) Inform() (any, error) {
 		r++
 	}
 
-	// -------------------------
-	// Gráfico de torta
-	// -------------------------
 	categoryRange := fmt.Sprintf("%s!$J$%d:$J$%d", sheet, resumeStart+1, r-1)
 	countRange := fmt.Sprintf("%s!$K$%d:$K$%d", sheet, resumeStart+1, r-1)
 
@@ -195,9 +195,9 @@ func (s *InformService) Inform() (any, error) {
 		Type: excelize.Pie3D,
 		Series: []excelize.ChartSeries{
 			{
-				Name:        "Productos por Categoría",
-				Categories:  categoryRange,
-				Values:      countRange,
+				Name:       "Productos por Categoría",
+				Categories: categoryRange,
+				Values:     countRange,
 				// DataLabel:   excelize.ChartDataLabel{ShowVal: true},
 				// ShowLabel:   true, // muestra los valores en cada porción
 				// ShowPercent: true, // muestra porcentaje en cada porción

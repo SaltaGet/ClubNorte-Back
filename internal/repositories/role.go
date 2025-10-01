@@ -24,7 +24,7 @@ func (r *MainRepository) RoleGetByID(id uint) (*models.Role, error) {
 func (r *MainRepository) RoleGetAll() ([]*models.Role, error) {
 	var roles []*models.Role
 
-	if err := r.DB.Where("name != ?", "admin").Find(&roles).Error; err != nil {
+	if err := r.DB.Find(&roles).Error; err != nil {
 		return nil, schemas.ErrorResponse(500, "error al obtener los roles", err)
 	}
 

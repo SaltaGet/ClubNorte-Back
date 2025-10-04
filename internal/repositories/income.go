@@ -177,12 +177,23 @@ func (r *MainRepository) IncomeCreate(userID, pointSaleID uint, incomeCreate *sc
 				return schemas.ErrorResponse(500, "Error al actualizar stock", err)
 			}
 
+			var priceCost models.ItemExpenseBuy
+			if err := tx.
+				Where("product_id = ?", item.ProductID).
+				Order("created_at DESC").
+				First(&priceCost).Error; err != nil {
+					if errors.Is(err, gorm.ErrRecordNotFound) {
+						priceCost.Price = product.Price						
+					}
+			}
+
 			// Crear item en memoria
 			incomeItems = append(incomeItems, &models.IncomeItem{
 				ProductID: item.ProductID,
 				Quantity:  item.Quantity,
 				Price:     product.Price,
 				Subtotal:  item.Quantity * product.Price,
+				Price_Cost: priceCost.Price,
 			})
 
 			total += item.Quantity * product.Price

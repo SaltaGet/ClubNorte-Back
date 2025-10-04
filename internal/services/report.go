@@ -8,100 +8,8 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-// func (s *InformService) Inform() (any, error) {
-// 	inform, err := s.InformRepository.Inform()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	excel := excelize.NewFile()
-// 	excel.SetCellValue("Sheet1", "A1", "ID")
-// 	excel.SetCellValue("Sheet1", "B1", "Name")
-// 	excel.SetCellValue("Sheet1", "C1", "Price")
-
-// 	for i, product := range inform.([]*models.Product) {
-// 		row := strconv.Itoa(i + 2) // Convierte el índice a string
-
-// 		excel.SetCellValue("Sheet1", "A"+row, product.ID)
-// 		excel.SetCellValue("Sheet1", "B"+row, product.Name)
-// 		excel.SetCellValue("Sheet1", "C"+row, product.Price)
-// 	}
-
-// 	err = excel.SaveAs("inform.xlsx")
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return excel, nil
-// }
-
-// func (s *InformService) Inform() (any, error) {
-// 	inform, err := s.InformRepository.Inform()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	excel := excelize.NewFile()
-// 	sheet := "Sheet1"
-
-// 	// Encabezados
-// 	headers := []string{"ID", "Code", "Name", "Description", "Price", "Category", "Notifier", "Min Amount"}
-// 	for i, h := range headers {
-// 		col := string(rune('A' + i)) // A, B, C, ...
-// 		excel.SetCellValue(sheet, col+"1", h)
-// 	}
-
-// 	// Estilo para encabezados
-// 	headerStyle, _ := excel.NewStyle(&excelize.Style{
-// 		Font:      &excelize.Font{Bold: true, Color: "#FFFFFF"},
-// 		Fill:      excelize.Fill{Type: "pattern", Color: []string{"#4F81BD"}, Pattern: 1},
-// 		Alignment: &excelize.Alignment{Horizontal: "center", Vertical: "center"},
-// 		Border: []excelize.Border{
-// 			{Type: "left", Color: "000000", Style: 1},
-// 			{Type: "top", Color: "000000", Style: 1},
-// 			{Type: "bottom", Color: "000000", Style: 1},
-// 			{Type: "right", Color: "000000", Style: 1},
-// 		},
-// 	})
-// 	excel.SetCellStyle(sheet, "A1", "H1", headerStyle)
-
-// 	// Llenar filas con productos
-// 	for i, product := range inform.([]*models.Product) {
-// 		row := strconv.Itoa(i + 2) // fila 2 en adelante
-
-// 		excel.SetCellValue(sheet, "A"+row, product.ID)
-// 		excel.SetCellValue(sheet, "B"+row, product.Code)
-// 		excel.SetCellValue(sheet, "C"+row, product.Name)
-// 		if product.Description != nil {
-// 			excel.SetCellValue(sheet, "D"+row, *product.Description)
-// 		}
-// 		excel.SetCellValue(sheet, "E"+row, product.Price)
-// 		excel.SetCellValue(sheet, "F"+row, product.Category.Name) // suponiendo que Category tiene Name
-// 		excel.SetCellValue(sheet, "G"+row, product.Notifier)
-// 		excel.SetCellValue(sheet, "H"+row, product.MinAmount)
-// 	}
-
-// 	// Ajustar ancho de columnas según contenido
-// 	for i := 0; i < len(headers); i++ {
-// 		col := string(rune('A' + i))
-// 		excel.SetColWidth(sheet, col, col, 20) // ancho fijo razonable
-// 	}
-
-// 	// Opcional: congelar primera fila
-// 	excel.SetPanes(sheet, &excelize.Panes{
-// 		Freeze:      true,
-// 		Split:       false,
-// 		XSplit:      0,
-// 		YSplit:      1,
-// 		TopLeftCell: "A2",
-// 		ActivePane:  "bottomLeft",
-// 	})
-
-// 	return excel, nil
-// }
-
-func (s *InformService) Inform() (any, error) {
-	inform, err := s.InformRepository.Inform()
+func (s *ReportService) ReportExcelGet() (any, error) {
+	inform, err := s.ReportRepository.ReportExcelGet()
 	if err != nil {
 		return nil, err
 	}
@@ -210,3 +118,4 @@ func (s *InformService) Inform() (any, error) {
 
 	return excel, nil
 }
+

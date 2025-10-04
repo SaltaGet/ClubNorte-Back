@@ -15,12 +15,12 @@ type MainContainer struct {
 	ExpenseBuyController *controllers.ExpenseBuyController
 	IncomeSportCourtController *controllers.IncomeSportCourtController
 	IncomeController *controllers.IncomeController
-	InformController *controllers.InformController
 	MovementStockController *controllers.MovementStockController
 	NotificationController *controllers.NotificationController
 	PointSaleController *controllers.PointSaleController
 	ProductController *controllers.ProductController
 	RegisterController *controllers.RegisterController
+	ReportController *controllers.ReportController
 	RoleController *controllers.RoleController
 	SportCourtsController *controllers.SportCourtController
 	StockController *controllers.StockController
@@ -39,12 +39,12 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 	expenseBuySvc := &services.ExpenseBuyService{ExpenseBuyRepository: repo}
 	incomeSportCourtSvc := &services.IncomeSportCourtService{IncomeSportCourtRepository: repo}
 	incomeSvc := &services.IncomeService{IncomeRepository: repo}
-	informSvc := &services.InformService{InformRepository: repo}
 	movementStockSvc := &services.MovementStockService{MovementStockRepository: repo}
 	notificationSvc := &services.NotificationService{NotificationRepository: repo}
 	pointSaleSvc := &services.PointSaleService{PointSaleRepository: repo}
 	productSvc := &services.ProductService{ProductRepository: repo}
 	registerSvc := &services.RegisterService{RegisterRepository: repo}
+	reportSvc := &services.ReportService{ReportRepository: repo}
 	roleSvc := &services.RoleService{RoleRepository: repo}
 	sportCourtSvc := &services.SportCourtService{SportCourtRepository: repo}
 	stockSvc := &services.StockService{StockPointSaleRepository: repo}
@@ -71,7 +71,7 @@ func NewMainContainer(db *gorm.DB) *MainContainer {
 		ExpenseBuyController: &controllers.ExpenseBuyController{ExpenseBuyService: expenseBuySvc},
 		IncomeSportCourtController: &controllers.IncomeSportCourtController{IncomeSportCourtService: incomeSportCourtSvc},
 		IncomeController: &controllers.IncomeController{IncomeService: incomeSvc},
-		InformController: &controllers.InformController{InformService: informSvc},
+		ReportController: &controllers.ReportController{ReportService: reportSvc},
 		MovementStockController: movementStockCtrl,
 		NotificationController: notificationCtrl,
 		PointSaleController: &controllers.PointSaleController{PointSaleService: pointSaleSvc},

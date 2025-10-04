@@ -30,10 +30,6 @@ type IncomeController struct {
 	IncomeService ports.IncomeService
 }
 
-type InformController struct {
-	InformService ports.InformService
-}
-
 type MovementStockController struct {
 	MovementStockService ports.MovementStockService
 	NotificationController *NotificationController
@@ -54,6 +50,10 @@ type ProductController struct {
 
 type RegisterController struct {
 	RegisterService ports.RegisterService
+}
+
+type ReportController struct {
+	ReportService ports.ReportService
 }
 
 type RoleController struct {

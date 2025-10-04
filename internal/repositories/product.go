@@ -104,7 +104,9 @@ func (r *MainRepository) ProductCreate(productCreate *schemas.ProductCreate) (ui
 	product.Name = productCreate.Name
 	product.Code = productCreate.Code
 	product.Description = productCreate.Description
-	product.Price = productCreate.Price
+	if productCreate.Price != nil {
+		product.Price = *productCreate.Price
+	}
 	product.CategoryID = productCreate.CategoryID
 	product.Notifier = productCreate.Notifier
 	product.MinAmount = productCreate.MinAmount
@@ -128,12 +130,16 @@ func (r *MainRepository) ProductUpdate(product *schemas.ProductUpdate) error {
 		return schemas.ErrorResponse(500, "error al obtener el producto", err)
 	}
 
+	if product.Price != nil {
+		p.Price = *product.Price
+	}
+
 	updates := map[string]any{
 		"code":        product.Code,
 		"name":        product.Name,
 		"description": &product.Description,
 		"category_id": product.CategoryID,
-		"price":       product.Price,
+		"price":       p.Price,
 		"notifier":    product.Notifier,
 		"min_amount":  product.MinAmount,
 	}

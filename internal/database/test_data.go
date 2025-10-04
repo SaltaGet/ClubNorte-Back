@@ -304,34 +304,34 @@ func CreateTestData() error {
 	dbTest.First(&register3, 3)
 
 	items := []models.IncomeItem{
-		{ID: 1, IncomeID: 1, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2},
-		{ID: 2, IncomeID: 1, ProductID: products[1].ID, Quantity: 4, Price: products[1].Price, Subtotal: products[0].Price * 4},
-		{ID: 3, IncomeID: 1, ProductID: products[2].ID, Quantity: 6, Price: products[2].Price, Subtotal: products[0].Price * 6},
+		{ID: 1, IncomeID: 1, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2, Price_Cost: products[0].Price},
+		{ID: 2, IncomeID: 1, ProductID: products[1].ID, Quantity: 4, Price: products[1].Price, Subtotal: products[0].Price * 4, Price_Cost: products[1].Price},
+		{ID: 3, IncomeID: 1, ProductID: products[2].ID, Quantity: 6, Price: products[2].Price, Subtotal: products[0].Price * 6, Price_Cost: products[2].Price},
 
-		{ID: 4, IncomeID: 2, ProductID: products[0].ID, Quantity: 3, Price: products[0].Price, Subtotal: products[0].Price * 3},
+		{ID: 4, IncomeID: 2, ProductID: products[0].ID, Quantity: 3, Price: products[0].Price, Subtotal: products[0].Price * 3, Price_Cost: products[0].Price},
 
-		{ID: 5, IncomeID: 3, ProductID: products[1].ID, Quantity: 5, Price: products[1].Price, Subtotal: products[0].Price * 5},
-		{ID: 6, IncomeID: 3, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7},
+		{ID: 5, IncomeID: 3, ProductID: products[1].ID, Quantity: 5, Price: products[1].Price, Subtotal: products[0].Price * 5, Price_Cost: products[1].Price},
+		{ID: 6, IncomeID: 3, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7, Price_Cost: products[2].Price},
 
-		{ID: 7, IncomeID: 4, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2},
-		{ID: 8, IncomeID: 4, ProductID: products[1].ID, Quantity: 2, Price: products[1].Price, Subtotal: products[0].Price * 2},
+		{ID: 7, IncomeID: 4, ProductID: products[0].ID, Quantity: 2, Price: products[0].Price, Subtotal: products[0].Price * 2, Price_Cost: products[0].Price},
+		{ID: 8, IncomeID: 4, ProductID: products[1].ID, Quantity: 2, Price: products[1].Price, Subtotal: products[0].Price * 2, Price_Cost: products[1].Price},
 
-		{ID: 9, IncomeID: 5, ProductID: products[2].ID, Quantity: 1, Price: products[2].Price, Subtotal: products[0].Price * 1},
-		{ID: 10, IncomeID: 5, ProductID: products[0].ID, Quantity: 5, Price: products[0].Price, Subtotal: products[0].Price * 5},
+		{ID: 9, IncomeID: 5, ProductID: products[2].ID, Quantity: 1, Price: products[2].Price, Subtotal: products[0].Price * 1, Price_Cost: products[2].Price},
+		{ID: 10, IncomeID: 5, ProductID: products[0].ID, Quantity: 5, Price: products[0].Price, Subtotal: products[0].Price * 5, Price_Cost: products[0].Price},
 
-		{ID: 11, IncomeID: 6, ProductID: products[1].ID, Quantity: 6, Price: products[1].Price, Subtotal: products[0].Price * 6},
-		{ID: 12, IncomeID: 6, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4},
-		{ID: 13, IncomeID: 6, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6},
-		{ID: 14, IncomeID: 6, ProductID: products[1].ID, Quantity: 3, Price: products[1].Price, Subtotal: products[0].Price * 3},
+		{ID: 11, IncomeID: 6, ProductID: products[1].ID, Quantity: 6, Price: products[1].Price, Subtotal: products[0].Price * 6, Price_Cost: products[1].Price},
+		{ID: 12, IncomeID: 6, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4, Price_Cost: products[2].Price},
+		{ID: 13, IncomeID: 6, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6, Price_Cost: products[0].Price},
+		{ID: 14, IncomeID: 6, ProductID: products[1].ID, Quantity: 3, Price: products[1].Price, Subtotal: products[0].Price * 3, Price_Cost: products[1].Price},
 
-		{ID: 15, IncomeID: 7, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6},
+		{ID: 15, IncomeID: 7, ProductID: products[0].ID, Quantity: 6, Price: products[0].Price, Subtotal: products[0].Price * 6, Price_Cost: products[0].Price},
 
-		{ID: 16, IncomeID: 8, ProductID: products[1].ID, Quantity: 9, Price: products[1].Price, Subtotal: products[0].Price * 9},
-		{ID: 17, IncomeID: 8, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7},
+		{ID: 16, IncomeID: 8, ProductID: products[1].ID, Quantity: 9, Price: products[1].Price, Subtotal: products[0].Price * 9, Price_Cost: products[1].Price},
+		{ID: 17, IncomeID: 8, ProductID: products[2].ID, Quantity: 7, Price: products[2].Price, Subtotal: products[0].Price * 7, Price_Cost: products[2].Price},
 
-		{ID: 18, IncomeID: 9, ProductID: products[0].ID, Quantity: 1, Price: products[0].Price, Subtotal: products[0].Price * 1},
-		{ID: 19, IncomeID: 9, ProductID: products[1].ID, Quantity: 1, Price: products[1].Price, Subtotal: products[0].Price * 1},
-		{ID: 20, IncomeID: 9, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4},
+		{ID: 18, IncomeID: 9, ProductID: products[0].ID, Quantity: 1, Price: products[0].Price, Subtotal: products[0].Price * 1, Price_Cost: products[0].Price},
+		{ID: 19, IncomeID: 9, ProductID: products[1].ID, Quantity: 1, Price: products[1].Price, Subtotal: products[0].Price * 1, Price_Cost: products[1].Price},
+		{ID: 20, IncomeID: 9, ProductID: products[2].ID, Quantity: 4, Price: products[2].Price, Subtotal: products[0].Price * 4, Price_Cost: products[2].Price},
 	}
 
 	incomes := []models.Income{

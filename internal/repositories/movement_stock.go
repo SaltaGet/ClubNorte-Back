@@ -49,6 +49,18 @@ func (r *MainRepository) MoveStock(userID uint, input *schemas.MovementStock) er
 
 		switch input.FromType {
 		case "deposit":
+			var product models.Product
+			if err := tx.First(&product, input.ProductID).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return schemas.ErrorResponse(404, "producto no encontrado", err)
+				}
+				return schemas.ErrorResponse(500, "error al obtener el producto", err)
+			}
+
+			if product.Price <= 0.0 {
+				return schemas.ErrorResponse(400, "No se puede editar un producto sin precio", fmt.Errorf("eNo se puede editar un producto sin precio"))
+			}
+
 			var deposit models.StockDeposit
 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 				Where("product_id = ?", input.ProductID).

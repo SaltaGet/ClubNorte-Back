@@ -576,7 +576,6 @@ definitions:
     - category_id
     - code
     - name
-    - price
     type: object
   schemas.ProductFullResponse:
     properties:
@@ -685,7 +684,6 @@ definitions:
     - code
     - id
     - name
-    - price
     type: object
   schemas.RegisterClose:
     properties:

@@ -6542,8 +6542,7 @@
             "required": [
                 "category_id",
                 "code",
-                "name",
-                "price"
+                "name"
             ],
             "properties": {
                 "category_id": {
@@ -6698,8 +6697,7 @@
                 "category_id",
                 "code",
                 "id",
-                "name",
-                "price"
+                "name"
             ],
             "properties": {
                 "category_id": {

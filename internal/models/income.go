@@ -24,7 +24,8 @@ type IncomeItem struct {
 	Income    Income  `gorm:"foreignKey:IncomeID;references:ID" json:"-"`
 	ProductID uint    `gorm:"not null" json:"product_id"`
 	Product   Product `gorm:"foreignKey:ProductID;references:ID" json:"product"`
-	Quantity  float64     `gorm:"not null" json:"quantity"`
+	Quantity  float64 `gorm:"not null" json:"quantity"`
+	Price_Cost float64 `gorm:"not null" json:"price_cost"`
 	Price     float64 `gorm:"not null" json:"price"`
 	Subtotal  float64 `gorm:"not null" json:"subtotal"`
 }

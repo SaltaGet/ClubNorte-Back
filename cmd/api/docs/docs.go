@@ -6550,8 +6550,7 @@ const docTemplate = `{
             "required": [
                 "category_id",
                 "code",
-                "name",
-                "price"
+                "name"
             ],
             "properties": {
                 "category_id": {
@@ -6706,8 +6705,7 @@ const docTemplate = `{
                 "category_id",
                 "code",
                 "id",
-                "name",
-                "price"
+                "name"
             ],
             "properties": {
                 "category_id": {

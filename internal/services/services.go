@@ -32,10 +32,6 @@ type IncomeService struct {
 	IncomeRepository ports.IncomeRepository
 }
 
-type InformService struct {
-	InformRepository ports.InformRepository
-}
-
 type MovementStockService struct {
 	MovementStockRepository ports.MovementStockRepository
 }
@@ -54,6 +50,10 @@ type ProductService struct {
 
 type RegisterService struct {
 	RegisterRepository ports.RegisterRepository
+}
+
+type ReportService struct {
+	ReportRepository ports.ReportRepository
 }
 
 type RoleService struct {

@@ -64,7 +64,7 @@ type ProductCreate struct {
 	Name        string  `json:"name" validate:"required" example:"Producto1"`
 	Description *string `json:"description" example:"description|null"`
 	CategoryID  uint    `json:"category_id" validate:"required" example:"1"`
-	Price       float64 `json:"price" validate:"required" example:"100.00"`
+	Price       *float64 `json:"price" example:"100.00"`
 	Notifier    bool     `json:"notifier" example:"false"`
 	MinAmount   float64  `json:"min_amount" example:"10.00"`
 }
@@ -91,7 +91,7 @@ type ProductUpdate struct {
 	Name        string  `json:"name" validate:"required" example:"Producto1"`
 	Description *string `json:"description" example:"description|null"`
 	CategoryID  uint    `json:"category_id" validate:"required" example:"1"`
-	Price       float64 `json:"price" validate:"required" example:"100.00"`
+	Price       *float64 `json:"price" example:"100.00"`
 	Notifier    bool     `json:"notifier" example:"false"`
 	MinAmount   float64  `json:"min_amount" example:"10.00"`
 }

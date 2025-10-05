@@ -1410,7 +1410,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemas.ExpenseDateRequest"
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
                         }
                     },
                     {
@@ -1723,7 +1723,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemas.ExpenseBuyDateRequest"
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
                         }
                     },
                     {
@@ -2036,7 +2036,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemas.IncomeDateRequest"
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
                         }
                     },
                     {
@@ -2349,7 +2349,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemas.IncomeSportsCourtsDateRequest"
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
                         }
                     },
                     {
@@ -4331,7 +4331,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schemas.RegisterInformRequest"
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
                         }
                     }
                 ],
@@ -4409,6 +4409,87 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/report/get_by_date": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Obtiene un reporte por fechas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Report"
+                ],
+                "summary": "ReportGetByDate",
+                "parameters": [
+                    {
+                        "description": "Rango de fechas",
+                        "name": "dateRangeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schemas.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "body": {
+                                            "$ref": "#/definitions/schemas.ReportMovementResponse"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -5780,6 +5861,23 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.DateRangeRequest": {
+            "type": "object",
+            "required": [
+                "from_date",
+                "to_date"
+            ],
+            "properties": {
+                "from_date": {
+                    "type": "string",
+                    "example": "2022-01-01"
+                },
+                "to_date": {
+                    "type": "string",
+                    "example": "2022-12-31"
+                }
+            }
+        },
         "schemas.DepositResponse": {
             "type": "object",
             "properties": {
@@ -5859,19 +5957,6 @@ const docTemplate = `{
                 }
             }
         },
-        "schemas.ExpenseBuyDateRequest": {
-            "type": "object",
-            "properties": {
-                "from_date": {
-                    "type": "string",
-                    "example": "2022-01-01"
-                },
-                "to_date": {
-                    "type": "string",
-                    "example": "2022-12-31"
-                }
-            }
-        },
         "schemas.ExpenseBuyResponse": {
             "type": "object",
             "properties": {
@@ -5943,19 +6028,6 @@ const docTemplate = `{
                 "total": {
                     "type": "number",
                     "example": 1000
-                }
-            }
-        },
-        "schemas.ExpenseDateRequest": {
-            "type": "object",
-            "properties": {
-                "from_date": {
-                    "type": "string",
-                    "example": "2022-01-01"
-                },
-                "to_date": {
-                    "type": "string",
-                    "example": "2022-12-31"
                 }
             }
         },
@@ -6052,19 +6124,6 @@ const docTemplate = `{
                         "transferencia"
                     ],
                     "example": "efectivo|tarjeta|transferencia"
-                }
-            }
-        },
-        "schemas.IncomeDateRequest": {
-            "type": "object",
-            "properties": {
-                "from_date": {
-                    "type": "string",
-                    "example": "2022-01-01"
-                },
-                "to_date": {
-                    "type": "string",
-                    "example": "2022-12-31"
                 }
             }
         },
@@ -6221,19 +6280,6 @@ const docTemplate = `{
                 "sports_court_id": {
                     "type": "integer",
                     "example": 1
-                }
-            }
-        },
-        "schemas.IncomeSportsCourtsDateRequest": {
-            "type": "object",
-            "properties": {
-                "from_date": {
-                    "type": "string",
-                    "example": "2022-01-01"
-                },
-                "to_date": {
-                    "type": "string",
-                    "example": "2022-12-31"
                 }
             }
         },
@@ -6813,29 +6859,55 @@ const docTemplate = `{
                 }
             }
         },
-        "schemas.RegisterInformRequest": {
-            "type": "object",
-            "required": [
-                "from_date",
-                "to_date"
-            ],
-            "properties": {
-                "from_date": {
-                    "type": "string",
-                    "example": "2022-01-01"
-                },
-                "to_date": {
-                    "type": "string",
-                    "example": "2022-12-31"
-                }
-            }
-        },
         "schemas.RegisterOpen": {
             "type": "object",
             "properties": {
                 "open_amount": {
                     "type": "number",
                     "example": 100
+                }
+            }
+        },
+        "schemas.ReportCount": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "group": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.ReportMovementResponse": {
+            "type": "object",
+            "properties": {
+                "expense": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ReportCount"
+                    }
+                },
+                "expense_buy": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ReportCount"
+                    }
+                },
+                "income": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ReportCount"
+                    }
+                },
+                "income_sports_courts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ReportCount"
+                    }
                 }
             }
         },

@@ -13,7 +13,7 @@ type IncomeSportsCourtsCreate struct {
 	DatePlay             time.Time `json:"date_play" validate:"required" example:"2023-08-01T12:00:00Z"`
 	PartialPay           float64   `json:"partial_pay" example:"100.00"`
 	PartialPaymentMethod string    `json:"partial_payment_method" validate:"oneof=efectivo tarjeta transferencia" example:"efectivo|tarjeta|transferencia"`
-	Price                float64   `json:"price" example:"200.00"`
+	Total                float64   `json:"price" example:"200.00"`
 
 	// RestPay           float64   `json:"rest_pay"`
 	// RestPaymentMethod string    `json:"rest_payment_method" validate:"oneof=efectivo tarjeta transferencia"`
@@ -107,7 +107,7 @@ type IncomeSportsCourtsResponse struct {
 	RestPaymentMethod *string    `json:"rest_payment_method"`
 	DateRestPay       *time.Time `json:"date_rest_pay"`
 
-	Price     float64   `json:"price"`
+	Total     float64   `json:"price"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -127,27 +127,3 @@ type IncomeSportsCourtsResponseDTO struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type IncomeSportsCourtsDateRequest struct {
-	FromDate string `json:"from_date" example:"2022-01-01"`
-	ToDate   string `json:"to_date" example:"2022-12-31"`
-}
-
-func (r *IncomeSportsCourtsDateRequest) GetParsedDates() (time.Time, time.Time, error) {
-	loc, _ := time.LoadLocation("America/Argentina/Buenos_Aires")
-
-	from, err := time.ParseInLocation("2006-01-02", r.FromDate, loc)
-	if err != nil {
-		return time.Time{}, time.Time{}, ErrorResponse(422, "error al parsear la fecha de inicio", err)
-	}
-
-	to, err := time.ParseInLocation("2006-01-02", r.ToDate, loc)
-	if err != nil {
-		return time.Time{}, time.Time{}, ErrorResponse(422, "error al parsear la fecha de fin", err)
-	}
-
-	// Ajustar horas
-	from = time.Date(from.Year(), from.Month(), from.Day(), 0, 0, 0, 0, from.Location())
-	to = time.Date(to.Year(), to.Month(), to.Day(), 23, 59, 59, int(time.Second-time.Nanosecond), to.Location())
-
-	return from, to, nil
-}

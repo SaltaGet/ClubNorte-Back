@@ -57,9 +57,9 @@ func (i *IncomeSportCourtController) IncomeSportCourtGetByID(c *fiber.Ctx) error
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
-//	@Param			income_date	body		schemas.IncomeSportsCourtsDateRequest	true	"Fecha desde - hasta del ingreso"
-//	@Param			page		query		int										false	"Número de página"				default(1)
-//	@Param			limit		query		int										false	"Número de elementos por página"	default(10)
+//	@Param			income_date	body		schemas.DateRangeRequest	true	"Fecha desde - hasta del ingreso"
+//	@Param			page		query		int							false	"Número de página"				default(1)
+//	@Param			limit		query		int							false	"Número de elementos por página"	default(10)
 //	@Success		200			{object}	schemas.Response{body=[]schemas.IncomeSportsCourtsResponseDTO}
 //	@Failure		400			{object}	schemas.Response
 //	@Failure		401			{object}	schemas.Response
@@ -68,7 +68,7 @@ func (i *IncomeSportCourtController) IncomeSportCourtGetByID(c *fiber.Ctx) error
 //	@Failure		500			{object}	schemas.Response
 //	@Router			/api/v1/income_sport_court/get_by_date [post]
 func (i *IncomeSportCourtController) IncomeSportCourtGetByDate(c *fiber.Ctx) error {
-	var incomeDateRequest schemas.IncomeSportsCourtsDateRequest
+	var incomeDateRequest schemas.DateRangeRequest
 	if err := c.BodyParser(&incomeDateRequest); err != nil {
 		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}

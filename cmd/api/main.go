@@ -76,6 +76,7 @@ func main() {
 	// app.Use(nrfiber.Middleware(nrApp))
 
 	app.Use(middleware.LoggingMiddleware)
+	app.Use(middleware.BlockAccess)
 	app.Use(middleware.InjectionDepends(dep))
 
 	credentials, err := strconv.ParseBool(os.Getenv("CREDENTIALS"))

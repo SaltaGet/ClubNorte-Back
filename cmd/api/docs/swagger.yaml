@@ -26,6 +26,18 @@ definitions:
     - id
     - name
     type: object
+  schemas.DateRangeRequest:
+    properties:
+      from_date:
+        example: "2022-01-01"
+        type: string
+      to_date:
+        example: "2022-12-31"
+        type: string
+    required:
+    - from_date
+    - to_date
+    type: object
   schemas.DepositResponse:
     properties:
       category:
@@ -81,15 +93,6 @@ definitions:
     required:
     - item_expense_buys
     type: object
-  schemas.ExpenseBuyDateRequest:
-    properties:
-      from_date:
-        example: "2022-01-01"
-        type: string
-      to_date:
-        example: "2022-12-31"
-        type: string
-    type: object
   schemas.ExpenseBuyResponse:
     properties:
       created_at:
@@ -139,15 +142,6 @@ definitions:
     required:
     - payment_method
     - total
-    type: object
-  schemas.ExpenseDateRequest:
-    properties:
-      from_date:
-        example: "2022-01-01"
-        type: string
-      to_date:
-        example: "2022-12-31"
-        type: string
     type: object
   schemas.ExpenseResponse:
     properties:
@@ -211,15 +205,6 @@ definitions:
     required:
     - items
     - payment_method
-    type: object
-  schemas.IncomeDateRequest:
-    properties:
-      from_date:
-        example: "2022-01-01"
-        type: string
-      to_date:
-        example: "2022-12-31"
-        type: string
     type: object
   schemas.IncomeItemCreate:
     properties:
@@ -327,15 +312,6 @@ definitions:
     - date_play
     - shift
     - sports_court_id
-    type: object
-  schemas.IncomeSportsCourtsDateRequest:
-    properties:
-      from_date:
-        example: "2022-01-01"
-        type: string
-      to_date:
-        example: "2022-12-31"
-        type: string
     type: object
   schemas.IncomeSportsCourtsResponse:
     properties:
@@ -732,23 +708,39 @@ definitions:
       user_open:
         $ref: '#/definitions/schemas.UserSimpleDTO'
     type: object
-  schemas.RegisterInformRequest:
-    properties:
-      from_date:
-        example: "2022-01-01"
-        type: string
-      to_date:
-        example: "2022-12-31"
-        type: string
-    required:
-    - from_date
-    - to_date
-    type: object
   schemas.RegisterOpen:
     properties:
       open_amount:
         example: 100
         type: number
+    type: object
+  schemas.ReportCount:
+    properties:
+      count:
+        type: number
+      date:
+        type: string
+      group:
+        type: string
+    type: object
+  schemas.ReportMovementResponse:
+    properties:
+      expense:
+        items:
+          $ref: '#/definitions/schemas.ReportCount'
+        type: array
+      expense_buy:
+        items:
+          $ref: '#/definitions/schemas.ReportCount'
+        type: array
+      income:
+        items:
+          $ref: '#/definitions/schemas.ReportCount'
+        type: array
+      income_sports_courts:
+        items:
+          $ref: '#/definitions/schemas.ReportCount'
+        type: array
     type: object
   schemas.Response:
     properties:
@@ -1886,7 +1878,7 @@ paths:
         name: expense_date
         required: true
         schema:
-          $ref: '#/definitions/schemas.ExpenseDateRequest'
+          $ref: '#/definitions/schemas.DateRangeRequest'
       - default: 1
         description: Número de página
         in: query
@@ -2082,7 +2074,7 @@ paths:
         name: expense_date
         required: true
         schema:
-          $ref: '#/definitions/schemas.ExpenseBuyDateRequest'
+          $ref: '#/definitions/schemas.DateRangeRequest'
       - default: 1
         description: Número de página
         in: query
@@ -2278,7 +2270,7 @@ paths:
         name: income_date
         required: true
         schema:
-          $ref: '#/definitions/schemas.IncomeDateRequest'
+          $ref: '#/definitions/schemas.DateRangeRequest'
       - default: 1
         description: Número de página
         in: query
@@ -2474,7 +2466,7 @@ paths:
         name: income_date
         required: true
         schema:
-          $ref: '#/definitions/schemas.IncomeSportsCourtsDateRequest'
+          $ref: '#/definitions/schemas.DateRangeRequest'
       - default: 1
         description: Número de página
         in: query
@@ -3708,7 +3700,7 @@ paths:
         name: register_request
         required: true
         schema:
-          $ref: '#/definitions/schemas.RegisterInformRequest'
+          $ref: '#/definitions/schemas.DateRangeRequest'
       produces:
       - application/json
       responses:
@@ -3785,6 +3777,55 @@ paths:
       summary: RegisterOpen
       tags:
       - Register
+  /api/v1/report/get_by_date:
+    post:
+      consumes:
+      - application/json
+      description: Obtiene un reporte por fechas
+      parameters:
+      - description: Rango de fechas
+        in: body
+        name: dateRangeRequest
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.DateRangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/schemas.Response'
+            - properties:
+                body:
+                  $ref: '#/definitions/schemas.ReportMovementResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/schemas.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schemas.Response'
+      security:
+      - CookieAuth: []
+      summary: ReportGetByDate
+      tags:
+      - Report
   /api/v1/role/get_all:
     get:
       consumes:

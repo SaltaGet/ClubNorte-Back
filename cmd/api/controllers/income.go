@@ -57,7 +57,7 @@ func (i *IncomeController) IncomeGetByID(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
-//	@Param			income_date	body		schemas.IncomeDateRequest	true	"Fecha desde - hasta del ingreso"
+//	@Param			income_date	body		schemas.DateRangeRequest	true	"Fecha desde - hasta del ingreso"
 //	@Param			page		query		int							false	"Número de página"				default(1)
 //	@Param			limit		query		int							false	"Número de elementos por página"	default(10)
 //	@Success		200			{object}	schemas.Response{body=[]schemas.IncomeResponseDTO}
@@ -68,7 +68,7 @@ func (i *IncomeController) IncomeGetByID(c *fiber.Ctx) error {
 //	@Failure		500			{object}	schemas.Response
 //	@Router			/api/v1/income/get_by_date [post]
 func (i *IncomeController) IncomeGetByDate(c *fiber.Ctx) error {
-	var incomeDateRequest schemas.IncomeDateRequest
+	var incomeDateRequest schemas.DateRangeRequest
 	if err := c.BodyParser(&incomeDateRequest); err != nil {
 		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}

@@ -175,7 +175,7 @@ func (r *RegisterController) RegisterClose(ctx *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
-//	@Param			register_request	body		schemas.RegisterInformRequest	true	"Fechas de solicitud de informe"
+//	@Param			register_request	body		schemas.DateRangeRequest	true	"Fechas de solicitud de informe"
 //	@Success		200					{object}	schemas.Response
 //	@Failure		400					{object}	schemas.Response
 //	@Failure		401					{object}	schemas.Response
@@ -184,7 +184,7 @@ func (r *RegisterController) RegisterClose(ctx *fiber.Ctx) error {
 //	@Failure		500					{object}	schemas.Response
 //	@Router			/api/v1/register/inform [post]
 func (r *RegisterController) RegiterInform(ctx *fiber.Ctx) error {
-	var registerInformRequest schemas.RegisterInformRequest
+	var registerInformRequest schemas.DateRangeRequest
 	if err := ctx.BodyParser(&registerInformRequest); err != nil {
 		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}

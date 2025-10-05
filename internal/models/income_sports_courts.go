@@ -24,7 +24,7 @@ type IncomeSportsCourts struct {
 	DateRestPay       *time.Time `gorm:"" json:"date_rest_pay"`
 	RestRegisterID    *uint      `gorm:"" json:"rest_register_id"`
 
-	Price     float64   `gorm:"not null" json:"price"`
+	Total     float64   `gorm:"not null" json:"total"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime:milli" json:"updated_at"`
 }

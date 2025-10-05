@@ -72,12 +72,12 @@ func (r *MainRepository) IncomeSportCourtCreate(userID, pointSaleID uint, income
 		PartialPay:           incomeCreate.PartialPay,
 		PartialPaymentMethod: incomeCreate.PartialPaymentMethod,
 		PartialRegisterID:    pointSaleID,
-		Price:                incomeCreate.Price,
+		Total:                incomeCreate.Total,
 		PointSaleID:          pointSaleID,
 		DatePartialPay:       now,
 	}
 
-	if incomeCreate.Price == incomeCreate.PartialPay {
+	if incomeCreate.Total == incomeCreate.PartialPay {
 		restPay := 0.0
 		income.RestPay = &restPay
 		income.RestPaymentMethod = &incomeCreate.PartialPaymentMethod
@@ -136,7 +136,7 @@ func (r *MainRepository) IncomeSportCourtUpdatePay(userID, pointSaleID uint, inc
 
 
 		now := time.Now()
-		restPay := income.Price - income.PartialPay
+		restPay := income.Total - income.PartialPay
 
 		if restPay != incomeUpdate.RestPay {
 			return schemas.ErrorResponse(400, "Error al actualizar el ingreso", fmt.Errorf("el pago restante debe ser igual al precio menos el pago parcial"))

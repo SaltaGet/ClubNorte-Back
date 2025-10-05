@@ -3,8 +3,10 @@ package services
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
+	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/xuri/excelize/v2"
 )
 
@@ -119,3 +121,55 @@ func (s *ReportService) ReportExcelGet() (any, error) {
 	return excel, nil
 }
 
+func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (*schemas.ReportMovementResponse, error) {
+	report, err := r.ReportRepository.ReportMovementByDate(fromDate, toDate)
+	if err != nil {
+		return nil, err
+	}
+
+	incomeCount := ProcessIncome(report.Income)
+	incomeSportsCourtsCount := ProcessIncomeSportsCourts(report.IncomeSportsCourts)
+	expenseCount := ProcessExpense(report.Expense)
+	expenseBuyCount := ProcessExpenseBuy(report.ExpenseBuy)
+
+	response := &schemas.ReportMovementResponse{
+		Income:             incomeCount,
+		IncomeSportsCourts: incomeSportsCourtsCount,
+		Expense:            expenseCount,
+		ExpenseBuy:         expenseBuyCount,
+	}
+
+	return response, nil
+}
+
+func ProcessIncome(list []*models.Income) []*schemas.ReportCount {
+	total := 0.0
+
+	for _, v := range list {
+		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
+	}
+
+	return nil
+}
+
+func ProcessIncomeSportsCourts(list []*models.IncomeSportsCourts) []*schemas.ReportCount {
+	for _, v := range list {
+		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
+	}
+	return nil
+
+}
+
+func ProcessExpense(list []*models.Expense) []*schemas.ReportCount {
+	for _, v := range list {
+		fmt.Println("Egreso ID:", v.ID, "Monto:", v.Total)
+	}
+	return nil
+}
+
+func ProcessExpenseBuy(list []*models.ExpenseBuy) []*schemas.ReportCount {
+	for _, v := range list {
+		fmt.Println("Compra ID:", v.ID, "Precio:", v.Total)
+	}
+	return nil
+}

@@ -57,7 +57,7 @@ func (i *ExpenseController) ExpenseGetByID(c *fiber.Ctx) error {
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
-//	@Param			expense_date	body		schemas.ExpenseDateRequest	true	"Fecha desde - hasta del egreso"
+//	@Param			expense_date	body		schemas.DateRangeRequest	true	"Fecha desde - hasta del egreso"
 //	@Param			page			query		int							false	"Número de página"				default(1)
 //	@Param			limit			query		int							false	"Número de elementos por página"	default(10)
 //	@Success		200				{object}	schemas.Response{body=[]schemas.ExpenseResponseDTO}
@@ -68,7 +68,7 @@ func (i *ExpenseController) ExpenseGetByID(c *fiber.Ctx) error {
 //	@Failure		500				{object}	schemas.Response
 //	@Router			/api/v1/expense/get_by_date [post]
 func (i *ExpenseController) ExpenseGetByDate(c *fiber.Ctx) error {
-	var expenseDateRequest schemas.ExpenseDateRequest
+	var expenseDateRequest schemas.DateRangeRequest
 	if err := c.BodyParser(&expenseDateRequest); err != nil {
 		return schemas.HandleError(c, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}

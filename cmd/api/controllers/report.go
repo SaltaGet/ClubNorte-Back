@@ -1,12 +1,9 @@
 package controllers
 
 import (
-	"time"
-
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
-	"google.golang.org/genproto/googleapis/type/month"
 )
 
 func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
@@ -31,13 +28,34 @@ func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
 	return nil
 }
 
-func (c *ReportController) ReportMonthGet(ctx *fiber.Ctx) error {
-	var date string
-	if date == "" {
-		date = time.Now().Format("2006-01")
+// ReportGetByDate godoc
+//
+//	@Summary		ReportGetByDate
+//	@Description	Obtiene un reporte por fechas
+//	@Tags			Report
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			dateRangeRequest	body		schemas.DateRangeRequest	true	"Rango de fechas"
+//	@Success		200					{object}	schemas.Response{body=schemas.ReportMovementResponse}
+//	@Failure		400					{object}	schemas.Response
+//	@Failure		401					{object}	schemas.Response
+//	@Failure		422					{object}	schemas.Response
+//	@Failure		404					{object}	schemas.Response
+//	@Failure		500					{object}	schemas.Response
+//	@Router			/api/v1/report/get_by_date [post]
+func (c *ReportController) ReportMovementByDate(ctx *fiber.Ctx) error {
+	var dateRangeRequest schemas.DateRangeRequest
+	if err := ctx.BodyParser(&dateRangeRequest); err != nil {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
 	}
 
-	report, err := c.ReportService.ReportMonthGet()
+	fromDate, toDate, err := dateRangeRequest.GetParsedDates()
+	if err != nil {
+		return schemas.HandleError(ctx, err)
+	}
+
+	report, err := c.ReportService.ReportMovementByDate(fromDate, toDate)
 	if err != nil {
 		return schemas.HandleError(ctx, err)
 	}

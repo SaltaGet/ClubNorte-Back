@@ -121,36 +121,37 @@ func (s *ReportService) ReportExcelGet() (any, error) {
 	return excel, nil
 }
 
-func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (*schemas.ReportMovementResponse, error) {
+// func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (*schemas.ReportMovementResponse, error) {
+func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (any, error) {
 	report, err := r.ReportRepository.ReportMovementByDate(fromDate, toDate)
 	if err != nil {
 		return nil, err
 	}
 
-	incomeCount := ProcessIncome(report.Income)
-	incomeSportsCourtsCount := ProcessIncomeSportsCourts(report.IncomeSportsCourts)
-	expenseCount := ProcessExpense(report.Expense)
-	expenseBuyCount := ProcessExpenseBuy(report.ExpenseBuy)
+	// incomeCount := ProcessIncome(report.Income)
+	// incomeSportsCourtsCount := ProcessIncomeSportsCourts(report.IncomeSportsCourts)
+	// expenseCount := ProcessExpense(report.Expense)
+	// expenseBuyCount := ProcessExpenseBuy(report.ExpenseBuy)
 
-	response := &schemas.ReportMovementResponse{
-		Income:             incomeCount,
-		IncomeSportsCourts: incomeSportsCourtsCount,
-		Expense:            expenseCount,
-		ExpenseBuy:         expenseBuyCount,
-	}
+	// response := &schemas.ReportMovementResponse{
+	// 	Income:             incomeCount,
+	// 	IncomeSportsCourts: incomeSportsCourtsCount,
+	// 	Expense:            expenseCount,
+	// 	ExpenseBuy:         expenseBuyCount,
+	// }
 
-	return response, nil
+	return report, nil
 }
 
-func ProcessIncome(list []*models.Income) []*schemas.ReportCount {
-	total := 0.0
+// func ProcessIncome(list []*models.Income) []*schemas.ReportCount {
+// 	total := 0.0
 
-	for _, v := range list {
-		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
-	}
+// 	for _, v := range list {
+// 		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func ProcessIncomeSportsCourts(list []*models.IncomeSportsCourts) []*schemas.ReportCount {
 	for _, v := range list {

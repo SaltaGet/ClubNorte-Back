@@ -17,7 +17,7 @@ func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
 	ctx.Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	ctx.Set("Content-Disposition", "attachment; filename=inform.xlsx")
 	ctx.Set("File-Name", "inform.xlsx")
-	
+
 	f, ok := inform.(*excelize.File)
 	if !ok {
 		return ctx.Status(fiber.StatusInternalServerError).SendString("Error al crear el archivo")
@@ -40,7 +40,7 @@ func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
 //	@Security		CookieAuth
 //	@Param			form				query		string						true	"day o month"
 //	@Param			dateRangeRequest	body		schemas.DateRangeRequest	true	"Rango de fechas"
-//	@Success		200					{object}	schemas.Response{body=schemas.ReportMovementResponse}
+//	@Success		200					{object}	schemas.Response
 //	@Failure		400					{object}	schemas.Response
 //	@Failure		401					{object}	schemas.Response
 //	@Failure		422					{object}	schemas.Response
@@ -68,12 +68,47 @@ func (c *ReportController) ReportMovementByDate(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
-		Status: true,
+		Status:  true,
 		Body:    report,
 		Message: "Reporte mensual obtenido con exito",
 	})
 }
 
+// ReportGetByDate godoc
+//
+//	@Summary		ReportGetProfitableProducts
+//	@Description	Obtiene un reporte de productos por fechas de los mas vendidos, los mas rentables y un ranking de los productos
+//	@Tags			Report
+//	@Accept			json
+//	@Produce		json
+//	@Security		CookieAuth
+//	@Param			dateRangeRequest	body		schemas.DateRangeRequest	true	"Rango de fechas"
+//	@Success		200					{object}	schemas.Response{body=[]schemas.ReportProfitableProducts}
+//	@Failure		400					{object}	schemas.Response
+//	@Failure		401					{object}	schemas.Response
+//	@Failure		422					{object}	schemas.Response
+//	@Failure		404					{object}	schemas.Response
+//	@Failure		500					{object}	schemas.Response
+//	@Router			/api/v1/report/get_profitable_products [post]
 func (r *ReportController) ReportProfitableProducts(ctx *fiber.Ctx) error {
-	return nil
+	var dateRangeRequest schemas.DateRangeRequest
+	if err := ctx.BodyParser(&dateRangeRequest); err != nil {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
+	}
+
+	fromDate, toDate, err := dateRangeRequest.GetParsedDates()
+	if err != nil {
+		return schemas.HandleError(ctx, err)
+	}
+
+	report, err := r.ReportService.ReportProfitableProducts(fromDate, toDate)
+	if err != nil {
+		return schemas.HandleError(ctx, err)
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(schemas.Response{
+		Status:  true,
+		Body:    report,
+		Message: "Reporte de productos obtenido con exito",
+	})
 }

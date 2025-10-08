@@ -7,6 +7,7 @@ import (
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
+
 	"github.com/xuri/excelize/v2"
 )
 
@@ -128,49 +129,14 @@ func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time, form st
 		return nil, err
 	}
 
-	// incomeCount := ProcessIncome(report.Income)
-	// incomeSportsCourtsCount := ProcessIncomeSportsCourts(report.IncomeSportsCourts)
-	// expenseCount := ProcessExpense(report.Expense)
-	// expenseBuyCount := ProcessExpenseBuy(report.ExpenseBuy)
-
-	// response := &schemas.ReportMovementResponse{
-	// 	Income:             incomeCount,
-	// 	IncomeSportsCourts: incomeSportsCourtsCount,
-	// 	Expense:            expenseCount,
-	// 	ExpenseBuy:         expenseBuyCount,
-	// }
-
 	return report, nil
 }
 
-// func ProcessIncome(list []*models.Income) []*schemas.ReportCount {
-// 	total := 0.0
-
-// 	for _, v := range list {
-// 		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
-// 	}
-
-// 	return nil
-// }
-
-func ProcessIncomeSportsCourts(list []*models.IncomeSportsCourts) []*schemas.ReportCount {
-	for _, v := range list {
-		fmt.Println("Ingreso ID:", v.ID, "Monto:", v.Total)
+func (r *ReportService) ReportProfitableProducts(start, end time.Time) ([]schemas.ReportProfitableProducts, error) {
+	report, err := r.ReportRepository.ReportProfitableProducts(start, end)
+	if err != nil {
+		return nil, err
 	}
-	return nil
 
-}
-
-func ProcessExpense(list []*models.Expense) []*schemas.ReportCount {
-	for _, v := range list {
-		fmt.Println("Egreso ID:", v.ID, "Monto:", v.Total)
-	}
-	return nil
-}
-
-func ProcessExpenseBuy(list []*models.ExpenseBuy) []*schemas.ReportCount {
-	for _, v := range list {
-		fmt.Println("Compra ID:", v.ID, "Precio:", v.Total)
-	}
-	return nil
+	return report, nil
 }

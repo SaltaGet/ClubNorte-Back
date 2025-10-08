@@ -4484,6 +4484,75 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/report/get_profitable_products": {
+            "post": {
+                "security": [
+                    {
+                        "CookieAuth": []
+                    }
+                ],
+                "description": "Obtiene un reporte de productos por fechas de los mas vendidos, los mas rentables y un ranking de los productos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Report"
+                ],
+                "summary": "ReportGetProfitableProducts",
+                "parameters": [
+                    {
+                        "description": "Rango de fechas",
+                        "name": "dateRangeRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.DateRangeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/schemas.Response"
@@ -4492,7 +4561,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "body": {
-                                            "$ref": "#/definitions/schemas.ReportMovementResponse"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/schemas.ReportProfitableProducts"
+                                            }
                                         }
                                     }
                                 }
@@ -6875,46 +6947,29 @@ const docTemplate = `{
                 }
             }
         },
-        "schemas.ReportCount": {
+        "schemas.ReportProfitableProducts": {
             "type": "object",
             "properties": {
-                "count": {
+                "code": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "total_cost": {
                     "type": "number"
                 },
-                "date": {
-                    "type": "string"
+                "total_profit": {
+                    "type": "number"
                 },
-                "group": {
-                    "type": "string"
-                }
-            }
-        },
-        "schemas.ReportMovementResponse": {
-            "type": "object",
-            "properties": {
-                "expense": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.ReportCount"
-                    }
+                "total_quantity": {
+                    "type": "number"
                 },
-                "expense_buy": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.ReportCount"
-                    }
-                },
-                "income": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.ReportCount"
-                    }
-                },
-                "income_sports_courts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemas.ReportCount"
-                    }
+                "total_sales": {
+                    "type": "number"
                 }
             }
         },

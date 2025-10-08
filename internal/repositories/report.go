@@ -34,7 +34,6 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time, form string)
 		dateFormat = "DATE(mov.fecha) as fecha"
 	}
 
-
 	query := fmt.Sprintf(`
 	SELECT 
     ps.id as point_sale_id,
@@ -102,15 +101,37 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time, form string)
 	return result, err
 }
 
-func (r *MainRepository) ReportProfitableProducts() (any, error) {
-	var products []*models.Product
+func (r *MainRepository) ReportProfitableProducts(start, end time.Time) ([]schemas.ReportProfitableProducts, error) {
+	var products []schemas.ReportProfitableProducts
+
+	query := `
+		SELECT 
+			p.id,
+			p.code,
+			p.name,
+			SUM(ii.quantity) AS total_quantity,
+			SUM(ii.subtotal) AS total_sales,
+			SUM(ii.price_cost * ii.quantity) AS total_cost,
+			SUM((ii.price - ii.price_cost) * ii.quantity) AS total_profit
+		FROM income_items ii
+		INNER JOIN products p ON p.id = ii.product_id
+		WHERE ii.created_at BETWEEN ? AND ?
+		GROUP BY p.id, p.code, p.name
+		ORDER BY total_profit DESC, total_quantity DESC
+	`
+
+	if err := r.DB.Raw(query, start, end).Scan(&products).Error; err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 // func (r *MainRepository) ObtenerResumenPorDiaYPuntoVenta(fechaInicio, fechaFin time.Time) ([]schemas.ResultadoPorDiaYPuntoVenta, error) {
 // 	var resultados []schemas.ResultadoPorDiaYPuntoVenta
 
 // 	query := `
-// 		SELECT 
+// 		SELECT
 // 			DATE(fecha) as fecha,
 // 			point_sale_id,
 // 			COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN total ELSE 0 END), 0) as total_ingresos,
@@ -121,19 +142,19 @@ func (r *MainRepository) ReportProfitableProducts() (any, error) {
 // 			SELECT created_at as fecha, total, point_sale_id, 'ingreso' as tipo
 // 			FROM incomes
 // 			WHERE created_at BETWEEN ? AND ?
-			
+
 // 			UNION ALL
-			
+
 // 			SELECT created_at as fecha, total, point_sale_id, 'egreso' as tipo
 // 			FROM expenses
 // 			WHERE created_at BETWEEN ? AND ?
-			
+
 // 			UNION ALL
-			
+
 // 			SELECT created_at as fecha, total, point_sale_id, 'cancha' as tipo
 // 			FROM income_sports_courts
 // 			WHERE created_at BETWEEN ? AND ?
-			
+
 // 			UNION ALL
 // 		) as movimientos
 // 		GROUP BY DATE(fecha), point_sale_id

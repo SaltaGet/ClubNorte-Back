@@ -28,4 +28,5 @@ type IncomeItem struct {
 	Price_Cost float64 `gorm:"not null" json:"price_cost"`
 	Price     float64 `gorm:"not null" json:"price"`
 	Subtotal  float64 `gorm:"not null" json:"subtotal"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 }

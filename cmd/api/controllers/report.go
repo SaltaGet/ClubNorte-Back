@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/DanielChachagua/Club-Norte-Back/internal/schemas"
 	"github.com/gofiber/fiber/v2"
 	"github.com/xuri/excelize/v2"
@@ -31,11 +33,12 @@ func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
 // ReportGetByDate godoc
 //
 //	@Summary		ReportGetByDate
-//	@Description	Obtiene un reporte por fechas
+//	@Description	Obtiene un reporte por fechas de los diferentes puntos de ventas, tanto como ingresos, ingresos por cancha y egresos
 //	@Tags			Report
 //	@Accept			json
 //	@Produce		json
 //	@Security		CookieAuth
+//	@Param			form				query		string						true	"day o month"
 //	@Param			dateRangeRequest	body		schemas.DateRangeRequest	true	"Rango de fechas"
 //	@Success		200					{object}	schemas.Response{body=schemas.ReportMovementResponse}
 //	@Failure		400					{object}	schemas.Response
@@ -45,6 +48,10 @@ func (c *ReportController) ReportExcelGet(ctx *fiber.Ctx) error {
 //	@Failure		500					{object}	schemas.Response
 //	@Router			/api/v1/report/get_by_date [post]
 func (c *ReportController) ReportMovementByDate(ctx *fiber.Ctx) error {
+	form := ctx.Query("form")
+	if (form != "day" && form != "month") || form == "" {
+		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "El campo form debe ser day o month no puede estar vacio", fmt.Errorf("form debe ser day o month")))
+	}
 	var dateRangeRequest schemas.DateRangeRequest
 	if err := ctx.BodyParser(&dateRangeRequest); err != nil {
 		return schemas.HandleError(ctx, schemas.ErrorResponse(400, "Error al parsear el cuerpo de la solicitud", err))
@@ -55,7 +62,7 @@ func (c *ReportController) ReportMovementByDate(ctx *fiber.Ctx) error {
 		return schemas.HandleError(ctx, err)
 	}
 
-	report, err := c.ReportService.ReportMovementByDate(fromDate, toDate)
+	report, err := c.ReportService.ReportMovementByDate(fromDate, toDate, form)
 	if err != nil {
 		return schemas.HandleError(ctx, err)
 	}
@@ -65,4 +72,8 @@ func (c *ReportController) ReportMovementByDate(ctx *fiber.Ctx) error {
 		Body:    report,
 		Message: "Reporte mensual obtenido con exito",
 	})
+}
+
+func (r *ReportController) ReportProfitableProducts(ctx *fiber.Ctx) error {
+	return nil
 }

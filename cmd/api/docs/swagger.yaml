@@ -3781,8 +3781,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Obtiene un reporte por fechas
+      description: Obtiene un reporte por fechas de los diferentes puntos de ventas,
+        tanto como ingresos, ingresos por cancha y egresos
       parameters:
+      - description: day o month
+        in: query
+        name: form
+        required: true
+        type: string
       - description: Rango de fechas
         in: body
         name: dateRangeRequest

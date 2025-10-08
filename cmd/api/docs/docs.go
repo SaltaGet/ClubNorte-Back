@@ -4451,7 +4451,7 @@ const docTemplate = `{
                         "CookieAuth": []
                     }
                 ],
-                "description": "Obtiene un reporte por fechas",
+                "description": "Obtiene un reporte por fechas de los diferentes puntos de ventas, tanto como ingresos, ingresos por cancha y egresos",
                 "consumes": [
                     "application/json"
                 ],
@@ -4463,6 +4463,13 @@ const docTemplate = `{
                 ],
                 "summary": "ReportGetByDate",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "day o month",
+                        "name": "form",
+                        "in": "query",
+                        "required": true
+                    },
                     {
                         "description": "Rango de fechas",
                         "name": "dateRangeRequest",

@@ -122,8 +122,8 @@ func (s *ReportService) ReportExcelGet() (any, error) {
 }
 
 // func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (*schemas.ReportMovementResponse, error) {
-func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time) (any, error) {
-	report, err := r.ReportRepository.ReportMovementByDate(fromDate, toDate)
+func (r *ReportService) ReportMovementByDate(fromDate, toDate time.Time, form string) (any, error) {
+	report, err := r.ReportRepository.ReportMovementByDate(fromDate, toDate, form)
 	if err != nil {
 		return nil, err
 	}

@@ -9,12 +9,12 @@ import (
 
 type ReportRepository interface {
 	ReportExcelGet() (report any, err error)
-	// ReportMovementByDate(fromDate, toDate time.Time) (report *models.ReportMovement, err error)
-	ReportMovementByDate(fromDate, toDate time.Time) (report any, err error)
+	ReportMovementByDate(fromDate, toDate time.Time, form string) (report any, err error)
+	ReportProfitableProducts() (report any, err error)
 }
 
 type ReportService interface {
 	ReportExcelGet() (report any, err error)
-	ReportMovementByDate(fromDate, toDate time.Time) (report any, err error)
-	// ReportMovementByDate(fromDate, toDate time.Time) (report *schemas.ReportMovementResponse, err error)
+	ReportMovementByDate(fromDate, toDate time.Time, form string) (report any, err error)
+	ReportProfitableProducts() (report any, err error)
 }

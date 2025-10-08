@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/DanielChachagua/Club-Norte-Back/internal/models"
@@ -19,97 +21,28 @@ func (r *MainRepository) ReportExcelGet() (any, error) {
 	return products, err
 }
 
-// func (r *MainRepository) ReportMovementByDate(start, end time.Time) (*models.ReportMovement, error) {
-// 	var income []*models.Income
-// 	if err := r.DB.
-// 		Where("created_at >= ? AND created_at < ?", start, end).
-// 		Find(&income).Error; err != nil {
-// 		return nil, schemas.ErrorResponse(500, "Error al obtener los ingresos", err)
-// 	}
-
-// 	var expense []*models.Expense
-// 	if err := r.DB.
-// 		Where("created_at >= ? AND created_at < ?", start, end).
-// 		Find(&expense).Error; err != nil {
-// 		return nil, schemas.ErrorResponse(500, "Error al obtener los egresos", err)
-// 	}
-
-// 	var incomeSportsCourts []*models.IncomeSportsCourts
-// 	if err := r.DB.
-// 		Where("created_at >= ? AND created_at < ?", start, end).
-// 		Find(&incomeSportsCourts).Error; err != nil {
-// 		return nil, schemas.ErrorResponse(500, "Error al obtener los ingresos por cancha", err)
-// 	}
-
-// 	var expenseBuy []*models.ExpenseBuy
-// 	if err := r.DB.
-// 		Where("created_at >= ? AND created_at < ?", start, end).
-// 		Find(&expenseBuy).Error; err != nil {
-// 		return nil, schemas.ErrorResponse(500, "Error al obtener los egresos por compra", err)
-// 	}
-
-// 	var PointSales []*models.PointSale
-// 	if err := r.DB.Find(&PointSales).Error; err != nil {
-// 		return nil, schemas.ErrorResponse(500, "Error al obtener los puntos de venta", err)
-// 	}
-
-// 	return &models.ReportMovement{
-// 		Income:            income,
-// 		Expense:           expense,
-// 		IncomeSportsCourts: incomeSportsCourts,
-// 		ExpenseBuy:        expenseBuy,
-// 		PointSale:         PointSales,
-// 	}, nil
-// }
-
-// func (r *MainRepository) ReportByPointSale(start, end time.Time) ([]ReportPointSaleFull, error) {
-//     results := map[uint]*ReportPointSaleFull{}
-
-//     // Ingresos
-//     var incomeRows []struct {
-//         PointSaleID uint
-//         Total       float64
-//     }
-//     if err := r.DB.
-//         Table("incomes").
-//         Select("point_sale_id, SUM(total) as total").
-//         Where("created_at >= ? AND created_at < ?", start, end).
-//         Group("point_sale_id").
-//         Scan(&incomeRows).Error; err != nil {
-//         return nil, err
-//     }
-
-//     for _, row := range incomeRows {
-//         if results[row.PointSaleID] == nil {
-//             results[row.PointSaleID] = &ReportPointSaleFull{PointSaleID: row.PointSaleID}
-//         }
-//         results[row.PointSaleID].IncomeTotal = row.Total
-//     }
-
-//     // → repetir lo mismo para Expense, IncomeSportsCourts y ExpenseBuy
-//     // y acumular en results[pointSaleID]
-
-//     // Convertir a slice
-//     var out []ReportPointSaleFull
-//     for _, v := range results {
-//         out = append(out, *v)
-//     }
-//     return out, nil
-// }
-
-func (r *MainRepository) ReportMovementByDate(start, end time.Time) (any, error) {
+func (r *MainRepository) ReportMovementByDate(start, end time.Time, form string) (any, error) {
 	var resultados []map[string]any
-	// var resultados []*schemas.ResultadoPorDia
 
-	query := `
+	var modo string
+	var dateFormat string
+	if form == "month" {
+		modo = "YEAR(mov.fecha), MONTH(mov.fecha)"
+		dateFormat = "DATE_FORMAT(mov.fecha, '%Y-%m') as fecha"
+	} else {
+		modo = "DATE(mov.fecha)"
+		dateFormat = "DATE(mov.fecha) as fecha"
+	}
+
+
+	query := fmt.Sprintf(`
 	SELECT 
     ps.id as point_sale_id,
     ps.name as point_sale_name,
-    DATE(mov.fecha) as fecha,
+    %s,
     COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN total ELSE 0 END),0) as total_ingresos,
     COALESCE(SUM(CASE WHEN tipo = 'egreso' THEN total ELSE 0 END),0) as total_egresos,
     COALESCE(SUM(CASE WHEN tipo = 'cancha' THEN total ELSE 0 END),0) as total_canchas,
-    COALESCE(SUM(CASE WHEN tipo = 'compra' THEN total ELSE 0 END),0) as total_compras,
     COALESCE(SUM(CASE WHEN tipo IN ('ingreso','cancha') THEN total ELSE -total END),0) as balance
 	FROM (
     SELECT created_at as fecha, total, 'ingreso' as tipo, point_sale_id
@@ -130,10 +63,9 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time) (any, error)
 	) AS mov
 	JOIN point_sales ps ON ps.id = mov.point_sale_id
 	WHERE mov.fecha BETWEEN ? AND ?
-	GROUP BY ps.id, ps.name, DATE(mov.fecha)
-	ORDER BY ps.id, fecha DESC
-
-	`
+	GROUP BY ps.id, ps.name, %s
+	ORDER BY ps.id
+	`, dateFormat, modo)
 
 	err := r.DB.Raw(query,
 		start, end,
@@ -144,7 +76,13 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time) (any, error)
 
 	grouped := make(map[string][]map[string]any)
 	for _, row := range resultados {
-		fecha := row["fecha"].(time.Time).Format("2006-01-02") // key simple
+		var fecha string
+		if form == "month" {
+			fecha = row["fecha"].(string)
+		} else {
+			fecha = row["fecha"].(time.Time).Format("2006-01-02") // key simple
+
+		}
 		grouped[fecha] = append(grouped[fecha], row)
 	}
 
@@ -157,57 +95,59 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time) (any, error)
 		})
 	}
 
+	sort.Slice(result, func(i, j int) bool {
+		return result[i]["fecha"].(string) < result[j]["fecha"].(string)
+	})
+
 	return result, err
 }
 
-func (r *MainRepository) ObtenerResumenPorDiaYPuntoVenta(fechaInicio, fechaFin time.Time) ([]schemas.ResultadoPorDiaYPuntoVenta, error) {
-	var resultados []schemas.ResultadoPorDiaYPuntoVenta
-
-	query := `
-		SELECT 
-			DATE(fecha) as fecha,
-			point_sale_id,
-			COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN total ELSE 0 END), 0) as total_ingresos,
-			COALESCE(SUM(CASE WHEN tipo = 'egreso' THEN total ELSE 0 END), 0) as total_egresos,
-			COALESCE(SUM(CASE WHEN tipo = 'cancha' THEN total ELSE 0 END), 0) as total_canchas,
-			COALESCE(SUM(CASE WHEN tipo = 'compra' THEN total ELSE 0 END), 0) as total_compras,
-			COALESCE(SUM(CASE WHEN tipo IN ('ingreso', 'cancha') THEN total ELSE -total END), 0) as balance
-		FROM (
-			SELECT created_at as fecha, total, point_sale_id, 'ingreso' as tipo
-			FROM incomes
-			WHERE created_at BETWEEN ? AND ?
-			
-			UNION ALL
-			
-			SELECT created_at as fecha, total, point_sale_id, 'egreso' as tipo
-			FROM expenses
-			WHERE created_at BETWEEN ? AND ?
-			
-			UNION ALL
-			
-			SELECT created_at as fecha, total, point_sale_id, 'cancha' as tipo
-			FROM income_sports_courts
-			WHERE created_at BETWEEN ? AND ?
-			
-			UNION ALL
-			
-			SELECT created_at as fecha, total, 0 as point_sale_id, 'compra' as tipo
-			FROM expense_buys
-			WHERE created_at BETWEEN ? AND ?
-		) as movimientos
-		GROUP BY DATE(fecha), point_sale_id
-		ORDER BY fecha DESC, point_sale_id
-	`
-
-	err := r.DB.Raw(query,
-		fechaInicio, fechaFin,
-		fechaInicio, fechaFin,
-		fechaInicio, fechaFin,
-		fechaInicio, fechaFin,
-	).Scan(&resultados).Error
-
-	return resultados, err
+func (r *MainRepository) ReportProfitableProducts() (any, error) {
+	var products []*models.Product
 }
+
+// func (r *MainRepository) ObtenerResumenPorDiaYPuntoVenta(fechaInicio, fechaFin time.Time) ([]schemas.ResultadoPorDiaYPuntoVenta, error) {
+// 	var resultados []schemas.ResultadoPorDiaYPuntoVenta
+
+// 	query := `
+// 		SELECT 
+// 			DATE(fecha) as fecha,
+// 			point_sale_id,
+// 			COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN total ELSE 0 END), 0) as total_ingresos,
+// 			COALESCE(SUM(CASE WHEN tipo = 'egreso' THEN total ELSE 0 END), 0) as total_egresos,
+// 			COALESCE(SUM(CASE WHEN tipo = 'cancha' THEN total ELSE 0 END), 0) as total_canchas,
+// 			COALESCE(SUM(CASE WHEN tipo IN ('ingreso', 'cancha') THEN total ELSE -total END), 0) as balance
+// 		FROM (
+// 			SELECT created_at as fecha, total, point_sale_id, 'ingreso' as tipo
+// 			FROM incomes
+// 			WHERE created_at BETWEEN ? AND ?
+			
+// 			UNION ALL
+			
+// 			SELECT created_at as fecha, total, point_sale_id, 'egreso' as tipo
+// 			FROM expenses
+// 			WHERE created_at BETWEEN ? AND ?
+			
+// 			UNION ALL
+			
+// 			SELECT created_at as fecha, total, point_sale_id, 'cancha' as tipo
+// 			FROM income_sports_courts
+// 			WHERE created_at BETWEEN ? AND ?
+			
+// 			UNION ALL
+// 		) as movimientos
+// 		GROUP BY DATE(fecha), point_sale_id
+// 		ORDER BY fecha DESC, point_sale_id
+// 	`
+
+// 	err := r.DB.Raw(query,
+// 		fechaInicio, fechaFin,
+// 		fechaInicio, fechaFin,
+// 		fechaInicio, fechaFin,
+// 	).Scan(&resultados).Error
+
+// 	return resultados, err
+// }
 
 // ========================
 // CONSULTAS POR MES

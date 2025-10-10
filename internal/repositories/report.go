@@ -101,6 +101,32 @@ func (r *MainRepository) ReportMovementByDate(start, end time.Time, form string)
 	return result, err
 }
 
+// func (r *MainRepository) ReportProfitableProducts(start, end time.Time) ([]schemas.ReportProfitableProducts, error) {
+// 	var products []schemas.ReportProfitableProducts
+
+// 	query := `
+// 		SELECT
+// 			p.id,
+// 			p.code,
+// 			p.name,
+// 			SUM(ii.quantity) AS total_quantity,
+// 			SUM(ii.subtotal) AS total_sales,
+// 			SUM(ii.price_cost * ii.quantity) AS total_cost,
+// 			SUM((ii.price - ii.price_cost) * ii.quantity) AS total_profit
+// 		FROM income_items ii
+// 		INNER JOIN products p ON p.id = ii.product_id
+// 		WHERE ii.created_at BETWEEN ? AND ?
+// 		GROUP BY p.id, p.code, p.name
+// 		ORDER BY total_profit DESC, total_quantity DESC
+// 	`
+
+// 	if err := r.DB.Raw(query, start, end).Scan(&products).Error; err != nil {
+// 		return nil, err
+// 	}
+
+// 	return products, nil
+// }
+
 func (r *MainRepository) ReportProfitableProducts(start, end time.Time) ([]schemas.ReportProfitableProducts, error) {
 	var products []schemas.ReportProfitableProducts
 
@@ -109,19 +135,35 @@ func (r *MainRepository) ReportProfitableProducts(start, end time.Time) ([]schem
 			p.id,
 			p.code,
 			p.name,
-			SUM(ii.quantity) AS total_quantity,
-			SUM(ii.subtotal) AS total_sales,
-			SUM(ii.price_cost * ii.quantity) AS total_cost,
-			SUM((ii.price - ii.price_cost) * ii.quantity) AS total_profit
-		FROM income_items ii
-		INNER JOIN products p ON p.id = ii.product_id
-		WHERE ii.created_at BETWEEN ? AND ?
+			COALESCE(SUM(ii.quantity), 0) AS total_quantity,
+			COALESCE(SUM(ii.subtotal), 0) AS total_sales,
+			COALESCE(SUM(ii.price_cost * ii.quantity), 0) AS total_cost,
+			COALESCE(SUM((ii.price - ii.price_cost) * ii.quantity), 0) AS total_profit
+		FROM products p
+		LEFT JOIN income_items ii 
+			ON p.id = ii.product_id
+			AND ii.created_at BETWEEN ? AND ?
 		GROUP BY p.id, p.code, p.name
 		ORDER BY total_profit DESC, total_quantity DESC
 	`
 
 	if err := r.DB.Raw(query, start, end).Scan(&products).Error; err != nil {
 		return nil, err
+	}
+
+	return products, nil
+}
+
+func (r *MainRepository) ReportStockProducts() ([]*models.Product, error) {
+	var products []*models.Product
+
+	if err := r.DB.
+		Preload("Category").
+		Preload("StockPointSales").
+		Preload("StockPointSales.PointSale").
+		Preload("StockDeposit").
+		Find(&products).Error; err != nil {
+		return nil, schemas.ErrorResponse(500, "error al obtener productos", err)
 	}
 
 	return products, nil
